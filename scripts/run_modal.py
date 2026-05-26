@@ -32,7 +32,10 @@ image = (
 
 
 @app.function(image=image, gpu="B200:1", timeout=3600, volumes={TRACE_SET_PATH: trace_volume})
-def run_benchmark(solution: Solution, config: BenchmarkConfig = None) -> dict:
+def run_benchmark(
+    solution: Solution,
+    config: BenchmarkConfig | None = None,
+) -> dict[str, dict[str, dict[str, object]]]:
     """Run benchmark on Modal B200 and return results."""
     if config is None:
         config = BenchmarkConfig(warmup_runs=3, iterations=100, num_trials=5)
@@ -60,11 +63,11 @@ def run_benchmark(solution: Solution, config: BenchmarkConfig = None) -> dict:
     result_trace_set = benchmark.run_all(dump_traces=True)
 
     traces = result_trace_set.traces.get(definition.name, [])
-    results = {definition.name: {}}
+    results: dict[str, dict[str, dict[str, object]]] = {definition.name: {}}
 
     for trace in traces:
         if trace.evaluation:
-            entry = {
+            entry: dict[str, object] = {
                 "status": trace.evaluation.status.value,
                 "solution": trace.solution,
             }

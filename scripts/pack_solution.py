@@ -6,16 +6,12 @@ Reads configuration from config.toml and packs the appropriate source files
 """
 
 import sys
+import tomllib
 from pathlib import Path
 
 # Add project root to path for imports
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-
-try:
-    import tomllib
-except ImportError:
-    import tomli as tomllib
 
 from flashinfer_bench import BuildSpec
 from flashinfer_bench.agents import pack_solution_from_files
@@ -31,7 +27,18 @@ def load_config() -> dict:
         return tomllib.load(f)
 
 
-def pack_solution(output_path: Path = None) -> Path:
+def normalize_entry_point(language: str, entry_point: str) -> str:
+    """Accept legacy short function names from config.toml."""
+    if "::" in entry_point:
+        return entry_point
+    if language == "triton":
+        return f"kernel.py::{entry_point}"
+    if language == "cuda":
+        return f"binding.py::{entry_point}"
+    return entry_point
+
+
+def pack_solution(output_path: Path | None = None) -> Path:
     """Pack solution files into a Solution JSON."""
     config = load_config()
 
@@ -57,7 +64,7 @@ def pack_solution(output_path: Path = None) -> Path:
     spec = BuildSpec(
         language=language,
         target_hardware=["cuda"],
-        entry_point=entry_point,
+        entry_point=normalize_entry_point(language, entry_point),
         destination_passing_style=dps,
     )
 

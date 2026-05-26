@@ -13,6 +13,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from flashinfer_bench import Benchmark, BenchmarkConfig, Solution, TraceSet
+
 from scripts.pack_solution import pack_solution
 
 
@@ -20,14 +21,17 @@ def get_trace_set_path() -> str:
     """Get trace set path from environment variable."""
     path = os.environ.get("FIB_DATASET_PATH")
     if not path:
-        raise EnvironmentError(
+        raise OSError(
             "FIB_DATASET_PATH environment variable not set. "
             "Please set it to the path of your flashinfer-trace dataset."
         )
     return path
 
 
-def run_benchmark(solution: Solution, config: BenchmarkConfig = None) -> dict:
+def run_benchmark(
+    solution: Solution,
+    config: BenchmarkConfig | None = None,
+) -> dict[str, dict[str, dict[str, object]]]:
     """Run benchmark locally and return results."""
     if config is None:
         config = BenchmarkConfig(warmup_runs=3, iterations=100, num_trials=5)
@@ -56,11 +60,11 @@ def run_benchmark(solution: Solution, config: BenchmarkConfig = None) -> dict:
     result_trace_set = benchmark.run_all(dump_traces=True)
 
     traces = result_trace_set.traces.get(definition.name, [])
-    results = {definition.name: {}}
+    results: dict[str, dict[str, dict[str, object]]] = {definition.name: {}}
 
     for trace in traces:
         if trace.evaluation:
-            entry = {
+            entry: dict[str, object] = {
                 "status": trace.evaluation.status.value,
                 "solution": trace.solution,
             }
