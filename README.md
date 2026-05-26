@@ -2,6 +2,12 @@
 
 Create high-performance GPU kernels for state-of-the-art LLM architectures on NVIDIA Blackwell GPUs with humans and/or AI agents.
 
+## Purpose of This Fork
+
+This repository is a demo project forked from the [FlashInfer Bench starter kit](https://github.com/flashinfer-ai/flashinfer-bench-starter-kit) to show how [Houmao](https://github.com/igamenovoer/houmao) can be used for CUDA kernel optimization work in the MLSys 2026 FlashInfer AI Kernel Generation Contest setting.
+
+The demo is intended to support both fully agentic workflows and agent+human collaboration: Houmao-managed agents can explore kernels, run benchmark loops, propose CUDA/Triton changes, and coordinate with a human operator through review, testing, and submission checkpoints.
+
 ---
 
 <p align="center">
