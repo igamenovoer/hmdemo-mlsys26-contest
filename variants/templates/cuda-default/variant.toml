@@ -1,0 +1,8 @@
+id = "template"
+language = "cuda"
+definition = "replace-me"
+
+[build]
+entry_point = "kernel"
+binding = "tvm-ffi"
+destination_passing_style = true

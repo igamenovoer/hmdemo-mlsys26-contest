@@ -36,12 +36,30 @@ pixi run lint
 pixi run typecheck
 pixi run pack
 pixi run -e cu130 nvcc --version
+pixi run project-cli variant list
+pixi run project-cli workload source list
 ```
 
 `pixi run bench` requires a CUDA-capable local environment and `FIB_DATASET_PATH`.
 `pixi run modal-bench` requires Modal setup.
 
 Use `pixi run -e cu130 ...` for CUDA 13.0 / Blackwell `sm_100a` work. That environment sets `CUDA_HOME` to the PyPI `cuda-toolkit` CUDA 13 layout, adds its `bin` directory to `PATH`, and exports `TORCH_CUDA_ARCH_LIST=10.0a` plus `TVM_FFI_CUDA_ARCH_LIST=10.0a`.
+
+Use `project-cli` for repo-local management tasks:
+
+```bash
+pixi run project-cli variant list
+pixi run project-cli variant new moe-trial --definition <exact-definition>
+pixi run project-cli variant deploy moe-trial
+pixi run project-cli variant stock moe-trial
+pixi run project-cli variant status
+pixi run project-cli variant diff moe-trial
+pixi run project-cli workload source list
+pixi run project-cli workload list --source contest-local --definition <exact-definition> --limit 5
+pixi run project-cli workload set list
+```
+
+`project-cli` intentionally has no `eval timing` command; use `pixi run bench`, `pixi run modal-bench`, or the underlying scripts for evaluation.
 
 ## Layout
 
