@@ -79,6 +79,7 @@ pixi run project-cli workload set list
 ## Guardrails
 
 - Do not commit generated `solution.json`, `.pixi/`, `tmp/`, or files under `extern/orphan/`.
+- When generating Markdown files, do not hard-break prose lines; keep each paragraph or list item on one logical line.
 - Prefer small, focused edits that preserve the starter-kit shape expected by the contest evaluator.
 - Keep GPU or dataset-dependent checks out of the default unit test path.
 - Preserve Python 3.12 compatibility.
