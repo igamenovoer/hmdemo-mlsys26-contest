@@ -1,0 +1,3 @@
+[submodule "extern/tracked/domain-skills"]
+	path = extern/tracked/domain-skills
+	url = https://github.com/igamenovoer/domain-skills.git

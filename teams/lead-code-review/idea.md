@@ -6,36 +6,60 @@ Optimize the MoE kernel for the MLSys26 contest through a simple lead-review-cod
 
 ## Team Members
 
-- `lead`: Owns the objective, keeps track of the best states, maintains the ranked beam of open solution branches, decides what to try next, and assigns work to the reviewer and coders.
-- `reviewer`: Inspects candidate solutions, checks evidence, identifies problems or opportunities, and proposes repair, incremental improvement, or structural expansion directions.
-- `coder-1`: Implements one lead-approved task and reports what changed.
-- `coder-2`: Implements one lead-approved task and reports what changed.
-- `coder-3`: Implements one lead-approved task and reports what changed.
+- `lead`: Owns the objective, keeps track of the best states, maintains the ranked beam of cand-solutions, decides what to try next, and assigns work to the reviewer and coders.
+- `reviewer`: Inspects cand-solutions, checks evidence, identifies problems or opportunities, and proposes repair, incr-explore, or struct-explore directions.
+- `coder-i`: Implements one lead-approved task and reports what changed, for `i = 1, 2, ..., N`.
 
-## Hyperparameters
+## Solution Concepts
 
-- `beam_width = 3`: keep up to three coder lanes active in one round.
-- `structural_directions_per_wave = 3`: when expanding a matured solution branch, ask reviewer for three distinct structural directions.
-- `maturity_failed_trials = 3`: mark an immature branch as matured after three counted local trials fail to improve it.
-- `structural_wave_quota = 3`: close a matured branch after it has been used as the seed for three structural expansion waves.
-- `promotion_target = open-best`: compare a matured local branch against the best promoted active branch, not necessarily against the best solution ever seen.
+- `cand-solution`: a candidate solution tracked in the beam; its state is one of `immature`, `matured`, `closed`, or `blocked`.
+- `immature`: an active cand-solution that still needs local exploration through coder attempts and reviewer evaluation.
+- `matured`: a cand-solution that has received enough local improvement attempts to be deemed not locally improvable anymore, making it eligible for struct-explore or promotion comparison.
+- `closed`: a cand-solution that will not be further explored.
+- `blocked`: a cand-solution that cannot currently be evaluated because of a concrete runtime, tooling, data, or environment blocker.
+- `global-best`: the best correct solution seen anywhere in the run, including closed branches.
+- `open-best`: the best promoted solution among cand-solutions that are still active; this is the promotion comparator.
+
+## Exploration Concepts
+
+- `local comparator`: the previous iteration of the cand-solution, used to decide whether a new attempt locally improves it.
+- `incr-explore`: one incremental exploration of a cand-solution that keeps the grand structure of the solution and makes focused local adjustments to improve performance, mainly around a found bottleneck.
+- `struct-explore`: one structural exploration effort that considers the kernel as a whole, tries to identify design issues based on multiple profiled metrics, code patterns, or domain knowledge, and comes up with an improved design.
 
 ## Agent Coordination
 
-The coordination is a generic beam search over open solution branches. `lead` maintains open ends with stable ids, lineage, priority, evidence, trial count, structural wave count, and a state marker: `immature`, `matured`, `closed`, `blocked`, or `pruned`.
+The coordination is a beam-style loop over cand-solutions. `lead` repeatedly picks a cand-solution, asks `reviewer` for either an incr-explore idea or a struct-explore idea, sends the resulting task to coders, and uses the returned cand-solution to update the beam.
 
-The initial base solution is treated as an already `matured` open end, so the first round begins with structural expansion rather than incremental tuning.
+There are N coders, and a struct-explore request asks reviewer for N struct-explore ideas so each idea can be assigned to one coder.
 
-`lead` tracks two best references: `global-best`, the best correct solution seen anywhere in the run, and `open-best`, the best promoted solution among branches that are still active. `global-best` is evidence; `open-best` is the comparator for promotion.
+```mermaid
+sequenceDiagram
+    participant Lead as lead
+    participant Reviewer as reviewer
+    participant Coder as coder-i, i=1..N
 
-1. If any `immature` open ends exist, `lead` selects up to `beam_width` highest-priority immature open ends and assigns one to each available coder lane.
-2. Each assigned coder works from that open end's current solution, implements one attempt, and reports the resulting candidate state.
-3. `reviewer` evaluates each candidate against the previous solution in the same local branch, not against `global-best` or `open-best`.
-4. If the candidate improves over its local comparator, `lead` closes or supersedes the previous local open end and creates a successor `immature` open end with trial count reset to zero.
-5. If the candidate does not improve, `lead` records a failed counted trial for that open end; after `maturity_failed_trials` failed local trials, the open end becomes `matured`.
-6. If an assigned attempt cannot be evaluated because of a concrete runtime or evaluation blocker, `lead` marks the open end `blocked`; once the blocker is resolved, the same open end can return to `immature` without losing its lineage or trial history.
-7. When no `immature` open ends remain, `lead` selects the best-performing `matured` open end that still has structural waves available and asks `reviewer` for `structural_directions_per_wave` structural directions from that matured state.
-8. `lead` materializes those reviewer directions as new `immature` child open ends, increments the structural wave count of the selected matured open end, and dispatches up to `beam_width` children to coder lanes.
-9. A matured open end closes after it has used `structural_wave_quota` structural expansion waves, or when a structural child improves and takes over that exploration tree.
-10. Only a final matured candidate from a local exploration tree is compared against `promotion_target`; if it improves, `lead` updates `open-best`, while `global-best` may still record any better correct solution seen anywhere.
-11. The loop repeats until the beam is exhausted, no open-best candidate remains, or the operator stops or changes the goal.
+    Lead->>Lead: pick cand-solution from beam
+    alt incr-explore
+        Lead->>Reviewer: request incr-explore idea with cand-solution and local comparator
+        Reviewer-->>Lead: local bottleneck-focused idea and rationale
+    else struct-explore
+        Lead->>Reviewer: request N struct-explore ideas with cand-solution and evidence
+        Reviewer-->>Lead: N whole-kernel design ideas and rationale
+    end
+    Lead->>Coder: distribute scoped implementation tasks to coder-i
+    Coder-->>Lead: return new cand-solution and test result
+    Lead->>Lead: compare with local comparator and update state
+    alt needs more exploration
+        Lead->>Reviewer: request next incr-explore or struct-explore idea
+    else no further exploration
+        Lead->>Lead: close or hold cand-solution
+    end
+```
+
+1. `lead` picks a cand-solution from the current beam and decides whether it needs an incr-explore idea or N struct-explore ideas.
+2. `lead` sends that cand-solution to `reviewer` with the requested exploration type.
+3. `reviewer` studies the cand-solution and returns an exploration idea with the reasoning behind it.
+4. `lead` turns the reviewer idea or N struct-explore ideas into coder tasks and distributes them to `coder-i`, where `i = 1, 2, ..., N`.
+5. Each assigned `coder-i` implements and tests its task, then reports a new cand-solution back to `lead`.
+6. `lead` compares the new cand-solution with its local comparator, updates its state, and decides what to ask `reviewer` for next: more incr-explore, struct-explore, or no further exploration.
+7. The loop repeats over the updated beam until the operator stops or changes the goal.
