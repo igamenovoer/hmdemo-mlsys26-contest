@@ -4,5 +4,7 @@ definition = "fused_moe"          # Track: fused_moe | sparse_attention | gated_
 author = "team-name"              # Team/author name
 
 [build]
-language = "triton"               # triton | cuda
-entry_point = "kernel"            # Kernel function name
+language = "cuda"                 # triton | cuda
+entry_point = "kernel.cu::kernel" # CUDA TVM-FFI entry point
+binding = "tvm-ffi"
+destination_passing_style = true

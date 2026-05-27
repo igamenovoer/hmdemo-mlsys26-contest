@@ -21,6 +21,19 @@ def make_repo(
     definition: str = MOE_DEFINITION,
 ) -> None:
     (root / "pyproject.toml").write_text("[project]\nname = 'test-project'\n")
+    entry_point = "kernel.cu::kernel" if config_language == "cuda" else "kernel"
+    build_lines = [
+        "[build]",
+        f'language = "{config_language}"',
+        f'entry_point = "{entry_point}"',
+    ]
+    if config_language == "cuda":
+        build_lines.extend(
+            [
+                'binding = "tvm-ffi"',
+                "destination_passing_style = true",
+            ]
+        )
     (root / "config.toml").write_text(
         "\n".join(
             [
@@ -29,11 +42,7 @@ def make_repo(
                 f'definition = "{definition}"',
                 'author = "team-name"',
                 "",
-                "[build]",
-                f'language = "{config_language}"',
-                'entry_point = "kernel"',
-                'binding = "tvm-ffi"',
-                "destination_passing_style = true",
+                *build_lines,
                 "",
             ]
         )
@@ -51,7 +60,7 @@ def make_repo(
                 'definition = "replace-me"',
                 "",
                 "[build]",
-                'entry_point = "kernel"',
+                'entry_point = "kernel.cu::kernel"',
                 'binding = "tvm-ffi"',
                 "destination_passing_style = true",
                 "",
@@ -141,7 +150,7 @@ def test_invalid_variant_id_in_config_fails(repo: Path) -> None:
                 'language = "cuda"',
                 f'definition = "{MOE_DEFINITION}"',
                 'path = "cuda/Bad_Name"',
-                'entry_point = "kernel"',
+                'entry_point = "kernel.cu::kernel"',
                 'binding = "tvm-ffi"',
                 "destination_passing_style = true",
                 "",
@@ -164,10 +173,15 @@ def test_variant_commands_cover_create_deploy_stock_status_and_diff(repo: Path) 
     assert "Created variant moe-trial" in result.output
     assert (repo / "variants/cuda/moe-trial/kernel.cu").read_text() == "// template kernel\n"
     assert (repo / "solution/cuda/kernel.cu").read_text() == "// template kernel\n"
+    manifest = tomllib.loads((repo / "variants/cuda/moe-trial/variant.toml").read_text())
+    assert manifest["build"]["entry_point"] == "kernel.cu::kernel"
+    assert manifest["build"]["binding"] == "tvm-ffi"
+    assert manifest["build"]["destination_passing_style"] is True
 
     show = runner.invoke(main, ["variant", "show", "moe-trial"])
     assert show.exit_code == 0, show.output
     assert f"definition = {MOE_DEFINITION}" in show.output
+    assert "entry_point = kernel.cu::kernel" in show.output
 
     status = runner.invoke(main, ["variant", "status"])
     assert status.exit_code == 0, status.output
@@ -182,10 +196,33 @@ def test_variant_commands_cover_create_deploy_stock_status_and_diff(repo: Path) 
     stock = runner.invoke(main, ["variant", "stock", "moe-trial"])
     assert stock.exit_code == 0, stock.output
     assert (repo / "variants/cuda/moe-trial/kernel.cu").read_text() == "// edited live kernel\n"
+    stocked_manifest = tomllib.loads((repo / "variants/cuda/moe-trial/variant.toml").read_text())
+    assert stocked_manifest["build"]["entry_point"] == "kernel.cu::kernel"
+    assert stocked_manifest["build"]["binding"] == "tvm-ffi"
+    assert stocked_manifest["build"]["destination_passing_style"] is True
 
     post_stock_diff = runner.invoke(main, ["variant", "diff", "moe-trial"])
     assert post_stock_diff.exit_code == 0, post_stock_diff.output
     assert "No differences" in post_stock_diff.output
+
+
+def test_variant_new_uses_template_build_metadata_when_live_config_is_not_cuda(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    make_repo(tmp_path, config_language="triton")
+    monkeypatch.chdir(tmp_path)
+
+    result = CliRunner().invoke(
+        main,
+        ["variant", "new", "moe-trial", "--definition", MOE_DEFINITION],
+    )
+
+    assert result.exit_code == 0, result.output
+    _, entries = load_variant_entries(resolve_repo_paths(tmp_path))
+    assert entries["moe-trial"].build.entry_point == "kernel.cu::kernel"
+    assert entries["moe-trial"].build.binding == "tvm-ffi"
+    assert entries["moe-trial"].build.destination_passing_style is True
 
 
 def test_variant_rejects_invalid_id_before_filesystem_changes(repo: Path) -> None:

@@ -64,7 +64,7 @@ pixi run project-cli workload set list
 ## Layout
 
 - `solution/triton/`: Triton implementation templates.
-- `solution/cuda/`: CUDA kernel and Python binding templates.
+- `solution/cuda/`: CUDA TVM-FFI template. The configured CUDA entry point is `kernel.cu::kernel`; `binding.py` is only a Python helper placeholder.
 - `scripts/`: pack, local benchmark, and Modal benchmark helpers.
 - `src/hmdemo_mlsys26_contest/`: importable Python package scaffold.
 - `tests/unit/`: fast unit tests.

@@ -5,6 +5,10 @@ def test_normalize_entry_point_keeps_explicit_path() -> None:
     assert normalize_entry_point("triton", "custom.py::run") == "custom.py::run"
 
 
+def test_normalize_entry_point_keeps_explicit_cuda_path() -> None:
+    assert normalize_entry_point("cuda", "kernel.cu::kernel") == "kernel.cu::kernel"
+
+
 def test_normalize_entry_point_supports_legacy_triton_name() -> None:
     assert normalize_entry_point("triton", "kernel") == "kernel.py::kernel"
 

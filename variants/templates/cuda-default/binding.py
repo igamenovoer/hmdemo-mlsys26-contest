@@ -1,6 +1,8 @@
-"""Default Python binding placeholder for CUDA variants."""
+"""Placeholder helper module for CUDA TVM-FFI variants.
 
+The configured CUDA entry point is ``kernel.cu::kernel``. Implement the TVM-FFI
+typed export in ``kernel.cu``; keep this file for Python-side helpers only if a
+variant needs them.
+"""
 
-def kernel(*_args, **_kwargs):
-    """Placeholder entry point for a new CUDA variant."""
-    raise NotImplementedError("TODO: implement this variant's binding.py::kernel")
+ENTRY_POINT = "kernel.cu::kernel"

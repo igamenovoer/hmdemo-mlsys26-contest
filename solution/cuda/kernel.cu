@@ -1,20 +1,16 @@
-/*
- * CUDA Kernel Template for FlashInfer Competition.
- *
- * Implement your kernel logic here. The entry point function name should match
- * the `entry_point` setting in config.toml.
- *
- * See the track definition for required function signature and semantics.
- */
-
 #include <cuda_runtime.h>
-#include <cuda_fp16.h>
+#include <tvm/ffi/container/tensor.h>
+#include <tvm/ffi/error.h>
+#include <tvm/ffi/function.h>
 
-__global__ void kernel() {
-    /*
-     * Your CUDA kernel implementation.
-     *
-     * TODO: Implement your kernel according to the track definition.
-     * The function signature should match the track requirements.
-     */
+namespace hmdemo_mlsys26_contest {
+
+void kernel(tvm::ffi::TensorView output) {
+    (void)output;
+    TVM_FFI_THROW(RuntimeError)
+        << "TODO: implement solution/cuda/kernel.cu::kernel for the selected definition";
 }
+
+}  // namespace hmdemo_mlsys26_contest
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(kernel, hmdemo_mlsys26_contest::kernel);

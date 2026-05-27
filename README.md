@@ -82,8 +82,10 @@ definition = "fused_moe"          # Track: fused_moe | sparse_attention | gated_
 author = "team-name"              # Team/author name
 
 [build]
-language = "triton"               # triton | cuda
-entry_point = "kernel"            # Kernel function name
+language = "cuda"                 # triton | cuda
+entry_point = "kernel.cu::kernel" # CUDA TVM-FFI entry point
+binding = "tvm-ffi"
+destination_passing_style = true
 ```
 
 ### 5. Implement Your Kernel
@@ -92,7 +94,7 @@ entry_point = "kernel"            # Kernel function name
 Edit `solution/triton/kernel.py` with your implementation.
 
 **For CUDA:**
-Edit `solution/cuda/kernel.cu` and `solution/cuda/binding.py` with your implementation.
+Edit `solution/cuda/kernel.cu` with your TVM-FFI exported entry point. The configured CUDA entry point is `kernel.cu::kernel`; `solution/cuda/binding.py` is kept as a Python helper placeholder.
 
 ## Development Workflow
 
@@ -151,8 +153,8 @@ flashinfer-bench-starter-kit/
 │   ├── triton/                  # Triton implementation
 │   │   └── kernel.py           # Your Triton kernel
 │   └── cuda/                    # CUDA implementation
-│       ├── kernel.cu           # Your CUDA kernel
-│       └── binding.py          # TVM FFI bindings
+│       ├── kernel.cu           # TVM-FFI exported CUDA entry point
+│       └── binding.py          # Optional Python helper placeholder
 ├── scripts/                     # Utility scripts
 │   ├── run_local.py            # Local benchmark runner
 │   ├── run_modal.py            # Modal cloud benchmark runner
@@ -174,9 +176,10 @@ from flashinfer_bench.agents import pack_solution_from_files, extract_solution_t
 
 # Pack source files into a Solution object
 spec = BuildSpec(
-    language="triton",  # or "cuda"
+    language="cuda",
     target_hardware=["cuda"],
-    entry_point="my_kernel",
+    entry_point="kernel.cu::kernel",
+    destination_passing_style=True,
 )
 solution = pack_solution_from_files(
     path="./my_solution_dir",
@@ -264,9 +267,9 @@ This can happen for two reasons: (1) your kernel function signature has the wron
 
 ### CUDA Kernel Bindings
 
-For CUDA kernel implementations, we recommend using [TVM FFI](https://tvm.apache.org/ffi/) for Python bindings. The `flashinfer_bench.agents` module provides TVM FFI agent instruction prompts to assist with development.
+For CUDA kernel implementations, this project uses [TVM FFI](https://tvm.apache.org/ffi/) directly from `kernel.cu`. The `flashinfer_bench.agents` module provides TVM FFI agent instruction prompts to assist with development.
 
-You can set the `binding` field in your solution's `spec` to specify the C++ binding type. Defaults to `"tvm-ffi"` if not specified. Supported values: `"tvm-ffi"`, `"torch"`.
+Use an explicit CUDA entry point such as `kernel.cu::kernel`. `binding.py` is present in the managed CUDA bundle for helper code or compatibility, but it is not the configured TVM-FFI entry point.
 
 ```json
 {
@@ -276,9 +279,10 @@ You can set the `binding` field in your solution's `spec` to specify the C++ bin
   "spec": {
     "language": "cuda",
     "target_hardware": ["cuda"],
-    "entry_point": "kernel.cu::my_kernel",
+    "entry_point": "kernel.cu::kernel",
     "dependencies": [],
-    "binding": "torch"
+    "binding": "tvm-ffi",
+    "destination_passing_style": true
   },
   "sources": [...]
 }
