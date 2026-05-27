@@ -72,6 +72,9 @@ pixi run project-cli workload set list
 - `tests/manual/`: manually run checks.
 - `docs/`: project documentation.
 - `context/`: working context and design notes.
+- `skillset/`: project-local agent skills.
+- `skillset/dev/`: developer-facing skills for maintaining, evolving, and operating this project; not used for CUDA kernel optimization.
+- `skillset/runtime/`: skills for agents that optimize CUDA kernels, automatically or with human assistance.
 - `extern/tracked/`: tracked external dependencies or submodules.
 - `extern/orphan/`: local-only external checkouts; ignored by Git.
 - `tmp/`: disposable local files; ignored by Git.
