@@ -13,7 +13,18 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from flashinfer_bench import BuildSpec, Solution, SourceFile  # noqa: E402
 
-VALID_SOURCE_EXTENSIONS = {".py", ".cu", ".cuh", ".cpp", ".c", ".h", ".hpp", ".inl", ".cc", ".cxx"}
+VALID_SOURCE_EXTENSIONS = {
+    ".py",
+    ".cu",
+    ".cuh",
+    ".cpp",
+    ".c",
+    ".h",
+    ".hpp",
+    ".inl",
+    ".cc",
+    ".cxx",
+}
 
 
 def load_toml(path: Path) -> dict:
@@ -56,7 +67,9 @@ def resolve_variant(args: argparse.Namespace) -> tuple[str, Path, dict]:
     if manifest_path.exists():
         manifest = load_toml(manifest_path)
         variant_id = args.name or manifest.get("id", variant_id)
-        entry.update({key: value for key, value in manifest.items() if isinstance(value, (str, bool))})
+        entry.update(
+            {key: value for key, value in manifest.items() if isinstance(value, (str, bool))}
+        )
     return variant_id, variant_dir, entry
 
 
@@ -67,21 +80,30 @@ def main() -> None:
     source.add_argument("--path", help="Variant directory path, relative to repo root or absolute")
     parser.add_argument("--output", required=True, type=Path, help="Output solution JSON path")
     parser.add_argument("--name", help="Solution name to write into the JSON")
-    parser.add_argument("--definition", help="Definition override; required for path variants without metadata")
+    parser.add_argument(
+        "--definition",
+        help="Definition override; required for path variants without metadata",
+    )
     parser.add_argument("--author", default="local-profile", help="Solution author field")
     args = parser.parse_args()
 
     config = load_toml(PROJECT_ROOT / "config.toml")
     build_defaults = config.get("build", {})
     variant_id, variant_dir, entry = resolve_variant(args)
-    definition = args.definition or entry.get("definition") or config.get("solution", {}).get("definition")
+    definition = (
+        args.definition or entry.get("definition") or config.get("solution", {}).get("definition")
+    )
     if not definition:
-        raise ValueError("Definition is required; pass --definition for path variants without metadata.")
+        raise ValueError(
+            "Definition is required; pass --definition for path variants without metadata."
+        )
 
     language = entry.get("language") or build_defaults.get("language")
     entry_point = entry.get("entry_point") or build_defaults.get("entry_point")
     if not language or not entry_point:
-        raise ValueError("Variant language and entry_point must be defined in variant metadata or config.toml.")
+        raise ValueError(
+            "Variant language and entry_point must be defined in variant metadata or config.toml."
+        )
 
     sources = collect_sources(variant_dir)
     seen = {source.path for source in sources}
@@ -89,7 +111,9 @@ def main() -> None:
         include_path = (PROJECT_ROOT / include_root).resolve()
         for source_file in collect_sources(include_path):
             if source_file.path in seen:
-                raise ValueError(f"Duplicate packed source path {source_file.path!r} from {include_root!r}")
+                raise ValueError(
+                    f"Duplicate packed source path {source_file.path!r} from {include_root!r}"
+                )
             seen.add(source_file.path)
             sources.append(source_file)
 
@@ -98,7 +122,12 @@ def main() -> None:
         target_hardware=["cuda"],
         entry_point=entry_point,
         dependencies=[],
-        destination_passing_style=bool(entry.get("destination_passing_style", build_defaults.get("destination_passing_style", True))),
+        destination_passing_style=bool(
+            entry.get(
+                "destination_passing_style",
+                build_defaults.get("destination_passing_style", True),
+            )
+        ),
         binding=entry.get("binding", build_defaults.get("binding")),
     )
     solution = Solution(

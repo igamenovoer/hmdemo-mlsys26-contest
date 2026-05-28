@@ -7,6 +7,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include "hmdemo_nvbench_profile/plugin_abi.h"
+
 namespace hmdemo::nvprofile {
 
 struct BuildOptions {
@@ -37,7 +39,10 @@ struct ArtifactManifest {
   std::string build_type;
   std::filesystem::path kernel_source;
   std::string kernel_sha;
-  std::filesystem::path runner_binary;
+  int plugin_abi_version = HM_PROFILE_PLUGIN_ABI_VERSION;
+  std::filesystem::path cuda_toolkit_root;
+  std::filesystem::path profiler_include_root;
+  std::filesystem::path plugin_library;
   std::filesystem::path nvbench_source;
   std::filesystem::path tvm_ffi_root;
   std::vector<std::filesystem::path> include_roots;

@@ -175,7 +175,7 @@ target_link_libraries(hm-nvbench-runner PRIVATE
 )cmake",
       fmt::arg("cuda_arch", manifest.cuda_arch == "100a" ? "100a" : manifest.cuda_arch),
       fmt::arg("nvbench_source", manifest.nvbench_source.lexically_normal().string()),
-      fmt::arg("artifact_src", (manifest.runner_binary.parent_path().parent_path() / "src").lexically_normal().string()),
+      fmt::arg("artifact_src", (manifest.plugin_library.parent_path().parent_path() / "src").lexically_normal().string()),
       fmt::arg("tvm_ffi_include", (manifest.tvm_ffi_root / "include").lexically_normal().string()),
       fmt::arg("tvm_ffi_dlpack", (manifest.tvm_ffi_root / "3rdparty/dlpack/include").lexically_normal().string()),
       fmt::arg("include_roots", [&] {
@@ -456,6 +456,129 @@ NVBENCH_MAIN
 )cuda";
 }
 
+std::string render_plugin_cmake(const ArtifactManifest& manifest) {
+  const auto artifact_src = (manifest.plugin_library.parent_path().parent_path() / "src").lexically_normal();
+  return fmt::format(
+      R"cmake(cmake_minimum_required(VERSION 3.30)
+project(hm_profile_kernel_plugin LANGUAGES CUDA CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_CUDA_ARCHITECTURES "{cuda_arch}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${{CMAKE_BINARY_DIR}}")
+
+find_package(CUDAToolkit REQUIRED)
+
+add_library(hm_profile_kernel_plugin SHARED src/plugin.cu)
+target_include_directories(hm_profile_kernel_plugin PRIVATE
+  "{artifact_src}"
+  "{profiler_include_root}"
+  "{tvm_ffi_include}"
+  "{tvm_ffi_dlpack}"
+  {include_roots}
+  {cutlass_include_roots}
+)
+target_compile_options(hm_profile_kernel_plugin PRIVATE
+  $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr {compiler_flags}>
+)
+target_link_libraries(hm_profile_kernel_plugin PRIVATE CUDA::cudart)
+)cmake",
+      fmt::arg("cuda_arch", manifest.cuda_arch == "100a" ? "100a" : manifest.cuda_arch),
+      fmt::arg("artifact_src", artifact_src.string()),
+      fmt::arg("profiler_include_root", manifest.profiler_include_root.lexically_normal().string()),
+      fmt::arg("tvm_ffi_include", (manifest.tvm_ffi_root / "include").lexically_normal().string()),
+      fmt::arg("tvm_ffi_dlpack", (manifest.tvm_ffi_root / "3rdparty/dlpack/include").lexically_normal().string()),
+      fmt::arg("include_roots", [&] {
+        std::string result;
+        for (const auto& root : manifest.include_roots) {
+          result += "  \"" + root.lexically_normal().string() + "\"\n";
+        }
+        return result;
+      }()),
+      fmt::arg("cutlass_include_roots", [&] {
+        std::string result;
+        for (const auto& root : manifest.cutlass_include_roots) {
+          result += "  \"" + root.lexically_normal().string() + "\"\n";
+        }
+        return result;
+      }()),
+      fmt::arg("compiler_flags", join_flags(manifest.compiler_flags)));
+}
+
+std::string render_plugin_source(const ArtifactManifest& manifest) {
+  (void)manifest;
+  return R"cuda(
+#include <exception>
+#include <string>
+
+#include <tvm/ffi/container/tensor.h>
+
+#include "hmdemo_nvbench_profile/plugin_abi.h"
+#include "kernel.cu"
+
+namespace {
+thread_local std::string g_last_error;
+
+tvm::ffi::TensorView view(DLTensor* tensor) {
+  return tvm::ffi::TensorView(tensor);
+}
+}  // namespace
+
+extern "C" {
+
+HM_PROFILE_PLUGIN_EXPORT int hm_profile_plugin_abi_version() {
+  return HM_PROFILE_PLUGIN_ABI_VERSION;
+}
+
+HM_PROFILE_PLUGIN_EXPORT const char* hm_profile_plugin_adapter() {
+  return HM_PROFILE_PLUGIN_ADAPTER_TVM_FFI_MOE;
+}
+
+HM_PROFILE_PLUGIN_EXPORT const char* hm_profile_plugin_last_error() {
+  return g_last_error.c_str();
+}
+
+HM_PROFILE_PLUGIN_EXPORT int hm_profile_moe_kernel_v1(
+    DLTensor* routing_logits,
+    DLTensor* routing_bias,
+    DLTensor* hidden_states,
+    DLTensor* hidden_states_scale,
+    DLTensor* gemm1_weights,
+    DLTensor* gemm1_weights_scale,
+    DLTensor* gemm2_weights,
+    DLTensor* gemm2_weights_scale,
+    int64_t local_expert_offset,
+    double routed_scaling_factor,
+    DLTensor* output) {
+  try {
+    g_last_error.clear();
+    moe_tvm_ffi::Kernel(
+      view(routing_logits),
+      view(routing_bias),
+      view(hidden_states),
+      view(hidden_states_scale),
+      view(gemm1_weights),
+      view(gemm1_weights_scale),
+      view(gemm2_weights),
+      view(gemm2_weights_scale),
+      local_expert_offset,
+      routed_scaling_factor,
+      view(output));
+    return 0;
+  } catch (const std::exception& e) {
+    g_last_error = e.what();
+    return -1;
+  } catch (...) {
+    g_last_error = "unknown plugin exception";
+    return -1;
+  }
+}
+
+}  // extern "C"
+)cuda";
+}
+
 void maybe_run(const std::string& command) {
   const int status = std::system(command.c_str());
   if (status != 0) {
@@ -499,7 +622,8 @@ ArtifactManifest make_manifest(const BuildOptions& options) {
   manifest.build_type = options.build_type;
   manifest.kernel_source = std::filesystem::absolute(options.kernel).lexically_normal();
   manifest.kernel_sha = file_hash(manifest.kernel_source);
-  manifest.nvbench_source = std::filesystem::absolute(options.nvbench_source).lexically_normal();
+  manifest.cuda_toolkit_root = discover_cuda_toolkit_root();
+  manifest.profiler_include_root = std::filesystem::absolute(options.repo_root / "cpp/include").lexically_normal();
   manifest.tvm_ffi_root = options.tvm_ffi_root.empty() ? std::filesystem::path{} : std::filesystem::absolute(options.tvm_ffi_root).lexically_normal();
   manifest.include_roots = options.include_roots;
   manifest.cutlass_include_roots = options.cutlass_include_roots;
@@ -513,7 +637,9 @@ ArtifactManifest make_manifest(const BuildOptions& options) {
       {"build_type", manifest.build_type},
       {"kernel_source", manifest.kernel_source.string()},
       {"kernel_sha", manifest.kernel_sha},
-      {"nvbench_source", manifest.nvbench_source.string()},
+      {"plugin_abi_version", manifest.plugin_abi_version},
+      {"cuda_toolkit_root", manifest.cuda_toolkit_root.string()},
+      {"profiler_include_root", manifest.profiler_include_root.string()},
       {"tvm_ffi_root", manifest.tvm_ffi_root.string()},
       {"include_roots", path_strings(manifest.include_roots)},
       {"cutlass_include_roots", path_strings(manifest.cutlass_include_roots)},
@@ -536,8 +662,10 @@ nlohmann::json to_json(const ArtifactManifest& manifest) {
       {"build_type", manifest.build_type},
       {"kernel_source", manifest.kernel_source.string()},
       {"kernel_sha", manifest.kernel_sha},
-      {"runner_binary", manifest.runner_binary.string()},
-      {"nvbench_source", manifest.nvbench_source.string()},
+      {"plugin_abi_version", manifest.plugin_abi_version},
+      {"cuda_toolkit_root", manifest.cuda_toolkit_root.string()},
+      {"profiler_include_root", manifest.profiler_include_root.string()},
+      {"plugin_library", manifest.plugin_library.string()},
       {"tvm_ffi_root", manifest.tvm_ffi_root.string()},
       {"include_roots", path_strings(manifest.include_roots)},
       {"cutlass_include_roots", path_strings(manifest.cutlass_include_roots)},
@@ -557,8 +685,13 @@ ArtifactManifest manifest_from_json(const nlohmann::json& value) {
   manifest.build_type = value.at("build_type").get<std::string>();
   manifest.kernel_source = value.at("kernel_source").get<std::string>();
   manifest.kernel_sha = value.at("kernel_sha").get<std::string>();
-  manifest.runner_binary = value.at("runner_binary").get<std::string>();
-  manifest.nvbench_source = value.at("nvbench_source").get<std::string>();
+  manifest.plugin_abi_version = value.value("plugin_abi_version", HM_PROFILE_PLUGIN_ABI_VERSION);
+  manifest.cuda_toolkit_root = value.value("cuda_toolkit_root", std::string{});
+  manifest.profiler_include_root = value.value("profiler_include_root", std::string{});
+  manifest.plugin_library = value.at("plugin_library").get<std::string>();
+  if (value.contains("nvbench_source")) {
+    manifest.nvbench_source = value.at("nvbench_source").get<std::string>();
+  }
   manifest.tvm_ffi_root = value.at("tvm_ffi_root").get<std::string>();
   manifest.include_roots = paths_from_json(value.at("include_roots"));
   manifest.cutlass_include_roots = paths_from_json(value.at("cutlass_include_roots"));
@@ -590,19 +723,20 @@ std::filesystem::path create_or_update_artifact(const BuildOptions& options) {
   const auto build_dir = artifact_dir / "build";
   std::filesystem::create_directories(src_dir);
   std::filesystem::create_directories(build_dir);
-  manifest.runner_binary = build_dir / "hm-nvbench-runner";
+  manifest.plugin_library = build_dir / "libhm_profile_kernel_plugin.so";
 
   const auto manifest_path = manifest_path_for_artifact(artifact_dir);
   if (std::filesystem::exists(manifest_path) && !options.force) {
     auto existing = read_manifest(manifest_path);
-    if (existing.build_hash == manifest.build_hash && std::filesystem::exists(existing.runner_binary)) {
+    if (existing.build_hash == manifest.build_hash &&
+        (options.skip_compile || std::filesystem::exists(existing.plugin_library))) {
       return artifact_dir;
     }
   }
 
   std::filesystem::copy_file(manifest.kernel_source, src_dir / "kernel.cu", std::filesystem::copy_options::overwrite_existing);
-  write_text(src_dir / "runner.cu", render_runner_source(manifest));
-  write_text(artifact_dir / "CMakeLists.txt", render_runner_cmake(manifest));
+  write_text(src_dir / "plugin.cu", render_plugin_source(manifest));
+  write_text(artifact_dir / "CMakeLists.txt", render_plugin_cmake(manifest));
   write_manifest(manifest, manifest_path);
 
   if (!options.skip_compile) {
@@ -610,7 +744,7 @@ std::filesystem::path create_or_update_artifact(const BuildOptions& options) {
     const auto prefix_arg = std::filesystem::is_directory(conan_generators)
                                 ? fmt::format(" -DCMAKE_PREFIX_PATH={}", shell_quote(conan_generators))
                                 : std::string{};
-    const auto cuda_root = discover_cuda_toolkit_root();
+    const auto cuda_root = manifest.cuda_toolkit_root;
     const auto cuda_root_arg = looks_like_cuda_toolkit_root(cuda_root)
                                    ? fmt::format(" -DCUDAToolkit_ROOT={} -DCMAKE_CUDA_COMPILER={}",
                                                  shell_quote(cuda_root),
@@ -626,7 +760,7 @@ std::filesystem::path create_or_update_artifact(const BuildOptions& options) {
         prefix_arg,
         cuda_root_arg,
         cudart_arg);
-    const auto build = fmt::format("cmake --build {} --target hm-nvbench-runner", shell_quote(build_dir));
+    const auto build = fmt::format("cmake --build {} --target hm_profile_kernel_plugin", shell_quote(build_dir));
     maybe_run(configure);
     maybe_run(build);
   }
