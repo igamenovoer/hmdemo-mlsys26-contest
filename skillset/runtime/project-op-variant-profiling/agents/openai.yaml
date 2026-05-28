@@ -1,0 +1,4 @@
+interface:
+  display_name: "Variant Profiling Ops"
+  short_description: "Set up official timing or NCU runs for contest kernel variants."
+  default_prompt: "Run official-timing or ncu-inspect for a contest kernel variant."

@@ -15,7 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from flashinfer_bench import BuildSpec, Solution, SourceFile
 
-VALID_SOURCE_EXTENSIONS = {".py", ".cu", ".cuh", ".cpp", ".c", ".h", ".hpp", ".cc", ".cxx"}
+VALID_SOURCE_EXTENSIONS = {".py", ".cu", ".cuh", ".cpp", ".c", ".h", ".hpp", ".inl", ".cc", ".cxx"}
 
 
 def load_config() -> dict:

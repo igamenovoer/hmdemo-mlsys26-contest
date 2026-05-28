@@ -8,4 +8,7 @@ language = "cuda"                 # triton | cuda
 entry_point = "kernel.cu::kernel" # CUDA TVM-FFI entry point
 binding = "tvm-ffi"
 destination_passing_style = true
-dev_include_roots = ["extern/orphan/cutlass/include"] # Development-only recursive header roots
+dev_include_roots = [
+  "extern/orphan/cutlass/include",
+  "extern/orphan/cutlass/tools/util/include",
+] # Development-only recursive header roots

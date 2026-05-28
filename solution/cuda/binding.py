@@ -1,8 +1,12 @@
-"""Placeholder helper module for CUDA TVM-FFI variants.
+"""
+Placeholder for Python-controlled CUDA bindings.
 
-The configured CUDA entry point is ``kernel.cu::kernel``. Implement the TVM-FFI
-typed export in ``kernel.cu``; keep this file for Python-side helpers only if a
-variant needs them.
+The default CUDA template exports a TVM-FFI symbol directly from kernel.cu, so
+this module is unused unless a variant deliberately moves to a Python-managed
+binding path.
 """
 
-ENTRY_POINT = "kernel.cu::kernel"
+
+def run(*_args, **_kwargs):
+    """Placeholder binding for a new CUDA variant template."""
+    raise NotImplementedError("TODO: implement this variant's binding.py::run")

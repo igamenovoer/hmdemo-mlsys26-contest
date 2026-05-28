@@ -1,0 +1,44 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "cu130",
+      "displayName": "CUDA 13 local environment",
+      "inherits": "default",
+      "cacheVariables": {
+        "HM_NVPROFILE_CUDA_ARCH": "100a",
+        "HM_NVPROFILE_NVBENCH_SOURCE": "${sourceDir}/../extern/orphan/nvbench",
+        "HM_NVPROFILE_TVM_FFI_ROOT": "$env{CONDA_PREFIX}/lib/python3.12/site-packages/tvm_ffi",
+        "HM_NVPROFILE_CUTLASS_INCLUDE_ROOTS": "${sourceDir}/../extern/orphan/cutlass/include;${sourceDir}/../extern/orphan/cutlass/tools/util/include"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "cu130",
+      "configurePreset": "cu130"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
