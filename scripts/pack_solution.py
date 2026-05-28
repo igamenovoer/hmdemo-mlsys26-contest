@@ -13,8 +13,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from flashinfer_bench import BuildSpec
-from flashinfer_bench.agents import pack_solution_from_files
+from flashinfer_bench import BuildSpec, Solution, SourceFile
+
+VALID_SOURCE_EXTENSIONS = {".py", ".cu", ".cuh", ".cpp", ".c", ".h", ".hpp", ".cc", ".cxx"}
 
 
 def load_config() -> dict:
@@ -36,6 +37,48 @@ def normalize_entry_point(language: str, entry_point: str) -> str:
     if language == "cuda":
         return f"binding.py::{entry_point}"
     return entry_point
+
+
+def _collect_sources_from_root(root: Path, *, prefix: Path | None = None) -> list[SourceFile]:
+    """Collect source files recursively from a root using paths relative to that root."""
+    if not root.exists():
+        raise FileNotFoundError(f"Source/include root not found: {root}")
+    if not root.is_dir():
+        raise NotADirectoryError(f"Source/include root is not a directory: {root}")
+
+    sources: list[SourceFile] = []
+    for file_path in sorted(path for path in root.rglob("*") if path.is_file()):
+        if file_path.suffix.lower() not in VALID_SOURCE_EXTENSIONS:
+            continue
+        content = file_path.read_text(encoding="utf-8")
+        if not content:
+            continue
+        rel_path = file_path.relative_to(root)
+        if prefix is not None:
+            rel_path = prefix / rel_path
+        sources.append(SourceFile(path=rel_path.as_posix(), content=content))
+    return sources
+
+
+def pack_solution_sources(source_dir: Path, dev_include_roots: list[str]) -> list[SourceFile]:
+    """Pack solution sources plus development include roots into SourceFile entries."""
+    sources = _collect_sources_from_root(source_dir)
+    seen = {source.path for source in sources}
+
+    for include_root in dev_include_roots:
+        include_path = (PROJECT_ROOT / include_root).resolve()
+        for source in _collect_sources_from_root(include_path):
+            if source.path in seen:
+                raise ValueError(
+                    "Duplicate packed source path "
+                    f"{source.path!r} from include root {include_root!r}"
+                )
+            seen.add(source.path)
+            sources.append(source)
+
+    if not sources:
+        raise ValueError(f"No source files found in directory: {source_dir}")
+    return sources
 
 
 def pack_solution(output_path: Path | None = None) -> Path:
@@ -66,15 +109,20 @@ def pack_solution(output_path: Path | None = None) -> Path:
         target_hardware=["cuda"],
         entry_point=normalize_entry_point(language, entry_point),
         destination_passing_style=dps,
+        binding=build_config.get("binding"),
     )
 
-    # Pack the solution
-    solution = pack_solution_from_files(
-        path=str(source_dir),
+    sources = pack_solution_sources(
+        source_dir,
+        dev_include_roots=list(build_config.get("dev_include_roots", [])),
+    )
+
+    solution = Solution(
         spec=spec,
         name=solution_config["name"],
         definition=solution_config["definition"],
         author=solution_config["author"],
+        sources=sources,
     )
 
     # Write to output file
