@@ -12,7 +12,7 @@ The repository CUDA path uses `language = "cuda"`, `entry_point = "kernel.cu::ke
 using tvm::ffi::TensorView;
 ```
 
-Local benchmarking checks correctness before accepting performance timing. A kernel that only builds and writes placeholder outputs is useful for validating the interface, but it will not produce a passed timing result unless it also satisfies correctness.
+Local benchmarking checks correctness before accepting performance timing. A kernel that only builds and writes placeholder outputs is useful for validating the interface, but it will not produce a passed timing result unless it also satisfies correctness. The repository's `moe-base` CUDA variant is the current minimal correctness-oriented baseline for the MoE contract.
 
 ## MoE
 
@@ -71,7 +71,7 @@ void kernel(
     TensorView output);
 ```
 
-For local timing, set `config.toml` to this exact definition ID. Coarse names such as `fused_moe` are not present in the local trace set definitions.
+For local timing, set `config.toml` to this exact definition ID. Coarse names such as `fused_moe` are not present in the local trace set definitions. The tracked `moe-base` variant uses this definition and can be managed with `pixi run project-cli variant deploy moe-base`, `pixi run project-cli variant stock moe-base`, and `pixi run project-cli variant status`.
 
 ## DSA Sparse Attention
 

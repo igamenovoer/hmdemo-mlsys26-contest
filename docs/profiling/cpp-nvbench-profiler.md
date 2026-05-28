@@ -22,7 +22,7 @@ pixi run -e cu130 cmake -S cpp -B cpp/build/cu130 \
   -DHM_NVPROFILE_CUDA_ARCH=100a \
   -DHM_NVPROFILE_NVBENCH_SOURCE=extern/orphan/nvbench \
   -DHM_NVPROFILE_TVM_FFI_ROOT="$CONDA_PREFIX/lib/python3.12/site-packages/tvm_ffi" \
-  -DHM_NVPROFILE_CUTLASS_INCLUDE_ROOTS="extern/orphan/cutlass/include;extern/orphan/cutlass/tools/util/include"
+  -DHM_NVPROFILE_CUTLASS_INCLUDE_ROOTS="thirdparty/cutlass/include"
 ```
 
 The static runner is the only target that compiles NVBench. If the current `extern/orphan/nvbench` checkout requires CMake 4.x through RAPIDS CMake, that requirement applies to the runner configure step, not to each kernel plugin artifact build.
@@ -38,11 +38,12 @@ cpp/build/Release/hm-nvbench-profile build \
   --adapter tvm-ffi-moe \
   --cuda-arch 100a \
   --tvm-ffi-root "$CONDA_PREFIX/lib/python3.12/site-packages/tvm_ffi" \
-  --cutlass-include-root extern/orphan/cutlass/include \
-  --cutlass-include-root extern/orphan/cutlass/tools/util/include
+  --cutlass-include-root thirdparty/cutlass/include
 ```
 
 The artifact is a shared library, `libhm_profile_kernel_plugin.so`, plus a manifest. It does not compile NVBench or generate a full runner project. The manifest records build inputs such as kernel content hash, adapter, definition, CUDA architecture, CUDA toolkit root, plugin ABI version, include roots, and dependency roots. Workload UUIDs, dataset paths, device IDs, timing options, and output format options are runtime inputs and do not affect artifact identity.
+
+The live `moe-base` CUDA variant uses CUTLASS/CuTe headers from `thirdparty/cutlass/include`; prefer that tracked include root for project kernels. Ignored `extern/orphan/cutlass` checkouts are useful for source inspection only and should not be required to build or pack a submitted solution.
 
 ## Run Against Workloads
 
