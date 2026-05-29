@@ -61,11 +61,16 @@ if(HM_NVPROFILE_BUILD_STATIC_RUNNER)
     "${HM_NVPROFILE_TVM_FFI_ROOT}/include"
     "${HM_NVPROFILE_TVM_FFI_ROOT}/3rdparty/dlpack/include"
   )
+  target_link_directories(hm-nvbench-runner PRIVATE "${HM_NVPROFILE_TVM_FFI_ROOT}/lib")
   target_link_libraries(hm-nvbench-runner PRIVATE
     hmdemo_nvbench_profile_core
     nvbench::main
     nlohmann_json::nlohmann_json
     CUDA::cudart
+    tvm_ffi
+  )
+  set_target_properties(hm-nvbench-runner PROPERTIES
+    BUILD_RPATH "${HM_NVPROFILE_TVM_FFI_ROOT}/lib"
   )
 endif()
 

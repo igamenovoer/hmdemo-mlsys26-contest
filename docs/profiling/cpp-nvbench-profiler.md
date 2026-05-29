@@ -105,7 +105,7 @@ FlashInfer-Bench-style aliases are intentionally not part of the C++ profiler CL
 
 ## Plugin ABI
 
-The generated kernel shim exports a small C ABI: `hm_profile_plugin_abi_version`, `hm_profile_plugin_adapter`, `hm_profile_plugin_last_error`, and `hm_profile_moe_kernel_v1`. The first supported adapter is `tvm-ffi-moe`; the entrypoint receives DLPack `DLTensor*` arguments plus the scalar MoE arguments, invokes `moe_tvm_ffi::Kernel`, returns `0` on success, and reports failures through `hm_profile_plugin_last_error`.
+The generated kernel shim exports a small C ABI: `hm_profile_plugin_abi_version`, `hm_profile_plugin_adapter`, `hm_profile_plugin_last_error`, and `hm_profile_moe_kernel_v1`. The first supported adapter is `tvm-ffi-moe`; the entrypoint receives DLPack `DLTensor*` arguments plus the scalar MoE arguments, invokes the contest CUDA kernel implementation, returns `0` on success, and reports failures through `hm_profile_plugin_last_error`.
 
 Old artifacts that contain an artifact-local `hm-nvbench-runner` are not compatible with this layout. Rebuild the artifact with the current `build` command to produce a plugin manifest and shared library.
 

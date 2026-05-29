@@ -85,6 +85,7 @@ def test_cpp_profiler_builds_kernel_plugin_not_runner_artifact() -> None:
     assert "add_library(hm_profile_kernel_plugin SHARED src/plugin.cu)" in plugin_cmake
     assert "add_subdirectory" not in plugin_cmake
     assert "nvbench" not in plugin_cmake.lower()
+    assert "hmdemo_mlsys26_contest::kernel" in artifact
     assert 'add_option("--nvbench-source"' not in main
     assert "write_text(src_dir / \"plugin.cu\"" in create_artifact
     assert "--target hm_profile_kernel_plugin" in create_artifact

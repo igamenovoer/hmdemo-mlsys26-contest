@@ -1,0 +1,4 @@
+interface:
+  display_name: "Variant Comparison Ops"
+  short_description: "Compare variants by latency or speedup."
+  default_prompt: "Use $project-op-variant-comparison to compare two kernel variants with latency-compare or speedup-ratio-compare."

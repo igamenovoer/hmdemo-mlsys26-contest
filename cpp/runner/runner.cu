@@ -1,8 +1,11 @@
+#include <cuda_runtime.h>
+#include <dlpack/dlpack.h>
+
+#define NVBENCH_MAIN_CUSTOM_ARGS_HANDLER(args) hm_profile_runner::strip_profile_args(args)
+
 #include "hmdemo_nvbench_profile/plugin_abi.h"
 #include "hmdemo_nvbench_profile/plugin_loader.hpp"
 
-#include <cuda_runtime.h>
-#include <dlpack/dlpack.h>
 #include <nvbench/main.cuh>
 #include <nvbench/nvbench.cuh>
 #include <nlohmann/json.hpp>
@@ -243,7 +246,7 @@ void profile_moe(nvbench::state& state) {
   auto& workload = g_context.workloads[index];
   state.add_summary("workload_uuid").set_string("value", workload.uuid);
 
-  state.exec(nvbench::exec_tag::timer, [&workload](nvbench::launch& launch, auto& timer) {
+  state.exec(nvbench::exec_tag::sync | nvbench::exec_tag::timer, [&workload](nvbench::launch& launch, auto& timer) {
     if (!g_plugin) throw std::runtime_error("plugin is not loaded");
     TVMFFIStreamHandle old_stream = nullptr;
     TVMFFIEnvSetStream(kDLCUDA, g_device, launch.get_stream(), &old_stream);
@@ -271,9 +274,12 @@ void profile_moe(nvbench::state& state) {
 
 }  // namespace hm_profile_runner
 
-NVBENCH_BENCH(hm_profile_runner::profile_moe)
+void profile_moe(nvbench::state& state) {
+  hm_profile_runner::profile_moe(state);
+}
+
+NVBENCH_BENCH(profile_moe)
     .set_name("profile_kernel")
     .add_int64_axis("workload_index", {0});
 
-#define NVBENCH_MAIN_CUSTOM_ARGS_HANDLER(args) hm_profile_runner::strip_profile_args(args)
 NVBENCH_MAIN
