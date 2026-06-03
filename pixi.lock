@@ -813,7 +813,7 @@ packages:
 - pypi: ./
   name: hmdemo-mlsys26-contest
   version: 0.1.0
-  sha256: b120ccaf4eebe941e3862d1cb84037f6ab5e4d4a67ec011c495568ab00b6c098
+  sha256: 8429aec4b73465e1649ec76c18cb641f5b609d27a1fb3147dbc1b8b72eaea71e
   requires_dist:
   - attrs>=26.1.0,<27
   - click>=8.4.1,<9

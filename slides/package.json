@@ -1,0 +1,15 @@
+{
+  "name": "hmdemo-mlsys26-contest-slides",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev pages/demo-package-intro.md --bind 0.0.0.0",
+    "build": "slidev build pages/demo-package-intro.md",
+    "export": "slidev export pages/demo-package-intro.md"
+  },
+  "devDependencies": {
+    "@slidev/cli": "52.16.0",
+    "@slidev/theme-default": "^0.25.0"
+  }
+}
