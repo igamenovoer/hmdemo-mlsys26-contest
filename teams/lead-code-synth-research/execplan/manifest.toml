@@ -80,6 +80,13 @@ path = "skills/lead-code-synth-research-operator-control/SKILL.md"
 artifact_kind = "file"
 purpose = "generated operator control skill"
 
+[[artifacts]]
+id = "schema-specific-on-event-skills"
+description = "Generated schema-specific on-event skills for all templated mail families."
+path = "skills/"
+artifact_kind = "dir"
+purpose = "generated schema-specific event skills"
+
 # Generated agent bindings directory.
 [[artifacts]]
 id = "agents"
@@ -124,4 +131,3 @@ description = "Generated operator guide."
 path = "docs/operator-guide.md"
 artifact_kind = "file"
 purpose = "generated support doc"
-

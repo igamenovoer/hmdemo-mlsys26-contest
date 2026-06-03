@@ -20,5 +20,15 @@ Index the generated `lead-code-synth-research` execplan artifacts.
 
 - `skills/lead-code-synth-research-shared/SKILL.md`
 - `skills/lead-code-synth-research-mail-event/SKILL.md`
+- `skills/lead-code-synth-research-on-task-assignment/SKILL.md`
+- `skills/lead-code-synth-research-on-candidate-result/SKILL.md`
+- `skills/lead-code-synth-research-on-synthesis-report/SKILL.md`
+- `skills/lead-code-synth-research-on-profile-request/SKILL.md`
+- `skills/lead-code-synth-research-on-profile-report/SKILL.md`
+- `skills/lead-code-synth-research-on-research-request/SKILL.md`
+- `skills/lead-code-synth-research-on-research-brief/SKILL.md`
+- `skills/lead-code-synth-research-on-operator-escalation/SKILL.md`
+- `skills/lead-code-synth-research-on-search-correction/SKILL.md`
+- `skills/lead-code-synth-research-on-terminal-report/SKILL.md`
 - `skills/lead-code-synth-research-tick/SKILL.md`
 - `skills/lead-code-synth-research-operator-control/SKILL.md`
