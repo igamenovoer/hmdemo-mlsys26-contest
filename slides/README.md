@@ -9,7 +9,7 @@ This directory collects Slidev decks and design notes for presenting Houmao and 
 
 ## Current Decks
 
-- `pages/demo-package-intro.md`: A Houmao system introduction covering usage, design philosophy, target use cases, and CUDA kernel optimization as a worked example.
+- `slides.md`: Houmao introduction deck copied from `tmp/agentic-cuda-general-slides/slides`, with local video assets replaced by placeholder slides.
 
 ## Installation
 

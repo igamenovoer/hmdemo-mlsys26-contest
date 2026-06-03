@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "slidev pages/demo-package-intro.md --bind 0.0.0.0",
-    "build": "slidev build pages/demo-package-intro.md",
-    "export": "slidev export pages/demo-package-intro.md"
+    "dev": "slidev slides.md --bind 0.0.0.0",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md"
   },
   "devDependencies": {
     "@slidev/cli": "52.16.0",

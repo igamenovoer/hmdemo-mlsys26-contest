@@ -1,0 +1,91 @@
+# Generated mail schema registry.
+
+[[templates]]
+name = "task_assignment"
+schema_id = "lead-code-synth-research.email.task_assignment"
+schema_path = "schemas/task_assignment.schema.json"
+renderer_path = "renderers/task_assignment.md.j2"
+payload_format = "json"
+reply_expectation = "candidate_result"
+description = "Planner assigns one bounded Fused MoE task to a coder."
+
+[[templates]]
+name = "candidate_result"
+schema_id = "lead-code-synth-research.email.candidate_result"
+schema_path = "schemas/candidate_result.schema.json"
+renderer_path = "renderers/candidate_result.md.j2"
+payload_format = "json"
+reply_expectation = "synthesis_report"
+description = "Coder reports implementation, correctness, timing, and evidence."
+
+[[templates]]
+name = "synthesis_report"
+schema_id = "lead-code-synth-research.email.synthesis_report"
+schema_path = "schemas/synthesis_report.schema.json"
+renderer_path = "renderers/synthesis_report.md.j2"
+payload_format = "json"
+reply_expectation = "none"
+description = "Synthesizer reports promotion, rejection, or merge outcome."
+
+[[templates]]
+name = "profile_request"
+schema_id = "lead-code-synth-research.email.profile_request"
+schema_path = "schemas/profile_request.schema.json"
+renderer_path = "renderers/profile_request.md.j2"
+payload_format = "json"
+reply_expectation = "profile_report"
+description = "Planner requests profiler evidence."
+
+[[templates]]
+name = "profile_report"
+schema_id = "lead-code-synth-research.email.profile_report"
+schema_path = "schemas/profile_report.schema.json"
+renderer_path = "renderers/profile_report.md.j2"
+payload_format = "json"
+reply_expectation = "none"
+description = "Profiler returns metrics and artifact refs."
+
+[[templates]]
+name = "research_request"
+schema_id = "lead-code-synth-research.email.research_request"
+schema_path = "schemas/research_request.schema.json"
+renderer_path = "renderers/research_request.md.j2"
+payload_format = "json"
+reply_expectation = "research_brief"
+description = "Planner requests references after three failed attempts."
+
+[[templates]]
+name = "research_brief"
+schema_id = "lead-code-synth-research.email.research_brief"
+schema_path = "schemas/research_brief.schema.json"
+renderer_path = "renderers/research_brief.md.j2"
+payload_format = "json"
+reply_expectation = "none"
+description = "Researcher returns references and patch ideas."
+
+[[templates]]
+name = "operator_escalation"
+schema_id = "lead-code-synth-research.email.operator_escalation"
+schema_path = "schemas/operator_escalation.schema.json"
+renderer_path = "renderers/operator_escalation.md.j2"
+payload_format = "json"
+reply_expectation = "search_correction"
+description = "Planner escalates after research-assisted retries fail."
+
+[[templates]]
+name = "search_correction"
+schema_id = "lead-code-synth-research.email.search_correction"
+schema_path = "schemas/search_correction.schema.json"
+renderer_path = "renderers/search_correction.md.j2"
+payload_format = "json"
+reply_expectation = "none"
+description = "Operator redirects, repairs, overrides, or stops."
+
+[[templates]]
+name = "terminal_report"
+schema_id = "lead-code-synth-research.email.terminal_report"
+schema_path = "schemas/terminal_report.schema.json"
+renderer_path = "renderers/terminal_report.md.j2"
+payload_format = "json"
+reply_expectation = "none"
+description = "Planner reports terminal run state."

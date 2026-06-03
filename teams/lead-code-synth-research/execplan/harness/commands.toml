@@ -1,0 +1,41 @@
+# Generated harness command registry.
+dependency_posture = "environment-provided"
+python_entrypoint = "bin/loop_harness.py"
+required_packages = ["click", "jinja2"]
+optional_packages = ["jsonschema"]
+install_guidance = "Install missing packages into the active harness Python environment or use the Python environment associated with the installed Houmao uv tool; inspect with uv tool list --show-paths --show-python."
+
+[[commands]]
+name = "validate package"
+description = "Validate generated artifact paths and key contract files."
+handler = "validate_package"
+
+[[commands]]
+name = "control status"
+description = "Read run lifecycle and execution mode from state."
+handler = "control_status"
+
+[[commands]]
+name = "control set-mode"
+description = "Record an operator mode-change intent event."
+handler = "control_set_mode"
+
+[[commands]]
+name = "email schema"
+description = "Print the schema path for a message family."
+handler = "email_schema"
+
+[[commands]]
+name = "email validate"
+description = "Validate a JSON payload against its message-family schema."
+handler = "email_validate"
+
+[[commands]]
+name = "email render"
+description = "Render a payload with its Markdown Jinja template."
+handler = "email_render"
+
+[[commands]]
+name = "manual context"
+description = "Print one-pass manual context for a participant."
+handler = "manual_context"

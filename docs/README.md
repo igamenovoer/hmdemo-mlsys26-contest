@@ -39,6 +39,7 @@ The live `config.toml` must match a variant's definition and TVM-FFI build metad
 
 - `contest/kernel-contracts.md`: TVM-FFI callable contracts for the local MoE and DSA contest definitions, including tensor order, scalar boundary types, and output order.
 - `profiling/cpp-nvbench-profiler.md`: Local timing-only C++/NVBench profiler workflow for building reusable kernel plugins and running selected workloads.
+- `reference/terminal-record/index.md`: Tmux terminal recorder commands and artifact contract.
 
 ## OpenSpec State
 

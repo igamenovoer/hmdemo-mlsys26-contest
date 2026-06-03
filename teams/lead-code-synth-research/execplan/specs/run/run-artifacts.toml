@@ -1,0 +1,31 @@
+# Generated run artifact contract.
+layout = "runs/<run-id>/"
+description = "Durable run outputs for payloads, rendered mail, evidence, state, logs, and operator notes."
+
+[[paths]]
+path = "runs/<run-id>/payloads/"
+description = "Structured outgoing and incoming payload files."
+
+[[paths]]
+path = "runs/<run-id>/rendered-mail/"
+description = "Rendered Markdown mail bodies."
+
+[[paths]]
+path = "runs/<run-id>/send-replies/"
+description = "Mail send or reply responses."
+
+[[paths]]
+path = "runs/<run-id>/state/"
+description = "SQLite database and validation outputs."
+
+[[paths]]
+path = "runs/<run-id>/evidence/"
+description = "Correctness, timing, profile, and candidate evidence refs."
+
+[[paths]]
+path = "runs/<run-id>/logs/"
+description = "Harness, preparation, validation, and participant logs."
+
+[[paths]]
+path = "runs/<run-id>/operator-notes/"
+description = "Operator stop, override, repair, or search-correction notes."

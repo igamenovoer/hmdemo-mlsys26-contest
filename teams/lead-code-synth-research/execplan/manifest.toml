@@ -1,0 +1,127 @@
+# Generated package metadata for this execplan revision.
+generated_source = true
+generated_with = "scripts/scaffold.py"
+scaffold_profile = "execplan-shell"
+loop_slug = "lead-code-synth-research"
+generated_date = "2026-06-03"
+plan_revision = 1
+purpose_directories = ["specs", "skills", "agents", "harness", "docs"]
+omitted_default_layers = []
+
+# Generated contracts directory.
+[[artifacts]]
+id = "specs"
+description = "Generated machine-readable loop contracts."
+path = "specs/"
+artifact_kind = "dir"
+purpose = "generated loop contracts"
+
+[[artifacts]]
+id = "process"
+description = "Process-first generated authority for phases, events, handoffs, and terminal posture."
+path = "specs/collab/collab-overview.md"
+artifact_kind = "file"
+purpose = "generated process authority"
+
+[[artifacts]]
+id = "objective"
+description = "Fused MoE objective contract."
+path = "specs/objective/objective.toml"
+artifact_kind = "file"
+purpose = "generated objective contract"
+
+[[artifacts]]
+id = "topology"
+description = "Generic-loop topology and routing contract."
+path = "specs/collab/topology/topology.toml"
+artifact_kind = "file"
+purpose = "generated topology contract"
+
+[[artifacts]]
+id = "communication-templates"
+description = "Schema-id mail family registry."
+path = "specs/comms/templates.toml"
+artifact_kind = "file"
+purpose = "generated communication registry"
+
+[[artifacts]]
+id = "state-schema"
+description = "SQLite state schema for loop bookkeeping."
+path = "specs/state/schema.sql"
+artifact_kind = "file"
+purpose = "generated state contract"
+
+[[artifacts]]
+id = "workspace-contract"
+description = "Managed workspace contract for three coder workspaces and shared task state."
+path = "specs/workspace/workspace.toml"
+artifact_kind = "file"
+purpose = "generated workspace contract"
+
+[[artifacts]]
+id = "run-contract"
+description = "Run artifact layout and run-time input contract."
+path = "specs/run/run-artifacts.toml"
+artifact_kind = "file"
+purpose = "generated run contract"
+
+# Generated skills directory.
+[[artifacts]]
+id = "skills"
+description = "Generated skill packages used by loop participants and operators."
+path = "skills/"
+artifact_kind = "dir"
+purpose = "generated skill packages"
+
+[[artifacts]]
+id = "operator-control-skill"
+description = "Loop-local operator control skill."
+path = "skills/lead-code-synth-research-operator-control/SKILL.md"
+artifact_kind = "file"
+purpose = "generated operator control skill"
+
+# Generated agent bindings directory.
+[[artifacts]]
+id = "agents"
+description = "Generated concrete agent bindings, profile material, and notifier prompt material."
+path = "agents/"
+artifact_kind = "dir"
+purpose = "generated concrete agent bindings"
+
+[[artifacts]]
+id = "agent-bindings"
+description = "Participant-to-agent bindings."
+path = "agents/bindings.toml"
+artifact_kind = "file"
+purpose = "generated agent binding contract"
+
+# Generated harness directory.
+[[artifacts]]
+id = "harness"
+description = "Generated loop-local helper surface for validation, query, rendering, and controlled apply."
+path = "harness/"
+artifact_kind = "dir"
+purpose = "generated loop-local helper surface"
+
+[[artifacts]]
+id = "harness-commands"
+description = "Loop-local harness command registry."
+path = "harness/commands.toml"
+artifact_kind = "file"
+purpose = "generated harness command registry"
+
+# Generated support docs directory.
+[[artifacts]]
+id = "docs"
+description = "Generated human support views that summarize authoritative artifacts."
+path = "docs/"
+artifact_kind = "dir"
+purpose = "generated human support views"
+
+[[artifacts]]
+id = "operator-guide"
+description = "Generated operator guide."
+path = "docs/operator-guide.md"
+artifact_kind = "file"
+purpose = "generated support doc"
+
