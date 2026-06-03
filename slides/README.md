@@ -1,6 +1,6 @@
 # Slides
 
-This directory collects Slidev decks and design notes for presenting this demo package.
+This directory collects Slidev decks and design notes for presenting Houmao and the CUDA optimization demo package.
 
 ## Layout
 
@@ -9,7 +9,7 @@ This directory collects Slidev decks and design notes for presenting this demo p
 
 ## Current Decks
 
-- `pages/demo-package-intro.md`: A short introduction to this MLSys 2026 FlashInfer contest demo package and the Houmao-assisted CUDA optimization workflow it demonstrates.
+- `pages/demo-package-intro.md`: A Houmao system introduction covering usage, design philosophy, target use cases, and CUDA kernel optimization as a worked example.
 
 ## Installation
 

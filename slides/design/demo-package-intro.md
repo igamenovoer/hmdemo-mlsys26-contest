@@ -1,29 +1,35 @@
-# Demo Package Introduction Design Notes
+# Houmao System Introduction Design Notes
 
 ## Audience
 
-The deck is for engineers, researchers, and contest participants who understand GPU kernels or LLM inference at a high level, but may not yet know how this repository wraps the FlashInfer Bench starter kit for human-and-agent CUDA optimization work.
+The deck is for engineers, researchers, and technical operators who want to understand what Houmao is, when to use it, and how its design supports supervised multi-agent work. CUDA kernel optimization is used as a concrete example, but the deck should not assume the viewer cares only about CUDA.
 
 ## Goals
 
-- Explain what this fork demonstrates: a contest starter kit shaped for Houmao-managed optimization workflows.
-- Show the concrete repository surfaces a user will touch: `solution/`, `variants/`, `scripts/`, `docs/`, `context/`, `skillset/`, and OpenSpec files.
-- Make the workflow feel operational rather than aspirational: inspect workloads, create variants, deploy, benchmark, review, and pack.
-- Set expectations around CUDA 13.0, Blackwell `sm_100a`, Modal benchmarking, and dataset-dependent local evaluation.
+- Explain Houmao as a coordination system for independent CLI agents.
+- Make the design philosophy clear: explicit roles, visible handoffs, operator authority, project-local memory, and composable workflows.
+- Describe the target use cases where multi-agent coordination is worth the added structure.
+- Show the basic usage model: initialize a project, launch agents, send work, inspect state, and collect results.
+- Use the MLSys 2026 FlashInfer CUDA optimization demo as one worked example of Houmao in practice.
+- Keep the demo pages as non-video replacement slots until new visuals are ready.
 
 ## Narrative Arc
 
-1. Start with the contest setting: generate high-performance kernels for FlashInfer Bench workloads.
-2. Position this fork as a demo of agent-assisted kernel optimization, not a replacement for benchmark discipline.
-3. Walk through the repository map and the live CUDA solution path.
-4. Describe the variant workflow as the center of day-to-day experimentation.
-5. Close with the operator loop: benchmark evidence, code review, OpenSpec updates when behavior changes, and packaging for submission.
+1. Start with Houmao itself: what it is and why it exists.
+2. Define the target use cases and design philosophy.
+3. Explain the core concepts: managed agents, gateway, mailboxes, project overlay, and skills.
+4. Show the operator workflow for launching and controlling agents.
+5. Use CUDA kernel optimization as the example loop.
+6. Map that example to this repository's surfaces.
+7. Reserve non-video demo pages for future replacement visuals.
+8. Close with the broader takeaway: inspectable, interruptible agent teams for long-running engineering work.
 
 ## Visual Direction
 
-Use a quiet technical style with dense but readable slides. Favor code paths, command blocks, workflow diagrams, and small tables over marketing copy. Reuse existing repository images only when they identify the contest or upstream ecosystem; avoid decorative graphics that do not help the viewer understand the workflow.
+Use a quiet technical style with dense but readable slides. Favor workflow diagrams, command blocks, small tables, and concrete project paths over marketing copy. Existing contest logos can appear on the title slide to signal the example domain, but Houmao should be the first-viewport topic. Do not include video demo assets in this deck; leave demo pages as placeholders until replacement material is ready.
 
 ## Open Questions
 
-- Should the deck include live timing numbers from a specific `moe-base` benchmark run, or stay environment-neutral?
-- Should there be a separate deck for CUDA kernel internals after this introduction?
+- What replacement visuals should fill the create-agents, operator-control, and agent-loop demo pages?
+- Should there be a follow-up deck specifically for CUDA kernel optimization details?
+- Should the usage slide use exact commands from a pinned Houmao release once the target release is selected?
