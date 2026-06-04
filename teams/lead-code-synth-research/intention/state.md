@@ -15,6 +15,7 @@
 - Previous-best comparison and speedup or latency summary.
 - Candidate lineage from Coder outputs and Synthesizer merge or selection notes.
 - Rejected candidates, invalid-speedup findings, and preserved ideas for future planning.
+- Waiting-for-GPU records and non-GPU retry counts.
 
 ## Ownership
 
@@ -23,3 +24,4 @@
 - Synthesizer writes synthesis reports and promotion-candidate submissions.
 - Coders write Coder result evidence for their own assignments.
 - Researcher writes research summaries and source-scope notes.
+- The runtime or responsible agent records waiting-for-GPU and retry state according to `failure-policy.md`.

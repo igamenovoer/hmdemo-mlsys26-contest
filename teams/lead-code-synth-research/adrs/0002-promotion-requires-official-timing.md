@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted, refined by ADR 0011
+Accepted, refined by ADR 0011, ADR 0012, ADR 0013, ADR 0014, and ADR 0015
 
 ## Context
 
@@ -22,4 +22,4 @@ Coder exploration may use local checks, but promotion to the new best candidate 
 - Coder result mail may report local correctness and timing evidence, but the Evaluator owns promotion validation after `official-timing`.
 - ADR 0011 assigns durable current-best state writes to Planner.
 - The loop state should record whether a candidate is exploratory, submitted for promotion, promoted, or rejected.
-- Terminal success rules, resource posture, and exact timeout or retry policy remain unresolved follow-up decisions.
+- Terminal success, resource posture, runtime posture, compute posture, and retry policy were later clarified by ADR 0003 and ADR 0011 through ADR 0015.

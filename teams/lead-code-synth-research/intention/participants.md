@@ -29,6 +29,7 @@
 - Both Coders use the same role profile; they differ by workspace and Planner-assigned optimization direction.
 - Inputs: one Planner assignment, allowed workspace, current best source, relevant skills or references, and benchmark commands.
 - Outputs: candidate implementation, correctness status, timing summary, changed-file summary, failure analysis, and recommended next step.
+- Each assignment is one bounded attempt: implement one direction, run local checks if available, report evidence, then stop.
 - Must work in isolated workspaces and must not edit the benchmark harness, datasets, reference code, or contest config semantics.
 
 ## Synthesizer

@@ -35,4 +35,4 @@
 
 ## Open Questions
 
-- UNRESOLVED - Live gateway/mail routing, local GPU access, Modal access, and offline-only versus executable loop posture still need decisions.
+- DEFERRED - Exact generated schema and harness command shapes belong to execplan generation.

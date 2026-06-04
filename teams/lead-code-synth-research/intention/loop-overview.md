@@ -19,10 +19,11 @@
 
 ## Operating Model
 
+- Runtime posture: launchable live Houmao loop with managed agents, isolated workspaces, mail/gateway support, generated state, run controls, launch readiness checks, and local spare-GPU selection for exploratory checks.
 - Preferred topology: `generic-loop`, because results move through a directed cycle with parallel Coder branches and explicit returns to Planner, Synthesizer, Evaluator, and Researcher; profiler evidence is attached as generated tool output.
 - Work begins from a current best variant, known workload definition, benchmark protocol, allowed edit surface, and current run history.
 - Each cycle starts when the Planner issues up to two optimization hypotheses with expected evidence and risk notes.
-- The two CUDA Coders implement in isolated workspaces, run the required correctness checks, benchmark their candidates, and send structured result summaries with changed files, metrics, failures, and next-step recommendations.
+- The two CUDA Coders each perform one bounded attempt per assignment: implement one direction, run local checks on a spare local GPU when available, report evidence, then stop or enter waiting-for-GPU state if GPU capacity is unavailable.
 - The Profiler tool surface supports specific candidates or representative workloads with timing and bottleneck evidence, especially when the next optimization depends on attribution rather than guesswork.
 - The Researcher is invoked when several attempts fail, when the Planner asks for external patterns, or when a Coder needs reference-backed implementation options; its default source policy is parallel local-and-network search.
 - The Synthesizer chooses, merges, or rejects candidate changes, then hands a promotion candidate and rationale to the Evaluator and Planner.
@@ -54,4 +55,4 @@
 
 ## Open Questions
 
-- What resource budget should each CUDA Coder receive per assignment or cycle?
+- Exact generated schema and harness command shapes belong to execplan generation.

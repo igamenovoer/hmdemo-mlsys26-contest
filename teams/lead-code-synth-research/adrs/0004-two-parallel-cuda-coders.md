@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted, refined by ADR 0012
 
 ## Context
 
@@ -21,4 +21,4 @@ The first generated loop prepares two parallel CUDA Coders.
 - Planner fan-out should assign at most two Coder work items per planning cycle unless the Human Operator overrides it.
 - Workspace contracts should prepare two isolated Coder workspaces or branches.
 - Synthesizer contracts should aggregate up to two Coder result messages per cycle.
-- Resource budget per Coder remains an unresolved follow-up decision.
+- Resource budget per Coder was later clarified by ADR 0012.

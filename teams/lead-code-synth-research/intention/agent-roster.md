@@ -17,6 +17,7 @@
 
 ## Binding Implications
 
+- Generate launchable managed-agent bindings for live Houmao operation.
 - Prepare six isolated managed-agent workspaces, one for each managed agent.
 - Prepare Planner workspace material for assignment and history review.
 - Prepare two Coder workspaces for candidate source edits and local evidence.

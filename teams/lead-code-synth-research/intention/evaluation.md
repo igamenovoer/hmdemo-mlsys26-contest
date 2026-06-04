@@ -10,9 +10,11 @@
 
 ## Evidence Classes
 
-- Exploratory evidence: local correctness checks, local timing, compile results, Coder notes, and profiler hints gathered during implementation.
+- Exploratory evidence: local correctness checks, local timing, compile results, Coder notes, and profiler hints gathered during implementation on a spare local GPU when available.
+- Bounded-attempt evidence: whether local checks were available, which checks ran, and why unavailable checks were skipped.
 - Promotion evidence: `official-timing` result, correctness status, speedup or latency comparison against the previous best, candidate id, variant or workspace path, command provenance, and changed-file summary.
 - Rejection evidence: correctness failure, timeout, benchmark invalidity, anti-hacking concern, regression, irreproducible result, or insufficient promotion evidence.
+- Waiting evidence: no spare GPU blocked local checks or profiling and produced a waiting-for-GPU record rather than a rejection.
 
 ## Candidate States
 

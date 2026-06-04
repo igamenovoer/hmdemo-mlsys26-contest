@@ -39,3 +39,6 @@
 - Long-running or expensive benchmark campaigns need operator-visible budget controls.
 - Agents should escalate when repeated failures show the current direction is exhausted, the benchmark appears exploitable, or workspace state becomes inconsistent.
 - Agents should not treat promotion, budget exhaustion, or plateau detection as automatic successful completion.
+- Coder agents should finish after one bounded attempt per assignment rather than waiting, polling, or continuing iterative work inside one turn.
+- Coder and profiler local GPU use should choose a spare local GPU dynamically; when none is available, record waiting-for-GPU state and wait for a later wakeup rather than sleeping in-chat.
+- Non-GPU blockers should retry up to three times before a failure report.

@@ -3,6 +3,7 @@
 ## Layout
 
 - The first generated loop should prepare six isolated managed-agent workspaces.
+- The workspace contract should support live Houmao launch and readiness validation.
 - Managed-agent workspace set: Planner, CUDA Coder 1, CUDA Coder 2, Synthesizer, Researcher, and Evaluator.
 - CUDA Coder 1 and CUDA Coder 2 use the same role profile but have separate workspace paths.
 - Profiler does not need a workspace as a managed agent because it is a generated tool/skill surface.
