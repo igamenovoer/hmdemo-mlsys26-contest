@@ -21,9 +21,15 @@ class: p-0
 ---
 
 <div class="h-full w-full bg-black flex items-center justify-center">
-  <div class="h-[74%] w-[78%] border border-dashed border-zinc-500 rounded flex items-center justify-center text-zinc-400 text-xl">
-    Demo visual placeholder
-  </div>
+  <video
+    src="../assets/lcsr-tmux-viewer-window-8x.mp4"
+    class="h-full w-full object-contain"
+    autoplay
+    muted
+    loop
+    playsinline
+    controls
+  />
 </div>
 
 <div class="option-side-title" style="margin: 0.95rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">进一步控制 Agent Loop</div>
@@ -205,8 +211,18 @@ layout: default
   grid-template-columns: minmax(0, 1fr);
 }
 
+.loop-example-stack {
+  display: grid;
+  gap: 0.6rem;
+}
+
 .loop-example-grid-side {
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 0.85rem;
+}
+
+.loop-example-grid-half {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.85rem;
 }
 
@@ -214,7 +230,16 @@ layout: default
   padding: 0.62rem;
 }
 
+.loop-example-grid-half .loop-example-panel {
+  padding: 0.62rem;
+}
+
 .loop-example-grid-side .loop-example-code {
+  font-size: 0.85rem;
+  line-height: 1.32;
+}
+
+.loop-example-grid-half .loop-example-code {
   font-size: 0.85rem;
   line-height: 1.32;
 }
@@ -245,6 +270,91 @@ layout: default
   font-size: 0.85rem;
   line-height: 1.28;
   padding: 0.5rem;
+}
+
+.loop-example-tree {
+  margin: 0;
+  line-height: 1.2;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow: hidden;
+}
+
+.loop-example-md {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.85rem;
+  line-height: 1.32;
+  padding: 0.62rem 0.72rem;
+}
+
+.loop-example-md h3 {
+  margin: 0 0 0.28rem;
+  color: #0f172a;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.loop-example-md p {
+  margin: 0.2rem 0 0.34rem;
+}
+
+.loop-example-md ul {
+  margin: 0.24rem 0 0;
+  padding-left: 1rem;
+}
+
+.loop-example-md li {
+  margin: 0.12rem 0;
+}
+
+.loop-example-md code {
+  border-radius: 4px;
+  background: #eef2ff;
+  color: #1e40af;
+  font-weight: 700;
+  padding: 0.02rem 0.16rem;
+}
+
+.loop-example-md-compact {
+  line-height: 1.2;
+  padding: 0.46rem 0.62rem;
+}
+
+.loop-example-md-compact h3 {
+  font-size: 0.98rem;
+}
+
+.generated-skills-table {
+  width: 100%;
+  margin-top: 0.34rem;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  line-height: 1.16;
+}
+
+.generated-skills-table th {
+  padding: 0.14rem 0.35rem;
+  border-bottom: 1px solid #94a3b8;
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+}
+
+.generated-skills-table td {
+  padding: 0.14rem 0.35rem;
+  border-top: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.generated-skills-table code {
+  border-radius: 4px;
+  background: #eef2ff;
+  color: #1e40af;
+  font-weight: 700;
+  padding: 0.02rem 0.14rem;
 }
 
 .tmux-response-title {
@@ -1444,8 +1554,6 @@ layout: section
   </div>
 </div>
 
-<div class="loop-example-note">Snapshot: <code>s000203</code> → <code>s000622</code>. 适合展示：init 只建立 source 区域，先不碰运行时 artifact。</div>
-
 </div>
 
 ---
@@ -1485,8 +1593,6 @@ layout: section
     <div class="loop-example-code">Created loop intent from the paper.<br><br>Updated loop-overview.md.<br>Added focused intent files:<br>- paper-notes.md<br>- participants.md<br>- workflow.md<br>- constraints.md<br><br>No execplan/ generated.</div>
   </div>
 </div>
-
-<div class="loop-example-note">Snapshot: <code>s000967</code> → <code>s001789</code>. 适合展示：operator 可以用自然语言和资料文件生成第一版 intention。</div>
 
 </div>
 
@@ -1553,8 +1659,6 @@ layout: section
   </div>
 </div>
 
-<div class="loop-example-note">Snapshot: <code>s001838</code> / <code>s002034</code>. 这个例子重点展示：AI 的 response 末尾会给 operator 一个可选择的决策表。</div>
-
 </div>
 
 ---
@@ -1587,18 +1691,32 @@ layout: section
 
 <div class="text-[14px] leading-snug mt-4">
 
-<div class="loop-example-grid">
-  <div class="loop-example-panel">
-    <div class="loop-example-label">You</div>
-    <div class="loop-example-code">execplan-specs-process</div>
+<div class="loop-example-grid loop-example-grid-side">
+  <div class="loop-example-stack">
+    <div class="loop-example-panel">
+      <div class="loop-example-label">You</div>
+      <div class="loop-example-code">execplan-specs-process</div>
+    </div>
+    <div class="loop-example-panel">
+      <div class="loop-example-label">AI</div>
+      <div class="loop-example-code">Generated process-stage files:<br><br>- execplan/specs/README.md<br>- execplan/specs/collab/README.md<br>- execplan/specs/collab/collab-overview.md<br><br>Next step:<br>execplan-specs-contract</div>
+    </div>
   </div>
   <div class="loop-example-panel">
-    <div class="loop-example-label">AI</div>
-    <div class="loop-example-code">Generated process-stage files:<br><br>- execplan/specs/README.md<br>- execplan/specs/collab/README.md<br>- execplan/specs/collab/collab-overview.md<br><br>Next step:<br>execplan-specs-contract</div>
+    <div class="loop-example-label">collab-overview.md preview</div>
+    <div class="loop-example-md loop-example-md-compact">
+      <h3>Generated Process Overview</h3>
+      <p><strong>Selected topology mode:</strong> <code>generic-loop</code>.</p>
+      <p>The loop is a directed graph with parallel Coder branches and repeated planning cycles. Normal work moves from Planner to two CUDA Coders, then to Synthesizer, then to Evaluator, then back to Planner through evaluation evidence.</p>
+      <p><strong>Normal directed routes:</strong></p>
+      <ul>
+        <li>Human Operator to Planner: start, stop, pause, resume, redirect, invalidate, or force a new cycle.</li>
+        <li>Planner to CUDA Coder 1 and CUDA Coder 2: optimization assignments with distinct directions.</li>
+        <li>CUDA Coders to Synthesizer: routine <code>coder-result</code> mail containing candidate evidence.</li>
+      </ul>
+    </div>
   </div>
 </div>
-
-<div class="loop-example-note">Snapshot: <code>s005202</code> → <code>s005566</code>. 适合展示：先生成 process authority，再让后续 contract 派生。</div>
 
 </div>
 
@@ -1629,18 +1747,34 @@ layout: section
 
 <div class="text-[14px] leading-snug mt-4">
 
-<div class="loop-example-grid">
-  <div class="loop-example-panel">
-    <div class="loop-example-label">You</div>
-    <div class="loop-example-code">execplan-specs-contract</div>
+<div class="loop-example-grid loop-example-grid-half">
+  <div class="loop-example-stack">
+    <div class="loop-example-panel">
+      <div class="loop-example-label">You</div>
+      <div class="loop-example-code">execplan-specs-contract</div>
+    </div>
+    <div class="loop-example-panel">
+      <div class="loop-example-label">AI</div>
+      <div class="loop-example-code">Generated contract layer:<br><br>- objective/<br>- participants/<br>- collab/topology/<br>- comms/<br>- state/<br>- workspace/<br>- run/<br><br>Validated TOML, JSON and SQL.</div>
+    </div>
   </div>
   <div class="loop-example-panel">
-    <div class="loop-example-label">AI</div>
-    <div class="loop-example-code">Generated contract layer:<br><br>- objective/<br>- participants/<br>- collab/topology/<br>- comms/<br>- state/<br>- workspace/<br>- run/<br><br>Validated TOML, JSON and SQL.</div>
+    <div class="loop-example-label">Generated Contract Tree</div>
+    <pre class="loop-example-code loop-example-tree">execplan/specs/
+|-- objective/       objective.toml, policy.toml
+|-- participants/   participants.toml, role *.md
+|-- collab/
+|   |-- loop-policy.toml
+|   `-- topology/   topology.toml, graph.md, context-posture.toml
+|-- comms/
+|   |-- templates.toml
+|   |-- schemas/*.schema.json
+|   `-- renderers/*.md.j2
+|-- state/          schema.sql, invariants.toml, seed.toml
+|-- workspace/      workspace.toml
+`-- run/            control.toml, run-artifacts.toml</pre>
   </div>
 </div>
-
-<div class="loop-example-note">Snapshot: <code>s006457</code> → <code>s007138</code>. 可用 <code>s006763</code> 展示 contract 生成中的文件批次。</div>
 
 </div>
 
@@ -1682,8 +1816,6 @@ layout: section
   </div>
 </div>
 
-<div class="loop-example-note">Snapshot: <code>s007138</code> → <code>s007436</code>. 适合展示：generated package 自带可调用的验证和控制入口。</div>
-
 </div>
 
 ---
@@ -1712,7 +1844,7 @@ layout: section
 
 <div class="text-[14px] leading-snug mt-4">
 
-<div class="loop-example-grid">
+<div class="loop-example-grid loop-example-grid-side">
   <div class="loop-example-panel">
     <div class="loop-example-label">You</div>
     <div class="loop-example-code">go next</div>
@@ -1723,7 +1855,24 @@ layout: section
   </div>
 </div>
 
-<div class="loop-example-note">Snapshot: <code>s007436</code> → <code>s007595</code>. 这里 user 用自然语言继续，AI 推断下一阶段。</div>
+<div class="loop-example-md loop-example-md-compact">
+  <h3>Generated Skills Preview</h3>
+  <table class="generated-skills-table">
+    <thead>
+      <tr>
+        <th>Skill</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>shared-harness</code></td><td>让所有角色用同一个 harness 查询 control status、schema 和 state。</td></tr>
+      <tr><td><code>on-planning-cycle-start</code></td><td>Planner 打开一个 cycle，并发出两个 Coder assignment。</td></tr>
+      <tr><td><code>on-optimization-assignment</code></td><td>Coder 执行一次 bounded implementation attempt，然后发送结果或 blocker。</td></tr>
+      <tr><td><code>on-coder-result</code></td><td>Synthesizer 汇总 Coder evidence，决定是否产出 synthesis-report。</td></tr>
+      <tr><td><code>on-evaluation-report</code></td><td>Planner 只根据 Evaluator accepted evidence 更新 current-best。</td></tr>
+    </tbody>
+  </table>
+</div>
 
 </div>
 
@@ -1765,8 +1914,6 @@ layout: section
   </div>
 </div>
 
-<div class="loop-example-note">Snapshot: <code>s007595</code> → <code>s007794</code>. 后续 refinement 用 <code>s008140</code> 展示 <code>lcsr-*</code> 命名和 runtime skills 分配。</div>
-
 </div>
 
 ---
@@ -1805,8 +1952,6 @@ layout: section
     <div class="loop-example-code">Generated final support layer:<br><br>- manifest.toml<br>- docs/artifact-index.md<br>- docs/operator-guide.md<br>- docs/runtime-model.md<br>- docs/validation.md<br><br>Package is ready for validation.</div>
   </div>
 </div>
-
-<div class="loop-example-note">Snapshot: <code>s008171</code> → <code>s008400</code>. 适合展示：finalize 不新增行为，而是整理读者和 operator 入口。</div>
 
 </div>
 
@@ -1881,8 +2026,6 @@ layout: section
   </div>
 </div>
 
-<div class="loop-example-note">Snapshot: <code>s008560</code> → <code>s008842</code>. 适合展示：validation 会暴露进入 live preparation 前的缺口。</div>
-
 </div>
 
 ---
@@ -1946,8 +2089,6 @@ layout: section
     </div>
   </div>
 </div>
-
-<div class="loop-example-note">Snapshot: <code>s008400</code> → <code>s008560</code>. 也可用 <code>s009962</code> 展示 CLI credential 分配类 clarification。</div>
 
 </div>
 
@@ -2166,1024 +2307,19 @@ layout: section
 </div>
 
 ---
-layout: section
----
-
-# Reference Material
-
-From Toy Example onward, the remaining pages are for reference only during slide development.
-
-After the final slide deck is finished, these reference pages will be removed.
-
----
-layout: section
----
-
-# Toy Example
-
-A Three-Agent Creative Writing Team
-
----
-
-# 创意写作团队
-
-一个最小但完整的 Houmao 例子，是让一个主 agent 负责最终交付，同时由几个 specialist agent 分别改进某一部分工作。
-
-| Agent | 职责 |
-| --- | --- |
-| `story-writer` | 主写作者，负责推进循环，并对每一章做最终决策 |
-| `character-designer` | 负责人物设定、关系备注和前后细节一致性 |
-| `story-reviewer` | 负责检查剧情逻辑、节奏、前后一致性和整体质量 |
-
-operator 负责启动并观察整个运行过程，agents 则通过路由后的 mailbox 消息彼此协作。
-
----
-
-# 创意写作工作流
-
-<div class="cw-workflows">
-  <div class="cw-panel">
-    <div class="cw-title">Operator drives all agents</div>
-    <div class="cw-subtitle">No mailbox involved</div>
-    <div class="cw-manual">
-      <div class="cw-manual-body">
-        <div class="cw-human-operator">
-          <div class="cw-human">Human</div>
-          <div class="cw-drive-line">drives</div>
-          <div class="cw-node cw-operator">operator agent</div>
-        </div>
-        <div class="cw-prompt-stack">
-          <div class="cw-prompt-row">
-            <span>prompt</span>
-            <i></i>
-            <div class="cw-node">story-writer</div>
-          </div>
-          <div class="cw-prompt-row">
-            <span>prompt</span>
-            <i></i>
-            <div class="cw-node">character-designer</div>
-          </div>
-          <div class="cw-prompt-row">
-            <span>prompt</span>
-            <i></i>
-            <div class="cw-node">story-reviewer</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="cw-panel">
-    <div class="cw-title">Operator triggers agent loop</div>
-    <div class="cw-subtitle">Agents coordinate by mail</div>
-    <div class="cw-loop-map">
-      <div class="cw-node cw-operator cw-loop-operator">Operator</div>
-      <div class="cw-node cw-loop-writer">story-writer</div>
-      <div class="cw-node cw-loop-character">character-designer</div>
-      <div class="cw-node cw-loop-reviewer">story-reviewer</div>
-      <div class="cw-node cw-mailbox cw-loop-mailbox">Mailbox</div>
-      <div class="cw-arrow cw-operator-writer"><span>talks</span></div>
-      <div class="cw-line cw-writer-spine"></div>
-      <div class="cw-line cw-writer-branch"></div>
-      <div class="cw-arrow-down cw-branch-character"></div>
-      <div class="cw-arrow-down cw-branch-reviewer"></div>
-      <div class="cw-mail-edge cw-mail-writer"></div>
-      <div class="cw-mail-edge cw-mail-character"></div>
-      <div class="cw-mail-edge cw-mail-reviewer"></div>
-    </div>
-  </div>
-</div>
-
-<style>
-.cw-workflows {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-top: 0.75rem;
-}
-
-.cw-panel {
-  min-height: 270px;
-  border: 2px solid #cbd5e1;
-  border-radius: 8px;
-  background: #f8fafc;
-  padding: 12px;
-}
-
-.cw-title {
-  color: #0f172a;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.cw-subtitle {
-  margin-top: 4px;
-  color: #64748b;
-  font-size: 12px;
-}
-
-.cw-node {
-  box-sizing: border-box;
-  display: flex;
-  min-height: 34px;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #2563eb;
-  border-radius: 8px;
-  background: #eff6ff;
-  color: #172554;
-  padding: 0 10px;
-  text-align: center;
-  font-size: 12px;
-  line-height: 1.15;
-}
-
-.cw-operator {
-  border-color: #7c3aed;
-  background: #f5f3ff;
-  color: #4c1d95;
-}
-
-.cw-mailbox {
-  border-color: #be123c;
-  background: #fff1f2;
-  color: #881337;
-}
-
-.cw-manual {
-  display: grid;
-  margin-top: 12px;
-}
-
-.cw-human {
-  justify-self: center;
-  min-width: 88px;
-  border: 2px solid #0f766e;
-  border-radius: 999px;
-  background: #f0fdfa;
-  color: #134e4a;
-  padding: 5px 24px;
-  font-size: 12px;
-  line-height: 1;
-}
-
-.cw-drive-line {
-  color: #64748b;
-  font-size: 11px;
-  line-height: 1.15;
-  text-align: center;
-}
-
-.cw-drive-line::before,
-.cw-drive-line::after {
-  display: block;
-  width: 2px;
-  height: 10px;
-  margin: 3px auto;
-  background: #64748b;
-  content: "";
-}
-
-.cw-manual-body {
-  display: grid;
-  width: 100%;
-  grid-template-columns: 0.72fr 1.28fr;
-  align-items: center;
-  gap: 14px;
-}
-
-.cw-human-operator {
-  display: grid;
-  justify-items: stretch;
-}
-
-.cw-prompt-stack {
-  display: grid;
-  gap: 10px;
-}
-
-.cw-prompt-row {
-  display: grid;
-  grid-template-columns: 42px 1fr 128px;
-  align-items: center;
-  gap: 8px;
-  color: #475569;
-  font-size: 11px;
-}
-
-.cw-prompt-row i {
-  position: relative;
-  display: block;
-  height: 2px;
-  background: #64748b;
-}
-
-.cw-prompt-row i::after {
-  position: absolute;
-  right: -1px;
-  top: -4px;
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 7px solid #64748b;
-  content: "";
-}
-
-.cw-loop-map {
-  position: relative;
-  height: 210px;
-  margin-top: 12px;
-}
-
-.cw-loop-map .cw-node {
-  position: absolute;
-  z-index: 2;
-}
-
-.cw-loop-operator {
-  left: 0;
-  top: 0;
-  width: 24%;
-}
-
-.cw-loop-writer {
-  left: 38%;
-  top: 0;
-  width: 28%;
-}
-
-.cw-loop-character {
-  left: 0;
-  bottom: 0;
-  width: 36%;
-}
-
-.cw-loop-reviewer {
-  right: 0;
-  bottom: 0;
-  width: 34%;
-}
-
-.cw-loop-mailbox {
-  left: 38%;
-  top: 92px;
-  width: 28%;
-}
-
-.cw-arrow,
-.cw-line,
-.cw-arrow-down,
-.cw-mail-edge {
-  position: absolute;
-  z-index: 1;
-  background: #64748b;
-}
-
-.cw-operator-writer {
-  left: 24%;
-  top: 16px;
-  width: 14%;
-  height: 2px;
-}
-
-.cw-operator-writer span {
-  position: absolute;
-  left: 50%;
-  top: -16px;
-  transform: translateX(-50%);
-  color: #475569;
-  background: #f8fafc;
-  padding: 0 4px;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.cw-arrow::after {
-  position: absolute;
-  right: -1px;
-  top: -4px;
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 7px solid #64748b;
-  content: "";
-}
-
-.cw-writer-spine {
-  left: 52%;
-  top: 34px;
-  width: 2px;
-  height: 32px;
-}
-
-.cw-writer-branch {
-  left: 18%;
-  top: 66px;
-  width: 68%;
-  height: 2px;
-}
-
-.cw-branch-character {
-  left: 18%;
-  top: 66px;
-  width: 2px;
-  height: 108px;
-}
-
-.cw-branch-reviewer {
-  left: 86%;
-  top: 66px;
-  width: 2px;
-  height: 108px;
-}
-
-.cw-arrow-down::after {
-  position: absolute;
-  left: -4px;
-  bottom: -1px;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 7px solid #64748b;
-  content: "";
-}
-
-.cw-mail-edge {
-  height: 0;
-  border-top: 2px dashed #be123c;
-  background: transparent;
-  transform-origin: left center;
-}
-
-.cw-mail-writer {
-  left: 52%;
-  top: 92px;
-  width: 58px;
-  transform: rotate(-90deg);
-}
-
-.cw-mail-character {
-  left: 43%;
-  top: 126px;
-  width: 125px;
-  transform: rotate(150deg);
-}
-
-.cw-mail-reviewer {
-  left: 58%;
-  top: 126px;
-  width: 125px;
-  transform: rotate(30deg);
-}
-</style>
-
----
+layout: image
+image: ''
 class: p-0
 ---
 
-<div class="h-full w-full bg-black text-zinc-100 flex flex-col">
-  <h1 class="px-10 pt-8 pb-3 text-3xl font-semibold">创建 Agents</h1>
-  <div class="flex-1 min-h-0 px-10 pb-8">
-    <div class="h-full w-full border border-dashed border-zinc-500 rounded flex items-center justify-center text-zinc-400 text-xl">
-      Replacement visual slot
-    </div>
-  </div>
-</div>
-
----
-class: p-0
----
-
-<div class="h-full w-full bg-black text-zinc-100 flex flex-col">
-  <h1 class="px-10 pt-8 pb-3 text-3xl font-semibold">手动驱动</h1>
-  <div class="flex-1 min-h-0 px-10 pb-8">
-    <div class="h-full w-full border border-dashed border-zinc-500 rounded flex items-center justify-center text-zinc-400 text-xl">
-      Replacement visual slot
-    </div>
-  </div>
-</div>
-
----
-class: p-0
----
-
-<div class="h-full w-full bg-black text-zinc-100 flex flex-col">
-  <h1 class="px-10 pt-8 pb-3 text-3xl font-semibold">Agent 循环</h1>
-  <div class="flex-1 min-h-0 px-10 pb-8">
-    <div class="h-full w-full border border-dashed border-zinc-500 rounded flex items-center justify-center text-zinc-400 text-xl">
-      Replacement visual slot
-    </div>
-  </div>
-</div>
-
----
-
-# 总结
-
-<div style="margin-top: 0.8rem; overflow: hidden; border: 1.5px solid #cbd5e1; border-radius: 14px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);">
-  <table class="w-full text-[15px] leading-snug border-collapse">
-    <thead>
-      <tr class="text-left" style="background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);">
-        <th class="px-4 py-3" style="white-space: nowrap; border-right: 1px solid #cbd5e1; color: #172554; font-weight: 700;">功能</th>
-        <th class="px-4 py-3" style="color: #172554; font-weight: 700;">这个例子说明了什么</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="white-space: nowrap; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">Agent 创建</td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">可以把 `story-writer`、`character-designer` 和 `story-reviewer` 定义成受管 agents</td>
-      </tr>
-      <tr style="background: rgba(248,250,252,0.92);">
-        <td class="px-4 py-3 align-top" style="white-space: nowrap; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">手动驱动</td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">operator 可以直接给每个 agent 发 prompt，并观察它们的响应</td>
-      </tr>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="white-space: nowrap; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">自动驱动</td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">operator 启动循环后，可以让 `story-writer` 自己协调后续工作</td>
-      </tr>
-      <tr style="background: rgba(248,250,252,0.92);">
-        <td class="px-4 py-3 align-top" style="white-space: nowrap; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">Mailbox 子系统</td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">agents 可以通过持久化邮件交换请求和回复</td>
-      </tr>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="white-space: nowrap; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">Agent gateway</td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">operator 可以查看、prompt、打断并恢复正在运行的 agents</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="option-side-title" style="margin: 0.95rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">进一步控制 Agent Loop</div>
-
-<div style="color: #334155; font-size: 0.95rem; line-height: 1.55;">
-  如果你需要对 agent loop 做更细粒度的控制，可以使用 <code>houmao-agent-loop-lite</code> 或 <code>houmao-agent-loop-pro</code> skills。
-</div>
-
----
-layout: section
----
-
-# CUDA Kernel 优化
-
-Houmao 如何把 kernel 调优变成一个可持续运行的 multi-agent 搜索循环。
-
----
-
-# 角色与 Agent 循环
-
-这次运行用了 5 个 Codex CLI 进程：1 个 lead、1 个 reviewer、3 个 coder。Houmao 把整个 kernel 搜索过程组织成一个由 lead 持有的 variant beam search。
-
-<div class="cuda-loop-grid">
-  <div class="cuda-diagram cuda-flow">
-    <div class="cuda-title">Beam Search 循环</div>
-    <div class="cuda-node cuda-step cuda-step-1">1. 选一个待优化的 kernel variant</div>
-    <div class="cuda-arrow-down cuda-flow-arrow-1"></div>
-    <div class="cuda-node cuda-step cuda-step-2">2. Lead 决定走增量优化还是结构优化</div>
-    <div class="cuda-arrow-down cuda-flow-arrow-2"></div>
-    <div class="cuda-node cuda-step cuda-step-3">3. Reviewer 给方向</div>
-    <div class="cuda-arrow-down cuda-flow-arrow-3"></div>
-    <div class="cuda-node cuda-step cuda-step-4">4. Coder 实现 + Reviewer 评估性能<br/><span>（nsys / ncu）</span></div>
-    <div class="cuda-arrow-down cuda-flow-arrow-4"></div>
-    <div class="cuda-node cuda-step cuda-step-decision">5. Lead 判断继续增量修复还是转向结构探索</div>
-    <div class="cuda-outcome-row">
-      <div class="cuda-outcome cuda-outcome-promote">
-        <div class="cuda-outcome-title">继续增量修复</div>
-        <div class="cuda-outcome-body">保留当前方向<br/>继续打磨</div>
-      </div>
-      <div class="cuda-outcome cuda-outcome-retry">
-        <div class="cuda-outcome-title">转向结构探索</div>
-        <div class="cuda-outcome-body">换更大的改法<br/>重新试</div>
-      </div>
-      <div class="cuda-outcome cuda-outcome-close">
-        <div class="cuda-outcome-title">结束这个方向</div>
-        <div class="cuda-outcome-body">没有价值就关闭</div>
-      </div>
-    </div>
-  </div>
-  <div class="cuda-diagram cuda-team">
-    <div class="cuda-title">5 个 CLI 进程</div>
-    <div class="cuda-node cuda-lead">
-      <div>Lead</div>
-      <span>（循环 owner）</span>
-    </div>
-    <div class="cuda-node cuda-reviewer">Reviewer<br/><span>评估 + 方案</span></div>
-    <div class="cuda-node cuda-coder-a">Coder</div>
-    <div class="cuda-node cuda-coder-b">Coder</div>
-    <div class="cuda-node cuda-coder-c">Coder</div>
-    <div class="cuda-team-edge edge-lead-reviewer"><span>review request</span></div>
-    <div class="cuda-team-reply edge-reviewer-lead-reply"><span>reply</span></div>
-    <div class="cuda-team-edge edge-lead-coder-a"><span>implementation request</span></div>
-    <div class="cuda-team-reply edge-coder-a-lead-reply"><span>reply</span></div>
-    <div class="cuda-team-edge edge-lead-coder-b"></div>
-    <div class="cuda-team-reply edge-coder-b-lead-reply"></div>
-    <div class="cuda-team-edge edge-lead-coder-c"></div>
-    <div class="cuda-team-reply edge-coder-c-lead-reply"></div>
-  </div>
-</div>
-
-<style>
-.cuda-loop-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-  margin-top: 0.75rem;
-  height: 70%;
-  align-items: stretch;
-}
-
-.cuda-diagram {
-  position: relative;
-  height: 100%;
-  border: 2px solid #cbd5e1;
-  border-radius: 8px;
-  background: #f8fafc;
-}
-
-.cuda-title {
-  position: absolute;
-  left: 14px;
-  top: 10px;
-  color: #334155;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.cuda-node {
-  position: absolute;
-  z-index: 2;
-  box-sizing: border-box;
-  display: flex;
-  min-height: 38px;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #2563eb;
-  border-radius: 8px;
-  background: #eff6ff;
-  color: #172554;
-  padding: 0 10px;
-  text-align: center;
-  font-size: 11px;
-  line-height: 1.15;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
-}
-
-.cuda-node span {
-  color: #475569;
-  font-size: 10px;
-}
-
-.cuda-edge,
-.cuda-team-edge {
-  position: absolute;
-  z-index: 1;
-  height: 2px;
-  background: #334155;
-  color: #475569;
-  font-size: 10px;
-  line-height: 1;
-}
-
-.cuda-edge span,
-.cuda-team-edge span {
-  position: absolute;
-  left: 50%;
-  top: -15px;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-
-.cuda-edge::after,
-.cuda-team-edge::after {
-  position: absolute;
-  top: -5px;
-  width: 0;
-  height: 0;
-  border-bottom: 6px solid transparent;
-  border-top: 6px solid transparent;
-  content: "";
-}
-
-.cuda-edge::after {
-  right: -1px;
-  border-left: 9px solid #334155;
-}
-
-.cuda-team-reply {
-  position: absolute;
-  z-index: 1;
-  height: 0;
-  border-top: 2px dashed #94a3b8;
-  color: #64748b;
-  font-size: 10px;
-  line-height: 1;
-}
-
-.cuda-team-reply span {
-  position: absolute;
-  left: 50%;
-  top: -15px;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-
-.cuda-team-reply::before {
-  position: absolute;
-  left: -1px;
-  top: -5px;
-  width: 0;
-  height: 0;
-  border-bottom: 6px solid transparent;
-  border-top: 6px solid transparent;
-  border-right: 9px solid #94a3b8;
-  content: "";
-}
-
-.cuda-team-edge::after {
-  right: -1px;
-  border-left: 9px solid #334155;
-}
-
-.cuda-step {
-  left: 10%;
-  width: 80%;
-  min-height: 32px;
-  justify-content: flex-start;
-  padding: 0 12px;
-  text-align: left;
-}
-
-.cuda-step span {
-  color: #475569;
-  font-size: 10px;
-}
-
-.cuda-step-1 {
-  top: 42px;
-}
-
-.cuda-step-2 {
-  top: 87px;
-}
-
-.cuda-step-3 {
-  top: 132px;
-}
-
-.cuda-step-4 {
-  top: 177px;
-}
-
-.cuda-step-decision {
-  top: 230px;
-  border-color: #7c3aed;
-  background: #f5f3ff;
-  color: #4c1d95;
-}
-
-.cuda-arrow-down {
-  position: absolute;
-  left: 50%;
-  width: 2px;
-  background: #64748b;
-  transform: translateX(-50%);
-}
-
-.cuda-arrow-down::after {
-  position: absolute;
-  left: 50%;
-  bottom: -1px;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid #64748b;
-  content: "";
-  transform: translateX(-50%);
-}
-
-.cuda-flow-arrow-1 {
-  top: 74px;
-  height: 12px;
-}
-
-.cuda-flow-arrow-2 {
-  top: 119px;
-  height: 12px;
-}
-
-.cuda-flow-arrow-3 {
-  top: 164px;
-  height: 12px;
-}
-
-.cuda-flow-arrow-4 {
-  top: 209px;
-  height: 12px;
-}
-
-.cuda-outcome-row {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 272px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.cuda-outcome {
-  min-height: 56px;
-  border: 2px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  padding: 6px 8px;
-  text-align: center;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
-}
-
-.cuda-outcome-title {
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-
-.cuda-outcome-body {
-  margin-top: 3px;
-  font-size: 10px;
-  line-height: 1.15;
-}
-
-.cuda-outcome-promote {
-  border-color: #0f766e;
-  background: #f0fdfa;
-  color: #134e4a;
-}
-
-.cuda-outcome-retry {
-  border-color: #ca8a04;
-  background: #fefce8;
-  color: #713f12;
-}
-
-.cuda-outcome-close {
-  border-color: #64748b;
-  background: #f1f5f9;
-  color: #334155;
-}
-
-.cuda-lead {
-  left: 6%;
-  top: 42px;
-  width: 25%;
-  height: 239px;
-  flex-direction: column;
-  border-color: #7c3aed;
-  background: #f5f3ff;
-  color: #4c1d95;
-}
-
-.cuda-reviewer {
-  left: 62%;
-  top: 44px;
-  width: 32%;
-  height: 52px;
-  border-color: #0f766e;
-  background: #f0fdfa;
-  color: #134e4a;
-}
-
-.cuda-coder-a,
-.cuda-coder-b,
-.cuda-coder-c {
-  left: 62%;
-  width: 32%;
-  height: 42px;
-}
-
-.cuda-coder-a {
-  top: 111px;
-}
-
-.cuda-coder-b {
-  top: 175px;
-}
-
-.cuda-coder-c {
-  top: 239px;
-}
-
-.edge-lead-reviewer {
-  left: 31%;
-  top: 70px;
-  width: 31%;
-}
-
-.edge-lead-reviewer span {
-  top: -17px;
-}
-
-.edge-reviewer-lead-reply {
-  left: 31%;
-  top: 84px;
-  width: 31%;
-}
-
-.edge-reviewer-lead-reply span {
-  top: 5px;
-}
-
-.edge-lead-coder-a {
-  left: 31%;
-  top: 132px;
-  width: 31%;
-}
-
-.edge-lead-coder-a span {
-  top: -17px;
-}
-
-.edge-coder-a-lead-reply {
-  left: 31%;
-  top: 146px;
-  width: 31%;
-}
-
-.edge-coder-a-lead-reply span {
-  top: 5px;
-}
-
-.edge-lead-coder-b {
-  left: 31%;
-  top: 196px;
-  width: 31%;
-}
-
-.edge-coder-b-lead-reply {
-  left: 31%;
-  top: 210px;
-  width: 31%;
-}
-
-.edge-lead-coder-c {
-  left: 31%;
-  top: 260px;
-  width: 31%;
-}
-
-.edge-coder-c-lead-reply {
-  left: 31%;
-  top: 274px;
-  width: 31%;
-}
-</style>
-
----
-
-# 知识库构建
-
-从公开的代码、白皮书、教程、论文中梳理 CUDA 优化的各种技巧。
-
-LLM-wiki skill: <https://github.com/imsight-forks/llm-wiki-skill>
-
-<div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.25rem; margin-top: 0.9rem; align-items: start;">
-  <div style="overflow: hidden; border: 1.5px solid #cbd5e1; border-radius: 14px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);">
-    <img src="../assets/cuda-opt-kb-viewer-12x9.png" style="display: block; width: 100%; height: auto;" />
-  </div>
-  <div>
-    <div class="option-side-title" style="margin: 0 0 0.55rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">Source Material</div>
-    <div style="display: grid; gap: 0.65rem; color: #334155; font-size: 0.95rem; line-height: 1.45;">
-      <div>- CUDA 指南和既有笔记</div>
-      <div>- CUTLASS / CuTe 和 FlashInfer 代码</div>
-      <div>- MoE 论文和 benchmark 代码</div>
-      <div>- Hopper / Blackwell 白皮书</div>
-      <div>- NVIDIA 官方 blog 和教程</div>
-      <div>- Triton / TVM-FFI 相关资料</div>
-      <div>- DeepGEMM / SonicMoE 等开源实现</div>
-      <div>- CUDA 最佳实践文档</div>
-    </div>
-  </div>
-</div>
-
-这个知识库既足够广，方便随时查；也足够结构化，能进一步沉淀成可复用的角色规则。
-
----
-
-# CUDA 优化 Skills
-
-从知识库提炼出来的通用 CUDA 优化 skills。
-
-<div style="margin-top: 0.9rem; overflow: hidden; border: 1.5px solid #cbd5e1; border-radius: 14px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);">
-  <table class="w-full text-[15px] leading-snug border-collapse">
-    <thead>
-      <tr class="text-left" style="background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);">
-        <th class="px-4 py-3" style="width: 32%; border-right: 1px solid #cbd5e1; color: #172554; font-weight: 700;">Skill</th>
-        <th class="px-4 py-3" style="color: #172554; font-weight: 700;">内容</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>cuda-coding</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">CUDA 代码实现规范：正确性、访存、同步、dtype 选择和资源权衡</td>
-      </tr>
-      <tr style="background: rgba(248,250,252,0.92);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>cuda-binding</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">TVM-FFI / Torch 入口、destination-passing、stream 处理、workspace ownership 和 build flags</td>
-      </tr>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>low-precision-kernel-formats</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">FP8 和 block-scale 格式约束，包括 scale layout 和 quantization boundary</td>
-      </tr>
-      <tr style="background: rgba(248,250,252,0.92);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>cuda-profiling</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;"><code>nsys</code> / <code>ncu</code> 热点定位、瓶颈分类和 profiler-to-source attribution</td>
-      </tr>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>cuda-generic-optimization</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">在定位到瓶颈之后，决定下一步局部实验怎么做</td>
-      </tr>
-      <tr style="background: rgba(248,250,252,0.92);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>cuda-structural-optimization</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">更大粒度的 kernel 重构：stage 边界、调度方式、核心 primitive 和 metadata flow</td>
-      </tr>
-      <tr style="background: rgba(255,255,255,0.95);">
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;"><code>hw-aware-optimization</code></td>
-        <td class="px-4 py-3 align-top" style="border-top: 1px solid #e2e8f0;">面向 B200 / SM100 的硬件感知规划，以及架构相关代码形态</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
----
-
-# Kernel 性能演进
-
-multi agent 算子优化路径。
-
-| 轮次 | 主要思路 | 加速比 |
-| ---: | --- | --- |
-| 001 | adaptive 1SM / 2SM schedule restore | medium `2.14x` |
-| 002 | count-aware launch metadata | medium `5.28x` |
-| 008 | persistent router / compactor / pack | all `30.80x` |
-| 015 | matured persistent pipeline tip | all `32.12x / 7.26x` |
-| 027 | device-launched descriptor classifier | all `35.17x / 9.53x` |
-| 054 | token-broadcast ingress fabric | all `32.71x / 6.33x` |
-
-官方 Docker 自测：19/19 个公开 MoE workloads 全部通过，平均 `27.63x`，最小 `6.31x`。
-
----
-
-# Thank You
-
-<div class="grid grid-cols-2 gap-8 mt-6">
-<div>
-
-<div style="margin: 0 0 0.7rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">UV Install</div>
-
-```bash
-uv tool install houmao
-```
-
-</div>
-<div>
-
-<div style="margin: 0 0 0.7rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">Skill Install</div>
-
-```bash
-npx skills add \
-  "https://github.com/igamenovoer/houmao/tree/main/"\
-  "src/houmao/agents/assets/system_skills/"
-```
-
-```bash
-houmao-mgr system-skills install --tool claude
-houmao-mgr system-skills install --tool codex
-houmao-mgr system-skills install --tool gemini
-```
-
-</div>
-</div>
-
-<div class="grid grid-cols-2 gap-8 mt-6">
-<div>
-
-<div style="margin: 0 0 0.7rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">GitHub</div>
-
-<a class="text-sm" href="https://github.com/igamenovoer/houmao" target="_blank">
-  https://github.com/igamenovoer/houmao
-</a>
-
-</div>
-<div>
-
-<div style="margin: 0 0 0.7rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">PyPI</div>
-
-<a class="text-sm" href="https://pypi.org/project/houmao/" target="_blank">
-  https://pypi.org/project/houmao/
-</a>
-
-</div>
+<div class="h-full w-full bg-black flex items-center justify-center">
+  <video
+    src="../assets/lcsr-tmux-viewer-window-20x.mp4"
+    class="h-full w-full object-contain"
+    autoplay
+    muted
+    loop
+    playsinline
+    controls
+  />
 </div>

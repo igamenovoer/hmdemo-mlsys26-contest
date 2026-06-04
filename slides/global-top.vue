@@ -128,8 +128,18 @@ const currentSection = computed(() => {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.loop-example-stack {
+  display: grid;
+  gap: 0.6rem;
+}
+
 .loop-example-grid-side {
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 0.85rem;
+}
+
+.loop-example-grid-half {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.85rem;
 }
 
@@ -137,7 +147,16 @@ const currentSection = computed(() => {
   padding: 0.62rem;
 }
 
+.loop-example-grid-half .loop-example-panel {
+  padding: 0.62rem;
+}
+
 .loop-example-grid-side .loop-example-code {
+  font-size: 0.85rem;
+  line-height: 1.32;
+}
+
+.loop-example-grid-half .loop-example-code {
   font-size: 0.85rem;
   line-height: 1.32;
 }
@@ -168,6 +187,91 @@ const currentSection = computed(() => {
   font-size: 0.85rem;
   line-height: 1.28;
   padding: 0.5rem;
+}
+
+.loop-example-tree {
+  margin: 0;
+  line-height: 1.2;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow: hidden;
+}
+
+.loop-example-md {
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.85rem;
+  line-height: 1.32;
+  padding: 0.62rem 0.72rem;
+}
+
+.loop-example-md h3 {
+  margin: 0 0 0.28rem;
+  color: #0f172a;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.loop-example-md p {
+  margin: 0.2rem 0 0.34rem;
+}
+
+.loop-example-md ul {
+  margin: 0.24rem 0 0;
+  padding-left: 1rem;
+}
+
+.loop-example-md li {
+  margin: 0.12rem 0;
+}
+
+.loop-example-md code {
+  border-radius: 4px;
+  background: #eef2ff;
+  color: #1e40af;
+  font-weight: 700;
+  padding: 0.02rem 0.16rem;
+}
+
+.loop-example-md-compact {
+  line-height: 1.2;
+  padding: 0.46rem 0.62rem;
+}
+
+.loop-example-md-compact h3 {
+  font-size: 0.98rem;
+}
+
+.generated-skills-table {
+  width: 100%;
+  margin-top: 0.34rem;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  line-height: 1.16;
+}
+
+.generated-skills-table th {
+  padding: 0.14rem 0.35rem;
+  border-bottom: 1px solid #94a3b8;
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+}
+
+.generated-skills-table td {
+  padding: 0.14rem 0.35rem;
+  border-top: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.generated-skills-table code {
+  border-radius: 4px;
+  background: #eef2ff;
+  color: #1e40af;
+  font-weight: 700;
+  padding: 0.02rem 0.14rem;
 }
 
 .tmux-response-title {
