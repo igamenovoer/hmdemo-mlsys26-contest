@@ -32,15 +32,7 @@ jobs:
 
       - run: bunx slidev build slides.md --base /hmdemo-mlsys26-contest/ --router-mode hash
 
-      - run: |
-          node <<'NODE'
-          const fs = require('node:fs')
-          const path = 'dist/index.html'
-          const html = fs.readFileSync(path, 'utf8')
-          const script = `<script>(function(){var base='/hmdemo-mlsys26-contest/';var legacy='#'+base;if(location.hash.indexOf(legacy)===0){location.replace(base+'#/'+location.hash.slice(legacy.length)+location.search);return}if(location.pathname.indexOf(base)===0&&location.pathname!==base&&!location.hash){var rest=location.pathname.slice(base.length);if(rest.charAt(rest.length-1)==='/')rest=rest.slice(0,-1);if(rest)location.replace(base+'#/'+rest+location.search)}})();</script>`
-          fs.writeFileSync(path, html.replace('</head>', script + '</head>'))
-          fs.copyFileSync(path, 'dist/404.html')
-          NODE
+      - run: node scripts/prepare-pages-dist.mjs
 
       - uses: actions/upload-pages-artifact@v3
         with:
