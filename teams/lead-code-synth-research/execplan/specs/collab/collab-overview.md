@@ -21,12 +21,12 @@ Normal directed routes:
 
 - Human Operator to Planner: start, stop, pause, resume, redirect, invalidate, or force a new cycle.
 - Planner to CUDA Coder 1 and CUDA Coder 2: optimization assignments with distinct directions and one bounded attempt per assignment.
-- CUDA Coders to Synthesizer: candidate result evidence, changed-file summaries, local-check status, and blocker reports.
+- CUDA Coders to Synthesizer: routine `coder-result` mail containing candidate evidence, `project-cli` variant id or variant directory ref, Coder workspace path, changed-file summaries, local-check status, and blocker reports.
 - Planner, CUDA Coders, or Synthesizer to Researcher: research requests with default parallel local-and-network source scope unless the request explicitly narrows scope.
 - Researcher to requester, and optionally Planner: research summaries with source-scope notes and reusable ideas.
 - Planner, CUDA Coders, Synthesizer, or Evaluator to Profiler tool surface: profiling requests or direct tool invocations.
 - Profiler tool surface to invoking agent: profile reports as artifacts or structured evidence refs.
-- Synthesizer to Evaluator: selected or merged promotion candidate with lineage and evidence refs.
+- Synthesizer to Evaluator and Planner: selected or merged promotion candidate with lineage, `project-cli` variant id or variant directory ref, workspace path, and evidence refs. Evaluator treats the report as a promotion review input; Planner treats the report as context only.
 - Evaluator to Planner: accepted or rejected promotion evidence after `official-timing`.
 - Planner to generated state: planning-cycle records and current-best writes after accepted Evaluator evidence.
 
@@ -36,7 +36,7 @@ Cycle control:
 - Planner emits up to two Coder assignments per ordinary cycle, one per Coder slot.
 - Each assignment has a stable `assignment_id`, owner Coder, optimization direction, current-best refs, expected evidence, allowed edit surface, and risk notes.
 - Each Coder performs one bounded attempt for its assignment, then reports evidence, failure, or waiting-for-GPU state and stops the turn.
-- Synthesizer may proceed with available Coder results when the other assignment is waiting for GPU or has failed after allowed retries.
+- Synthesizer may proceed with available Coder results when generated state shows the other assignment is waiting for GPU or has failed after allowed retries.
 - Evaluator decides promotion eligibility only after project `official-timing`; Evaluator does not write current-best state.
 - Planner writes current-best state only from accepted Evaluator promotion evidence, then continues the loop or follows operator control state.
 
@@ -96,7 +96,7 @@ On-tick responsibilities:
 3. Dispatch assignments: each Coder receives exactly one work item for one bounded attempt, with current-best refs, direction, evidence expectations, allowed edit surface, and risk notes.
 4. Coder bounded attempts: each Coder edits only its workspace, picks a spare local GPU dynamically for local checks when needed, records waiting-for-GPU if no spare GPU exists, retries non-GPU blockers up to three times, and sends `coder-result` or `failure-report`.
 5. Research and profiling support: Planner, Coders, or Synthesizer may request Researcher support or invoke the Profiler tool surface. Researcher uses parallel local-and-network search by default. Profiler reports are artifacts or structured evidence, not participant mail from a live Profiler agent.
-6. Synthesis: Synthesizer compares available Coder results, selects or merges a promotion candidate, preserves useful rejected ideas, and sends `synthesis-report` to Evaluator with candidate lineage and evidence refs.
+6. Synthesis: Synthesizer compares available Coder results, selects or merges a promotion candidate, preserves useful rejected ideas, and sends `synthesis-report` to Evaluator and Planner with candidate lineage and evidence refs; Planner's copy is context only.
 7. Evaluation: Evaluator checks correctness, anti-hacking, reproducibility, and promotion eligibility. Promotion eligibility requires `official-timing`; local checks and profiler output are supporting evidence only.
 8. Current-best update: Planner writes current-best state only when Evaluator sends accepted promotion evidence, records rejected evidence otherwise, and preserves useful context for later cycles.
 9. Tick, recovery, and control: generated tick work reconciles open assignments, retries eligible blockers, handles waiting-for-GPU wakeups, routes failure reports, and applies operator controls.
@@ -108,13 +108,13 @@ Templated participant mail uses `schema_id` as the loop-local mail type. Concret
 
 - `lead-code-synth-research.email.planning-cycle-start`: request for Planner to start or resume a planning cycle.
 - `lead-code-synth-research.email.optimization-assignment`: Planner assigns one bounded optimization direction to one Coder.
-- `lead-code-synth-research.email.coder-result`: Coder reports candidate evidence, local-check status, changed-file summary, blocker status, and next-step notes.
+- `lead-code-synth-research.email.coder-result`: Coder reports candidate evidence, `project-cli` variant id or variant directory ref, Coder workspace path, local-check status, changed-file summary, blocker status, and next-step notes to Synthesizer as the normal recipient.
 - `lead-code-synth-research.email.research-request`: Planner, Coder, or Synthesizer asks Researcher for reference-backed ideas, optionally narrowing the default source scope.
 - `lead-code-synth-research.email.research-summary`: Researcher returns source-backed ideas, source-scope notes, attribution, risk notes, and reusable patterns.
-- `lead-code-synth-research.email.synthesis-report`: Synthesizer submits selected or merged promotion candidate, lineage, merge notes, rejected changes, preserved ideas, and evidence refs.
+- `lead-code-synth-research.email.synthesis-report`: Synthesizer submits selected or merged promotion candidate, lineage, `project-cli` variant id or variant directory ref, workspace path, merge notes, rejected changes, preserved ideas, and evidence refs to Evaluator and Planner.
 - `lead-code-synth-research.email.evaluation-report`: Evaluator returns accepted or rejected promotion eligibility, `official-timing` provenance when accepted, and rejection reasons when rejected.
-- `lead-code-synth-research.email.failure-report`: a managed agent reports a non-GPU blocker after three failed retries or another unrecoverable blocker.
-- `lead-code-synth-research.email.gpu-wait-report`: a managed agent records no spare local GPU for a GPU-dependent local check or profiler call; this is a blocked-work report, not an in-chat wait.
+- `lead-code-synth-research.email.failure-report`: a managed agent reports a non-GPU blocker after three failed retries or another unrecoverable blocker to Planner only.
+- `lead-code-synth-research.email.gpu-wait-report`: a managed agent reports no spare local GPU for a GPU-dependent local check or profiler call to Planner only; this is a blocked-work report, not an in-chat wait.
 - `lead-code-synth-research.email.operator-intervention`: Human Operator sends stop, pause, resume, redirect, invalidate, force-new-cycle, or constraint updates. This family may remain freeform with high-priority handling where later contracts choose that shape.
 
 Non-mail records and artifacts:
@@ -128,27 +128,27 @@ Non-mail records and artifacts:
 
 - `planning-cycle-start` to Planner carries run id, cycle intent, operator constraints or trigger source, current-best state refs, and relevant history refs. When triggered by prior evaluation, it also carries the previous `evaluation-report` ref.
 - `optimization-assignment` to a Coder carries current-best refs, assignment id, cycle id, assigned direction, allowed edit surface, relevant failed-direction summary, evidence expectations, risk notes, and any selected research or profile refs.
-- `coder-result` to Synthesizer carries assignment id, candidate id when created, Coder workspace or variant refs, changed-file summary, commands run, local-check availability, local timing or correctness evidence, profile refs, blocker state, and recommended follow-up.
+- `coder-result` to Synthesizer carries assignment id, candidate id when created, `project-cli` variant id or variant directory ref, Coder workspace path, changed-file summary, commands run, local-check availability, local timing or correctness evidence, profile refs, blocker state, and recommended follow-up.
 - `research-request` to Researcher carries requester id, target kernel family, question, known failed attempts or bottleneck context, source-scope override when any, and requested output shape.
 - `research-summary` to requester carries request id, source scope used, local and network attribution, reusable implementation patterns, speculative ideas, applicability notes, and risk notes.
-- `synthesis-report` to Evaluator carries source Coder candidate ids, selected or merged candidate id, lineage, merge notes, rejected changes, preserved ideas, workspace or variant refs, and evidence bundle refs.
+- `synthesis-report` to Evaluator and Planner carries source Coder candidate ids, selected or merged candidate id, lineage, selected or merged `project-cli` variant id or variant directory ref, workspace path, merge notes, rejected changes, preserved ideas, and evidence bundle refs. Evaluator uses it for promotion review; Planner records it as next-cycle context only.
 - `evaluation-report` to Planner carries candidate id, accepted or rejected status, `official-timing` provenance when accepted, correctness and speedup evidence, anti-hacking review notes, rejection reasons when rejected, and recommended Planner follow-up.
 - `failure-report` to Planner carries assignment id, agent id, candidate id when applicable, blocker type, retry count, retry evidence, completed local checks or profiler work, and recommended Planner follow-up.
-- `gpu-wait-report` to Planner and the owning agent context carries assignment id, affected agent, attempted GPU selection evidence, blocked GPU-dependent action, and next wakeup need. It does not require a live wait inside the current turn.
+- `gpu-wait-report` to Planner carries assignment id, affected agent, attempted GPU selection evidence, blocked GPU-dependent action, and next wakeup need. The owning Coder slot status is recorded in generated state for later wakeup and Synthesizer queries; it does not require a live wait inside the current turn.
 - `operator-intervention` carries control action, target cycle or candidate refs when applicable, operator rationale when provided, and precedence over ordinary scheduling.
 
 ## Result Routing
 
 Because this is a `generic-loop`, replies and forwards use explicit route policy rather than local-close tree returns.
 
-- Coder results route to Synthesizer, with Planner receiving state refs or summaries when needed for cycle ownership.
+- Coder results route to Synthesizer only as routine mail. Planner visibility comes from generated state or run-artifact query surfaces, not duplicate Coder result mail.
 - Research summaries reply to the requester and may forward selected planning-relevant ideas to Planner when the requester is not Planner.
 - Profile reports return to the invoking agent as artifacts or structured evidence refs and may be attached to Coder, Synthesizer, Evaluator, or Planner records.
-- Synthesis reports route to Evaluator for promotion eligibility review and to Planner as next-cycle context.
+- Synthesis reports route to Evaluator for promotion eligibility review and to Planner as next-cycle context only. Planner cannot update current-best from a synthesis report.
 - Accepted evaluation reports route to Planner for current-best write authority.
 - Rejected evaluation reports route to Planner and Synthesizer for history, preserved ideas, and future planning context.
-- Failure reports route to Planner and, when candidate comparison is affected, to Synthesizer.
-- Waiting-for-GPU reports route to Planner and remain schedulable for later notifier or operator wakeup.
+- Failure reports route to Planner only. Synthesizer sees failed Coder slot status through generated state, not direct failure mail.
+- Waiting-for-GPU reports route to Planner only and remain schedulable for later notifier or operator wakeup. Synthesizer sees waiting-for-GPU slot status through generated state, not direct GPU-wait mail.
 - Operator interventions route to the generated operator-control surface and affected managed agents according to later contracts.
 
 ## Provisional State and Record Families
@@ -158,12 +158,12 @@ Because this is a `generic-loop`, replies and forwards use explicit route policy
 - Planning cycles: cycle id, cycle status, Planner owner, active Coder slots, issued directions, continuation decision, and historical refs.
 - Assignments: assignment id, owner Coder, direction, allowed edit surface, evidence expectations, status, retry count, waiting state, and result refs.
 - Attempts: bounded-attempt records for Coder work, commands run, local-check availability, spare-GPU selection evidence, failures, and stop point.
-- Candidates: candidate id, source workspace or variant refs, lineage, changed files, local evidence, profile refs, synthesis status, evaluation status, and current-best relationship.
+- Candidates: candidate id, source `project-cli` variant id or variant directory ref, source workspace path, lineage, changed files, local evidence, profile refs, synthesis status, evaluation status, and current-best relationship.
 - Current best: Planner-owned current-best state, previous-best comparison, accepted Evaluator evidence refs, `official-timing` provenance, and transition audit.
 - Research summaries: request id, source scope, local refs, network refs, idea classifications, risk notes, and downstream route refs.
 - Profile artifacts: request id, invoking agent, target candidate or workload, selected GPU evidence, metrics summary, bottleneck attribution, and artifact path.
 - Synthesis reports: selected or merged candidate, source Coder candidates, conflicts, rejected changes, preserved ideas, and evidence bundle refs.
-- Evaluation reports: candidate id, official timing command provenance, correctness status, speedup or latency summary, anti-hacking review, acceptance or rejection, and Planner action recommendation.
+- Evaluation reports: candidate id, evaluated `project-cli` variant id or variant directory ref, official timing command provenance, correctness status, speedup or latency summary, anti-hacking review, acceptance or rejection, and Planner action recommendation.
 - Retry and blocker records: non-GPU retry counters, three-retry failure reports, waiting-for-GPU records, malformed mail repair attempts, missing-ref repair attempts, and timeout evidence.
 - Operator intent events: stop, pause, resume, redirect, invalidate, force-new-cycle, mode switch, recovery action, and target refs.
 
@@ -177,7 +177,7 @@ Because this is a `generic-loop`, replies and forwards use explicit route policy
 - No spare local GPU produces a `waiting-for-GPU` state record and a `gpu-wait-report`; later notifier or operator wakeup retries GPU selection.
 - Non-GPU blockers retry up to three times, then produce `failure-report` with evidence and recommended Planner follow-up.
 - Unknown, malformed, freeform, or unsupported mail enters an explicit fallback or repair path in later contracts instead of being silently ignored.
-- Partial Coder availability is tolerated; Synthesizer may continue with available Coder results while Planner decides whether to wait, reassign, redirect, or preserve partial findings.
+- Partial Coder availability is tolerated; Synthesizer may query generated state for waiting or failed Coder slots and continue with available Coder results while Planner decides whether to wait, reassign, redirect, or preserve partial findings.
 - Recovery must preserve transition audit, evidence refs, assignment ids, candidate ids, and operator intent events.
 
 ## Process Pseudocode
@@ -218,7 +218,10 @@ def handle_event(event, state):
         return
 
     if event.schema_id == "lead-code-synth-research.email.synthesis-report":
-        evaluator_review_candidate(event, state)
+        if event.recipient == "Evaluator":
+            evaluator_review_candidate(event, state)
+        elif event.recipient == "Planner":
+            planner_record_synthesis_context(event, state)  # context only; no current-best write
         return
 
     if event.schema_id == "lead-code-synth-research.email.evaluation-report":
@@ -246,7 +249,7 @@ def coder_attempt_assignment(event, state):
     # Each Coder does one bounded attempt, then reports and stops.
     assignment = load_assignment(event.assignment_id)
     try:
-        candidate = implement_one_direction(assignment)
+        candidate = implement_one_direction(assignment)  # produces or updates a project-cli variant ref in the Coder workspace
         if assignment.needs_gpu_check:
             gpu = select_spare_local_gpu()
             if gpu is None:
@@ -275,9 +278,9 @@ def researcher_answer_request(event, state):
 def synthesizer_absorb_coder_result(event, state):
     # Synthesizer may proceed with available Coder evidence.
     record_coder_result(event.payload)
-    if has_sufficient_available_results(event.cycle_id):
-        candidate = select_or_merge_candidate(event.cycle_id)
-        send_mail("synthesis-report", to="Evaluator", payload=build_synthesis_report(candidate))
+    if has_sufficient_available_results(event.cycle_id, slot_state=query_coder_slot_state(event.cycle_id)):
+        candidate = select_or_merge_candidate(event.cycle_id)  # selected output carries a project-cli variant ref for Evaluator
+        send_mail("synthesis-report", to=["Evaluator", "Planner"], payload=build_synthesis_report(candidate))
     else:
         record_waiting_for_more_results(event.cycle_id)
 
@@ -290,6 +293,11 @@ def evaluator_review_candidate(event, state):
         send_mail("evaluation-report", to="Planner", payload=accepted_evidence(candidate, official))
     else:
         send_mail("evaluation-report", to="Planner", payload=rejection_evidence(candidate, official))
+
+
+def planner_record_synthesis_context(event, state):
+    # Planner records synthesis context for future cycles but cannot promote from it.
+    record_synthesis_context(event.payload)
 
 
 def planner_apply_evaluation(event, state):
@@ -343,7 +351,10 @@ sequenceDiagram
     Notifier-->>Synth: wake for coder-result mail
     Synth->>State: record synthesis lineage
     Synth->>Eval: synthesis-report
+    Synth->>Planner: synthesis-report context
     Notifier-->>Eval: wake for synthesis-report mail
+    Notifier-->>Planner: wake to record synthesis context only
+    Planner->>State: record synthesis context, no current-best write
     Eval->>State: record official-timing evidence
     Eval-->>Planner: evaluation-report
     Notifier-->>Planner: wake for evaluation-report mail

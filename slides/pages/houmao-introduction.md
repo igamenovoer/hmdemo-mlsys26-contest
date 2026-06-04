@@ -1268,13 +1268,13 @@ layout: section
 - **输入**：loop 目录、operator 对目标和参与者的描述。
 - **边界**：不做 project context 探测，也不进入 execplan 生成阶段。
 
-<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出文件</div>
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出与依赖</div>
 
-| 文件 | 作用 |
-| --- | --- |
-| `intention/README.md` | 最小 source 入口，说明 intention 目录是后续生成 execplan 的人工可编辑来源 |
-| `intention/loop-overview.md` | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
-| 不生成 `project-context.md` | 这个命令不扫描项目背景；需要项目事实时用 `init` 或后续手动补充 |
+| 文件 | 类型 | 作用 |
+| --- | --- | --- |
+| `intention/project-context.md` | 依赖 | 项目背景事实：repo 结构、可用命令、约束、已有约定和 workspace 假设 |
+| `intention/README.md` | 输出 | 最小 source 入口，说明 intention 目录是后续生成 execplan 的人工可编辑来源 |
+| `intention/loop-overview.md` | 输出 | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
 
 </div>
 
