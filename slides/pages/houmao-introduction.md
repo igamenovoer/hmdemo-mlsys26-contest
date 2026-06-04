@@ -1520,6 +1520,51 @@ layout: section
 
 ---
 
+# Authoring 产物总览
+
+<div class="text-[13px] leading-snug mt-4">
+
+Agent Loop Pro authoring 的核心产物，是把可编辑意图逐步转成可校验、可启动的 loop package。
+
+<div class="grid grid-cols-2 gap-3 mt-3">
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>intention/</code></div>
+    <div>operator 可编辑的意图来源：记录目标、项目背景、参与者、协作流程、通信方式、状态、workspace 和约束。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/specs/collab/</code></div>
+    <div>协作过程的权威说明：描述拓扑、生命周期、交接方式、mail 路由和控制姿态。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/specs/**</code></div>
+    <div>可验证的约束层：定义目标、参与者、通信 schema/renderers、状态表、workspace 策略和运行产物。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/harness/</code></div>
+    <div>这个 loop 自带的命令入口：提供 validate、query、render、apply、control，让 agents 统一读写状态。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/skills/</code></div>
+    <div>生成的 skills：把事件处理、角色 tick 和 operator 控制写成 agents 可加载的操作步骤。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/agents/</code></div>
+    <div>agent 绑定层：把 participant 映射到具体 agent id、profile、notifier prompt、memo seed、skills 和 workspace 策略。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/docs/</code> + <code>manifest.toml</code></div>
+    <div>给读者和 operator 的索引：说明 package 包含什么、如何运行、运行模型是什么、哪些 artifact 是权威来源。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.55rem 0.65rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.18rem;"><code>execplan/adrs/</code> + 校验结果</div>
+    <div>决策记录和一致性检查：记录关键取舍，并验证 specs、harness、skills、agents 是否相互匹配。</div>
+  </div>
+</div>
+
+</div>
+
+---
+
 # `init`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1583,14 +1628,20 @@ layout: section
 
 <div class="text-[14px] leading-snug mt-4">
 
-<div class="loop-example-grid">
-  <div class="loop-example-panel">
-    <div class="loop-example-label">You</div>
-    <div class="loop-example-code">read the paper teams/lead-code-synth-research/source/mlsys26-tech-report.pdf, we want to implement such a multi agent system</div>
+<div class="loop-example-grid loop-example-grid-half">
+  <div class="loop-example-stack">
+    <div class="loop-example-panel">
+      <div class="loop-example-label">You</div>
+      <div class="loop-example-code">read the paper teams/lead-code-synth-research/source/mlsys26-tech-report.pdf, we want to implement such a multi agent system</div>
+    </div>
+    <div class="loop-example-panel">
+      <div class="loop-example-label">AI</div>
+      <div class="loop-example-code">Created loop intent from the paper.<br><br>Updated loop-overview.md.<br>Added focused intent files:<br>- paper-notes.md<br>- participants.md<br>- workflow.md<br>- constraints.md<br><br>No execplan/ generated.</div>
+    </div>
   </div>
   <div class="loop-example-panel">
-    <div class="loop-example-label">AI</div>
-    <div class="loop-example-code">Created loop intent from the paper.<br><br>Updated loop-overview.md.<br>Added focused intent files:<br>- paper-notes.md<br>- participants.md<br>- workflow.md<br>- constraints.md<br><br>No execplan/ generated.</div>
+    <div class="loop-example-label">PDF Snapshot: Agent Structure</div>
+    <img src="../assets/mlsys26-agent-structure.png" class="w-full rounded border border-slate-300 bg-white object-contain" />
   </div>
 </div>
 
@@ -1805,14 +1856,20 @@ layout: section
 
 <div class="text-[14px] leading-snug mt-4">
 
-<div class="loop-example-grid">
-  <div class="loop-example-panel">
-    <div class="loop-example-label">You</div>
-    <div class="loop-example-code">execplan-harness</div>
+<div class="loop-example-grid loop-example-grid-half">
+  <div class="loop-example-stack">
+    <div class="loop-example-panel">
+      <div class="loop-example-label">You</div>
+      <div class="loop-example-code">execplan-harness</div>
+    </div>
+    <div class="loop-example-panel">
+      <div class="loop-example-label">AI</div>
+      <div class="loop-example-code">Generated harness stage:<br><br>- commands.toml<br>- bin/lead-code-synth-research-harness<br>- src/..._harness.py<br>- command-envelope.schema.json<br>- dependency-posture.toml<br><br>Smoke tests passed.</div>
+    </div>
   </div>
   <div class="loop-example-panel">
-    <div class="loop-example-label">AI</div>
-    <div class="loop-example-code">Generated harness stage:<br><br>- commands.toml<br>- bin/lead-code-synth-research-harness<br>- src/..._harness.py<br>- command-envelope.schema.json<br>- dependency-posture.toml<br><br>Smoke tests passed.</div>
+    <div class="loop-example-label">Generated Harness CLI</div>
+    <div class="loop-example-code loop-example-tree">lead-code-synth-research-harness<br>|-- self-check<br>|-- topology&nbsp;&nbsp; validate / query<br>|-- context&nbsp;&nbsp;&nbsp; validate / query<br>|-- email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; schema / validate / render / apply / query<br>|-- state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; init / validate / query / export<br>|-- record&nbsp;&nbsp;&nbsp;&nbsp; validate / apply<br>`-- control&nbsp;&nbsp; status / get-mode / set-mode / pause / resume / stop<br><br>核心能力：<br>- 校验 topology、context、state 和 mail payload<br>- 渲染 mail，并把 lifecycle facts 写入 sqlite state<br>- 给 agents 提供统一 query/control 入口</div>
   </div>
 </div>
 
@@ -1903,14 +1960,36 @@ layout: section
 
 <div class="text-[14px] leading-snug mt-4">
 
-<div class="loop-example-grid">
-  <div class="loop-example-panel">
-    <div class="loop-example-label">You</div>
-    <div class="loop-example-code">next</div>
+<div class="loop-example-grid loop-example-grid-half">
+  <div class="loop-example-stack">
+    <div class="loop-example-panel">
+      <div class="loop-example-label">You</div>
+      <div class="loop-example-code">next</div>
+    </div>
+    <div class="loop-example-panel">
+      <div class="loop-example-label">AI</div>
+      <div class="loop-example-code">Generated agent bindings:<br><br>- agents/bindings.toml<br>- six planned profile configs<br>- role definitions<br>- memo seeds<br>- notifier prompts<br><br>No live agents were launched.</div>
+    </div>
   </div>
-  <div class="loop-example-panel">
-    <div class="loop-example-label">AI</div>
-    <div class="loop-example-code">Generated agent bindings:<br><br>- agents/bindings.toml<br>- six planned profile configs<br>- role definitions<br>- memo seeds<br>- notifier prompts<br><br>No live agents were launched.</div>
+  <div class="loop-example-md loop-example-md-compact">
+    <h3>Binding Result</h3>
+    <table class="generated-skills-table">
+      <thead>
+        <tr>
+          <th>Participant</th>
+          <th>Agent / CLI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>planner</code></td><td><code>lcsr-planner</code> → Claude</td></tr>
+        <tr><td><code>cuda-coder-1</code></td><td><code>lcsr-cuda-coder-1</code> → Codex</td></tr>
+        <tr><td><code>cuda-coder-2</code></td><td><code>lcsr-cuda-coder-2</code> → Codex</td></tr>
+        <tr><td><code>synthesizer</code></td><td><code>lcsr-synthesizer</code> → Codex</td></tr>
+        <tr><td><code>researcher</code></td><td><code>lcsr-researcher</code> → Codex</td></tr>
+        <tr><td><code>evaluator</code></td><td><code>lcsr-evaluator</code> → Claude</td></tr>
+      </tbody>
+    </table>
+    <div class="loop-example-note">每一条 mapping 同时指向 profile config、definition、memo seed、notifier prompt 和 assigned skills。</div>
   </div>
 </div>
 
