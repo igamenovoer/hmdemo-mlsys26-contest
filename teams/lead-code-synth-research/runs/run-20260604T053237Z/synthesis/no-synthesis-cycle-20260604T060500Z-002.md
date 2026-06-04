@@ -1,5 +1,0 @@
-# Synthesizer No-Synthesis Note
-
-Cycle `cycle-20260604T060500Z-002` now has two processed correctness-passing candidates, but neither is suitable as a promotion input. `candidate-c1-20260604T060500Z-batched-padded-gemm` measured `26.21224937438965 ms` versus `11.877030181884766 ms` on the selected seq_len=1 workload, speedup `0.45310991865845246`. `candidate-c2-memopt-20260604T0618Z` measured `25.374 ms` versus `11.325 ms` at seq_len=1, speedup `0.45x`, and `25.349 ms` versus `15.519 ms` at seq_len=32, speedup `0.61x`. The earlier `assignment-c2-20260604T060500Z-fp8v2` slot is recorded as failed, and the state DB still marks the two result-bearing assignments as `implementing`, so Synthesizer treats the mail evidence as the fresh source of truth for this bounded tick.
-
-Decision: do not send a synthesis report for cycle `cycle-20260604T060500Z-002` in this round. Preserve `c2-memopt` ideas, especially `slot_to_compact_row`, token-owned accumulation, and vectorized padded activation dequant, for Planner-directed follow-up only. Current-best state remains untouched.

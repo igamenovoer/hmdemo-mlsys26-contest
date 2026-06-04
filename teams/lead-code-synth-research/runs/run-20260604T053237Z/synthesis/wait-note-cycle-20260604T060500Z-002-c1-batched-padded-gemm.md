@@ -1,3 +1,0 @@
-# Synthesizer Wait Note
-
-Cycle `cycle-20260604T060500Z-002` received `candidate-c1-20260604T060500Z-batched-padded-gemm` from `cuda-coder-1`. The candidate passes selected correctness, but its selected workload timing is slower than reference: `26.21224937438965 ms` versus `11.877030181884766 ms`, speedup `0.45310991865845246`. Coder-slot state showed `assignment-c2-20260604T060500Z-fp8v2` failed and a fresh sibling slot `assignment-c2-20260604T061500Z-memopt` still `implementing`, so available evidence is insufficient for a synthesis report. Preserve the c1 candidate as compile/runtime evidence only and wait for sibling evidence or blocker state before selecting a promotion input.

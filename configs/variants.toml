@@ -1,54 +1,6 @@
 version = 1
 default_template = "cuda-default"
 
-[variants.c1-batched-padded-gemm]
-language = "cuda"
-definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
-path = "cuda/c1-batched-padded-gemm"
-entry_point = "kernel.cu::kernel"
-binding = "tvm-ffi"
-destination_passing_style = true
-
-[variants.c1-bf16-tensor-gemm]
-language = "cuda"
-definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
-path = "cuda/c1-bf16-tensor-gemm"
-entry_point = "kernel.cu::kernel"
-binding = "tvm-ffi"
-destination_passing_style = true
-
-[variants.c1-conditional-bf16-gemm]
-language = "cuda"
-definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
-path = "cuda/c1-conditional-bf16-gemm"
-entry_point = "kernel.cu::kernel"
-binding = "tvm-ffi"
-destination_passing_style = true
-
-[variants.c2-memopt]
-language = "cuda"
-definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
-path = "cuda/c2-memopt"
-entry_point = "kernel.cu::kernel"
-binding = "tvm-ffi"
-destination_passing_style = true
-
-[variants.c2-routingfuse]
-language = "cuda"
-definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
-path = "cuda/c2-routingfuse"
-entry_point = "kernel.cu::kernel"
-binding = "tvm-ffi"
-destination_passing_style = true
-
-[variants.c2-tf32]
-language = "cuda"
-definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
-path = "cuda/c2-tf32"
-entry_point = "kernel.cu::kernel"
-binding = "tvm-ffi"
-destination_passing_style = true
-
 [variants.moe-base]
 language = "cuda"
 definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
