@@ -1,6 +1,6 @@
 # Generated execplan manifest for lead-code-synth-research.
 loop_slug = "lead-code-synth-research"
-plan_revision = "agent-bindings-stage-0001"
+plan_revision = "agent-bindings-stage-0002"
 generated_from = "teams/lead-code-synth-research/intention and execplan ADRs"
 current_stage = "execplan-agent-bindings"
 generated_source_posture = "execplan is generated operational material; intention and ADR files are editable source authority"
@@ -19,6 +19,11 @@ collab_records_dir = "omitted because topology, communication, and state contrac
 state_records_dir = "omitted because sqlite is the selected generated state authority for durable bookkeeping"
 platform_setup = "omitted because maintained Houmao skills own workspace, mailbox, gateway, launch, messaging, and inspection mechanics"
 runtime_execution = "omitted because prepare-agents, prepare-workspace, validate-loop, launch-agents, and start are later execution stages"
+
+[agent_runtime_skills]
+assignment = "all-managed-agents"
+root = "../../../skillset/runtime"
+names = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 
 [[artifacts]]
 path = "specs/collab/collab-overview.md"
@@ -191,121 +196,121 @@ kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/planner/config.toml"
+path = "agents/profiles/lcsr-planner/config.toml"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/planner/definition.md"
+path = "agents/profiles/lcsr-planner/definition.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/planner/memo-seed.md"
+path = "agents/profiles/lcsr-planner/memo-seed.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/cuda-coder-1/config.toml"
+path = "agents/profiles/lcsr-cuda-coder-1/config.toml"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/cuda-coder-1/definition.md"
+path = "agents/profiles/lcsr-cuda-coder-1/definition.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/cuda-coder-1/memo-seed.md"
+path = "agents/profiles/lcsr-cuda-coder-1/memo-seed.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/cuda-coder-2/config.toml"
+path = "agents/profiles/lcsr-cuda-coder-2/config.toml"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/cuda-coder-2/definition.md"
+path = "agents/profiles/lcsr-cuda-coder-2/definition.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/cuda-coder-2/memo-seed.md"
+path = "agents/profiles/lcsr-cuda-coder-2/memo-seed.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/synthesizer/config.toml"
+path = "agents/profiles/lcsr-synthesizer/config.toml"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/synthesizer/definition.md"
+path = "agents/profiles/lcsr-synthesizer/definition.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/synthesizer/memo-seed.md"
+path = "agents/profiles/lcsr-synthesizer/memo-seed.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/researcher/config.toml"
+path = "agents/profiles/lcsr-researcher/config.toml"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/researcher/definition.md"
+path = "agents/profiles/lcsr-researcher/definition.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/researcher/memo-seed.md"
+path = "agents/profiles/lcsr-researcher/memo-seed.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/evaluator/config.toml"
+path = "agents/profiles/lcsr-evaluator/config.toml"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/evaluator/definition.md"
+path = "agents/profiles/lcsr-evaluator/definition.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/profiles/evaluator/memo-seed.md"
+path = "agents/profiles/lcsr-evaluator/memo-seed.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/notifier-prompts/planner.md"
+path = "agents/notifier-prompts/lcsr-planner.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/notifier-prompts/cuda-coder-1.md"
+path = "agents/notifier-prompts/lcsr-cuda-coder-1.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/notifier-prompts/cuda-coder-2.md"
+path = "agents/notifier-prompts/lcsr-cuda-coder-2.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/notifier-prompts/synthesizer.md"
+path = "agents/notifier-prompts/lcsr-synthesizer.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/notifier-prompts/researcher.md"
+path = "agents/notifier-prompts/lcsr-researcher.md"
 kind = "agent-bindings"
 status = "current"
 
 [[artifacts]]
-path = "agents/notifier-prompts/evaluator.md"
+path = "agents/notifier-prompts/lcsr-evaluator.md"
 kind = "agent-bindings"
 status = "current"

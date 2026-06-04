@@ -1,20 +1,21 @@
 [agent]
 description = "Planned Houmao profile config for Evaluator."
-agent_id = "evaluator"
+agent_id = "lcsr-evaluator"
 participant_id = "evaluator"
 role_id = "evaluator"
-easy_profile = "evaluator"
+easy_profile = "lcsr-evaluator"
 
 [paths]
 definition = "definition.md"
 memo_seed = "memo-seed.md"
-notifier_prompt = "../../notifier-prompts/evaluator.md"
+notifier_prompt = "../../notifier-prompts/lcsr-evaluator.md"
 workspace_contract = "../../../specs/workspace/workspace.toml"
 harness_command = "../../../harness/bin/lead-code-synth-research-harness"
 
 [skills]
 install_mode = "project-local-source"
 generated = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-synthesis-report", "lead-code-synth-research-evaluator-tick"]
+project_runtime = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 system_skill_posture = "preinstalled-by-houmao-managed-agent"
 
 [mail]
@@ -23,7 +24,7 @@ schema_ids = ["lead-code-synth-research.email.synthesis-report"]
 after_mail_tick = "lead-code-synth-research-evaluator-tick"
 
 [workspace]
-policy_ref = "workspace.agents[agent_id=evaluator]"
-workspace_agent_name = "evaluator"
+policy_ref = "workspace.agents[agent_id=lcsr-evaluator]"
+workspace_agent_name = "lcsr-evaluator"
 launch_cwd_policy = "repo-root"
 source_mutation_surface = "none"

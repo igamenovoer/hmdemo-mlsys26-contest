@@ -28,9 +28,9 @@ required_fields = ["workspace_paths_distinct", "repo_roots_available", "agent_st
 
 [[workspace.agents]]
 description = "Planner workspace requirements."
-agent_id = "planner"
-workspace_agent_name = "planner"
-expected_role_profile = "planner"
+agent_id = "lcsr-planner"
+workspace_agent_name = "lcsr-planner"
+expected_role_profile = "lcsr-planner"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
@@ -39,9 +39,9 @@ read_write_policy = "planning-notes-cycle-state-current-best-records"
 
 [[workspace.agents]]
 description = "CUDA Coder 1 workspace requirements."
-agent_id = "cuda-coder-1"
-workspace_agent_name = "cuda-coder-1"
-expected_role_profile = "cuda-coder"
+agent_id = "lcsr-cuda-coder-1"
+workspace_agent_name = "lcsr-cuda-coder-1"
+expected_role_profile = "lcsr-cuda-coder-1"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
@@ -50,9 +50,9 @@ read_write_policy = "candidate-source-local-evidence-profiler-artifacts"
 
 [[workspace.agents]]
 description = "CUDA Coder 2 workspace requirements."
-agent_id = "cuda-coder-2"
-workspace_agent_name = "cuda-coder-2"
-expected_role_profile = "cuda-coder"
+agent_id = "lcsr-cuda-coder-2"
+workspace_agent_name = "lcsr-cuda-coder-2"
+expected_role_profile = "lcsr-cuda-coder-2"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
@@ -61,9 +61,9 @@ read_write_policy = "candidate-source-local-evidence-profiler-artifacts"
 
 [[workspace.agents]]
 description = "Synthesizer workspace requirements."
-agent_id = "synthesizer"
-workspace_agent_name = "synthesizer"
-expected_role_profile = "synthesizer"
+agent_id = "lcsr-synthesizer"
+workspace_agent_name = "lcsr-synthesizer"
+expected_role_profile = "lcsr-synthesizer"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
@@ -72,9 +72,9 @@ read_write_policy = "candidate-comparison-synthesis-reports-preserved-ideas"
 
 [[workspace.agents]]
 description = "Researcher workspace requirements."
-agent_id = "researcher"
-workspace_agent_name = "researcher"
-expected_role_profile = "researcher"
+agent_id = "lcsr-researcher"
+workspace_agent_name = "lcsr-researcher"
+expected_role_profile = "lcsr-researcher"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
@@ -83,9 +83,9 @@ read_write_policy = "research-notes-source-attribution-reference-summaries"
 
 [[workspace.agents]]
 description = "Evaluator workspace requirements."
-agent_id = "evaluator"
-workspace_agent_name = "evaluator"
-expected_role_profile = "evaluator"
+agent_id = "lcsr-evaluator"
+workspace_agent_name = "lcsr-evaluator"
+expected_role_profile = "lcsr-evaluator"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true

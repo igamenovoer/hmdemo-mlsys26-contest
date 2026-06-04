@@ -6,9 +6,9 @@ This generated directory contains planned profile material for the six managed a
 
 ## Contents
 
-- `planner/`: Planner planned profile material.
-- `cuda-coder-1/`: CUDA Coder 1 planned profile material.
-- `cuda-coder-2/`: CUDA Coder 2 planned profile material.
-- `synthesizer/`: Synthesizer planned profile material.
-- `researcher/`: Researcher planned profile material.
-- `evaluator/`: Evaluator planned profile material.
+- `lcsr-planner/`: Planner planned profile material.
+- `lcsr-cuda-coder-1/`: CUDA Coder 1 planned profile material.
+- `lcsr-cuda-coder-2/`: CUDA Coder 2 planned profile material.
+- `lcsr-synthesizer/`: Synthesizer planned profile material.
+- `lcsr-researcher/`: Researcher planned profile material.
+- `lcsr-evaluator/`: Evaluator planned profile material.

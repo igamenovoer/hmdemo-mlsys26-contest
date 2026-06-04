@@ -1,11 +1,15 @@
 # Generated planned agent bindings. Execution stages create or confirm live profiles later.
 loop_slug = "lead-code-synth-research"
-plan_revision = "agent-bindings-stage-0001"
+plan_revision = "agent-bindings-stage-0002"
 bindings_authority = "generated-intent-not-live-proof"
 workspace_contract = "../specs/workspace/workspace.toml"
 participant_contract = "../specs/participants/participants.toml"
 harness_command = "../harness/bin/lead-code-synth-research-harness"
-system_skill_preinstall_posture = "Houmao managed-agent creation preinstalls maintained system skills; generated bindings install loop-local generated skills only."
+system_skill_preinstall_posture = "Houmao managed-agent creation preinstalls maintained system skills; generated bindings install loop-local generated skills and declared project runtime skills."
+runtime_skill_root = "../../../../skillset/runtime"
+runtime_skill_assignment = "all-managed-agents"
+runtime_skill_names = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
+runtime_skill_sources = ["../../../../skillset/runtime/krnopt-cuda-coding", "../../../../skillset/runtime/krnopt-cuda-domain-optimization", "../../../../skillset/runtime/krnopt-cuda-generic-optimization", "../../../../skillset/runtime/krnopt-cuda-profiling", "../../../../skillset/runtime/krnopt-cuda-structural-optimization", "../../../../skillset/runtime/krnopt-hw-aware-optimization", "../../../../skillset/runtime/krnopt-low-precision-kernel-formats", "../../../../skillset/runtime/project-op-variant-comparison", "../../../../skillset/runtime/project-op-variant-profiling", "../../../../skillset/runtime/project-op-variant-validation"]
 profile_creation_stage = "prepare-agents"
 workspace_preparation_stage = "prepare-workspace"
 launch_stage = "launch-agents"
@@ -20,107 +24,113 @@ in_chat_waiting_allowed = false
 [[bindings]]
 description = "Planner binding."
 participant_id = "planner"
-agent_id = "planner"
-easy_profile = "planner"
+agent_id = "lcsr-planner"
+easy_profile = "lcsr-planner"
 role_id = "planner"
-profile_config = "profiles/planner/config.toml"
-definition = "profiles/planner/definition.md"
-memo_seed = "profiles/planner/memo-seed.md"
-notifier_prompt = "notifier-prompts/planner.md"
-workspace_policy = "workspace.agents[agent_id=planner]"
-workspace_agent_name = "planner"
+profile_config = "profiles/lcsr-planner/config.toml"
+definition = "profiles/lcsr-planner/definition.md"
+memo_seed = "profiles/lcsr-planner/memo-seed.md"
+notifier_prompt = "notifier-prompts/lcsr-planner.md"
+workspace_policy = "workspace.agents[agent_id=lcsr-planner]"
+workspace_agent_name = "lcsr-planner"
 launch_cwd_policy = "repo-root"
 mail_driven = true
 event_schema_ids = ["lead-code-synth-research.email.planning-cycle-start", "lead-code-synth-research.email.synthesis-report", "lead-code-synth-research.email.evaluation-report", "lead-code-synth-research.email.failure-report", "lead-code-synth-research.email.gpu-wait-report", "lead-code-synth-research.email.operator-intervention"]
 generated_skills = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-planning-cycle-start", "lead-code-synth-research-on-synthesis-report", "lead-code-synth-research-on-evaluation-report", "lead-code-synth-research-on-failure-report", "lead-code-synth-research-on-gpu-wait-report", "lead-code-synth-research-planner-tick", "lead-code-synth-research-operator-control"]
+project_runtime_skills = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 tick_skill = "lead-code-synth-research-planner-tick"
 
 [[bindings]]
 description = "CUDA Coder 1 binding."
 participant_id = "cuda-coder-1"
-agent_id = "cuda-coder-1"
-easy_profile = "cuda-coder"
+agent_id = "lcsr-cuda-coder-1"
+easy_profile = "lcsr-cuda-coder-1"
 role_id = "cuda-coder"
-profile_config = "profiles/cuda-coder-1/config.toml"
-definition = "profiles/cuda-coder-1/definition.md"
-memo_seed = "profiles/cuda-coder-1/memo-seed.md"
-notifier_prompt = "notifier-prompts/cuda-coder-1.md"
-workspace_policy = "workspace.agents[agent_id=cuda-coder-1]"
-workspace_agent_name = "cuda-coder-1"
+profile_config = "profiles/lcsr-cuda-coder-1/config.toml"
+definition = "profiles/lcsr-cuda-coder-1/definition.md"
+memo_seed = "profiles/lcsr-cuda-coder-1/memo-seed.md"
+notifier_prompt = "notifier-prompts/lcsr-cuda-coder-1.md"
+workspace_policy = "workspace.agents[agent_id=lcsr-cuda-coder-1]"
+workspace_agent_name = "lcsr-cuda-coder-1"
 launch_cwd_policy = "repo-root"
 mail_driven = true
 event_schema_ids = ["lead-code-synth-research.email.optimization-assignment", "lead-code-synth-research.email.research-summary"]
 generated_skills = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-optimization-assignment", "lead-code-synth-research-on-research-summary", "lead-code-synth-research-coder-tick"]
+project_runtime_skills = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 tick_skill = "lead-code-synth-research-coder-tick"
 
 [[bindings]]
 description = "CUDA Coder 2 binding."
 participant_id = "cuda-coder-2"
-agent_id = "cuda-coder-2"
-easy_profile = "cuda-coder"
+agent_id = "lcsr-cuda-coder-2"
+easy_profile = "lcsr-cuda-coder-2"
 role_id = "cuda-coder"
-profile_config = "profiles/cuda-coder-2/config.toml"
-definition = "profiles/cuda-coder-2/definition.md"
-memo_seed = "profiles/cuda-coder-2/memo-seed.md"
-notifier_prompt = "notifier-prompts/cuda-coder-2.md"
-workspace_policy = "workspace.agents[agent_id=cuda-coder-2]"
-workspace_agent_name = "cuda-coder-2"
+profile_config = "profiles/lcsr-cuda-coder-2/config.toml"
+definition = "profiles/lcsr-cuda-coder-2/definition.md"
+memo_seed = "profiles/lcsr-cuda-coder-2/memo-seed.md"
+notifier_prompt = "notifier-prompts/lcsr-cuda-coder-2.md"
+workspace_policy = "workspace.agents[agent_id=lcsr-cuda-coder-2]"
+workspace_agent_name = "lcsr-cuda-coder-2"
 launch_cwd_policy = "repo-root"
 mail_driven = true
 event_schema_ids = ["lead-code-synth-research.email.optimization-assignment", "lead-code-synth-research.email.research-summary"]
 generated_skills = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-optimization-assignment", "lead-code-synth-research-on-research-summary", "lead-code-synth-research-coder-tick"]
+project_runtime_skills = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 tick_skill = "lead-code-synth-research-coder-tick"
 
 [[bindings]]
 description = "Synthesizer binding."
 participant_id = "synthesizer"
-agent_id = "synthesizer"
-easy_profile = "synthesizer"
+agent_id = "lcsr-synthesizer"
+easy_profile = "lcsr-synthesizer"
 role_id = "synthesizer"
-profile_config = "profiles/synthesizer/config.toml"
-definition = "profiles/synthesizer/definition.md"
-memo_seed = "profiles/synthesizer/memo-seed.md"
-notifier_prompt = "notifier-prompts/synthesizer.md"
-workspace_policy = "workspace.agents[agent_id=synthesizer]"
-workspace_agent_name = "synthesizer"
+profile_config = "profiles/lcsr-synthesizer/config.toml"
+definition = "profiles/lcsr-synthesizer/definition.md"
+memo_seed = "profiles/lcsr-synthesizer/memo-seed.md"
+notifier_prompt = "notifier-prompts/lcsr-synthesizer.md"
+workspace_policy = "workspace.agents[agent_id=lcsr-synthesizer]"
+workspace_agent_name = "lcsr-synthesizer"
 launch_cwd_policy = "repo-root"
 mail_driven = true
 event_schema_ids = ["lead-code-synth-research.email.coder-result", "lead-code-synth-research.email.research-summary"]
 generated_skills = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-coder-result", "lead-code-synth-research-on-research-summary", "lead-code-synth-research-synthesizer-tick"]
+project_runtime_skills = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 tick_skill = "lead-code-synth-research-synthesizer-tick"
 
 [[bindings]]
 description = "Researcher binding."
 participant_id = "researcher"
-agent_id = "researcher"
-easy_profile = "researcher"
+agent_id = "lcsr-researcher"
+easy_profile = "lcsr-researcher"
 role_id = "researcher"
-profile_config = "profiles/researcher/config.toml"
-definition = "profiles/researcher/definition.md"
-memo_seed = "profiles/researcher/memo-seed.md"
-notifier_prompt = "notifier-prompts/researcher.md"
-workspace_policy = "workspace.agents[agent_id=researcher]"
-workspace_agent_name = "researcher"
+profile_config = "profiles/lcsr-researcher/config.toml"
+definition = "profiles/lcsr-researcher/definition.md"
+memo_seed = "profiles/lcsr-researcher/memo-seed.md"
+notifier_prompt = "notifier-prompts/lcsr-researcher.md"
+workspace_policy = "workspace.agents[agent_id=lcsr-researcher]"
+workspace_agent_name = "lcsr-researcher"
 launch_cwd_policy = "repo-root"
 mail_driven = true
 event_schema_ids = ["lead-code-synth-research.email.research-request"]
 generated_skills = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-research-request", "lead-code-synth-research-researcher-tick"]
+project_runtime_skills = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 tick_skill = "lead-code-synth-research-researcher-tick"
 
 [[bindings]]
 description = "Evaluator binding."
 participant_id = "evaluator"
-agent_id = "evaluator"
-easy_profile = "evaluator"
+agent_id = "lcsr-evaluator"
+easy_profile = "lcsr-evaluator"
 role_id = "evaluator"
-profile_config = "profiles/evaluator/config.toml"
-definition = "profiles/evaluator/definition.md"
-memo_seed = "profiles/evaluator/memo-seed.md"
-notifier_prompt = "notifier-prompts/evaluator.md"
-workspace_policy = "workspace.agents[agent_id=evaluator]"
-workspace_agent_name = "evaluator"
+profile_config = "profiles/lcsr-evaluator/config.toml"
+definition = "profiles/lcsr-evaluator/definition.md"
+memo_seed = "profiles/lcsr-evaluator/memo-seed.md"
+notifier_prompt = "notifier-prompts/lcsr-evaluator.md"
+workspace_policy = "workspace.agents[agent_id=lcsr-evaluator]"
+workspace_agent_name = "lcsr-evaluator"
 launch_cwd_policy = "repo-root"
 mail_driven = true
 event_schema_ids = ["lead-code-synth-research.email.synthesis-report"]
 generated_skills = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-synthesis-report", "lead-code-synth-research-evaluator-tick"]
+project_runtime_skills = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 tick_skill = "lead-code-synth-research-evaluator-tick"

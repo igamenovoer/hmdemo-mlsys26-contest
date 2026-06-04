@@ -1345,18 +1345,16 @@ layout: section
 - **定位**：先定义协作过程，作为后续 artifact 的 process authority。
 - **输入**：intention 中的目标、参与者、事件、handoff 和 recovery 设想。
 - **边界**：关注 phase、event、tick、handoff 和伪代码，不生成具体 agent 绑定。
-
-<div class="mt-3 rounded border border-slate-300 px-3 py-2 text-[12px] leading-tight">
-核心文件：`execplan/specs/collab/collab-overview.md`，第一个 generated authority。
-</div>
+- **输出**：`execplan/specs/collab/collab-overview.md`，第一个 generated authority。
 
 <div class="option-side-title" style="margin: 0.55rem 0 0.3rem; padding-bottom: 0.16rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 0.95rem; font-weight: 700; line-height: 1.15;">`collab-overview.md` key sections</div>
 
 | 分组 | 目的 |
 | --- | --- |
-| process boundary | 定义 scope、topology/cycle posture、ownership 和 execution mode，划清 loop 边界 |
-| work movement | 定义 phases、events、handoffs、mail/result routing，以及 pseudocode/sequenceDiagram |
-| control posture | 定义 on-event/on-tick、terminal/recovery posture 和 unresolved decisions |
+| scope boundary | 说清这个 loop 做什么、不做什么，避免后续 artifact 扩大范围 |
+| topology model | 说清参与者如何协作，谁负责什么，以及整体运行模式 |
+| event flow | 说清工作如何从触发、交接、流转到下一步状态 |
+| runtime contract | 说清 mail 如何驱动 agent，以及 operator 如何控制、恢复和结束 run |
 
 </div>
 
@@ -1600,66 +1598,19 @@ layout: section
 
 ---
 
-# `status`
+# Runtime Control Commands
 
-<div class="text-[15px] leading-snug mt-5">
+<div class="text-[14px] leading-snug mt-5">
 
-- **定位**：只读查看 loop 当前运行状态。
-- **输入**：run id、runtime state、agent liveness、mailbox 和 harness status。
-- **输出**：phase、open events、pending mail、agent 状态和最近 artifact 更新。
-- **边界**：不修改 state，不发送 prompt，不触发 agent 行动。
+`start` 之后的 execution commands 主要是 runtime control surface，用来观察、暂停、恢复、修复和结束一次 run。
 
-</div>
-
----
-
-# `pause`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：暂停 loop 的自动推进或 wakeup 姿态。
-- **输入**：run id、当前 scheduling/notifier 状态。
-- **输出**：paused state、暂停原因和恢复提示。
-- **边界**：暂停 loop 控制面，不等同于杀掉 agents 或删除 workspace。
-
-</div>
-
----
-
-# `resume`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：从 paused state 恢复 loop 推进。
-- **输入**：run id、resume intent、必要的 repaired state。
-- **输出**：恢复后的 scheduling/notifier 状态，以及下一步触发计划。
-- **边界**：只恢复已经可恢复的 loop，不掩盖仍然存在的 validation 问题。
-
-</div>
-
----
-
-# `recover`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：处理中断、部分 handoff、失败 setup 或 runtime posture 不一致。
-- **输入**：run artifacts、agent state、mailbox state、harness logs 和 operator 的恢复选择。
-- **输出**：recovery plan、修复后的 state、必要的 replay 或 manual handoff。
-- **边界**：恢复应保守推进，避免重复触发已经完成的关键动作。
-
-</div>
-
----
-
-# `stop`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：停止 loop 的运行和相关 managed agents。
-- **输入**：run id、stop mode、需要保留的 artifacts 和 cleanup 策略。
-- **输出**：stopped state、agent stop report、剩余 artifacts 和后续清理建议。
-- **边界**：停止 live runtime，不删除历史 run artifacts，除非 contract 明确要求。
+| command | 作用 |
+| --- | --- |
+| `status` | 只读查看 phase、open events、pending mail、agent 状态和最近 artifact 更新 |
+| `pause` | 暂停自动推进或 notifier wakeup 姿态，保留 agents、workspace 和 run artifacts |
+| `resume` | 从 paused state 恢复推进，并给出下一步触发计划 |
+| `recover` | 处理中断、部分 handoff、失败 setup 或 runtime posture 不一致 |
+| `stop` | 停止 loop runtime 和相关 managed agents，同时保留历史 run artifacts |
 
 </div>
 

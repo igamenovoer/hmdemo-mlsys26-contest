@@ -11,3 +11,4 @@ This generated directory records accepted clarification decisions about generate
 - `0003-gpu-wait-reports-route-to-planner.md`: accepted decision for GPU wait report routing and Synthesizer slot-status visibility.
 - `0004-failure-reports-route-to-planner.md`: accepted decision for non-GPU failure report routing and Synthesizer slot-status visibility.
 - `0005-synthesis-reports-route-to-evaluator-and-planner.md`: accepted decision for `synthesis-report` routing and Planner context-only handling.
+- `0006-lcsr-agent-names-and-runtime-skills.md`: accepted decision for concrete `lcsr-*` agent names and project runtime skill assignment.

@@ -1,20 +1,21 @@
 [agent]
 description = "Planned Houmao profile config for Researcher."
-agent_id = "researcher"
+agent_id = "lcsr-researcher"
 participant_id = "researcher"
 role_id = "researcher"
-easy_profile = "researcher"
+easy_profile = "lcsr-researcher"
 
 [paths]
 definition = "definition.md"
 memo_seed = "memo-seed.md"
-notifier_prompt = "../../notifier-prompts/researcher.md"
+notifier_prompt = "../../notifier-prompts/lcsr-researcher.md"
 workspace_contract = "../../../specs/workspace/workspace.toml"
 harness_command = "../../../harness/bin/lead-code-synth-research-harness"
 
 [skills]
 install_mode = "project-local-source"
 generated = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-research-request", "lead-code-synth-research-researcher-tick"]
+project_runtime = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 system_skill_posture = "preinstalled-by-houmao-managed-agent"
 
 [mail]
@@ -23,7 +24,7 @@ schema_ids = ["lead-code-synth-research.email.research-request"]
 after_mail_tick = "lead-code-synth-research-researcher-tick"
 
 [workspace]
-policy_ref = "workspace.agents[agent_id=researcher]"
-workspace_agent_name = "researcher"
+policy_ref = "workspace.agents[agent_id=lcsr-researcher]"
+workspace_agent_name = "lcsr-researcher"
 launch_cwd_policy = "repo-root"
 source_mutation_surface = "none"
