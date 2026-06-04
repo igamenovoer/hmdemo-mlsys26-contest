@@ -30,10 +30,9 @@
 - The README lists tracks for fused MoE, sparse attention, and gated delta net; this repo is currently configured for a fused MoE FP8 block-scale definition.
 - Default unit and integration checks should avoid GPU or dataset dependency; GPU and dataset dependent timing belongs in explicit benchmark paths.
 - Generated `solution.json`, `.pixi/`, `tmp/`, and ignored external checkouts should not be committed.
-- This loop root already contains `source/mlsys26-tech-report.pdf`; its intended role in the loop is not yet specified.
+- This loop root contains `source/mlsys26-tech-report.pdf`, which is the design seed for the intended Houmao multi-agent optimization loop.
 
 ## Open Questions
 
-- UNRESOLVED - The loop objective, participants, operating model, and acceptance criteria were not provided during init.
-- UNRESOLVED - Whether `source/mlsys26-tech-report.pdf` should seed the loop's research agenda, be summarized first, or be treated as reference-only.
+- UNRESOLVED - The exact first implementation scope is not yet chosen: active Fused MoE only, all contest kernels, or a reusable framework that starts with Fused MoE.
 - UNRESOLVED - Whether the loop will need managed agent workspaces, live gateway/mail routing, local GPU access, Modal access, or only offline execplan authoring.
