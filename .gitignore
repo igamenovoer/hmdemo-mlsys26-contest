@@ -14,6 +14,9 @@ slides/*.pdf
 .codex-home/
 .claude-home/
 
+# Generated Houmao loop runs
+teams/lead-code-synth-research/runs/
+
 # CUDA build artifacts
 *.o
 *.obj

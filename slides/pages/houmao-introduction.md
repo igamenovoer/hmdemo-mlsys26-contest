@@ -1520,6 +1520,39 @@ layout: section
 
 ---
 
+# 为什么 Agent Loop 能工作？
+
+<div class="text-[14px] leading-snug mt-4">
+
+Agent Loop Pro 不是生成一个“总控大脑”，而是生成一组松耦合的运行约束：事件如何定义、agent 遇到事件时怎么做、状态如何可靠读写、协作记录放在哪里。
+
+<div class="grid grid-cols-2 gap-4 mt-4">
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.7rem 0.8rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;">1. on-event skill 定义行为</div>
+    <div>mail schema 定义“发生了什么事件”；对应的 on-event skill 像 callback functions，规定 agent 收到这类 mail 后应该读什么、做什么、回什么。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.7rem 0.8rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;">2. houmao-memo.md 提供轻量记忆</div>
+    <div>memo 记录任务相关细节、临时策略和 operator 给出的行为指令。它不是长期知识库，而是当前任务里让 agent 不忘关键上下文的轻量 memory。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.7rem 0.8rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;">3. harness 负责可靠读写</div>
+    <div>agent 不直接猜状态文件怎么改，而是通过 harness 做 validate、query、render、apply、control。这样状态更新和 schema 校验有统一入口。</div>
+  </div>
+  <div style="border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; padding: 0.7rem 0.8rem;">
+    <div style="font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;">4. mailbox 是主通信通道</div>
+    <div>mailbox 可以表达点对点、广播、汇总、转发、等待回复等通信模式；同时它也是任务记录的最后兜底，保留谁在什么时候交付了什么。</div>
+  </div>
+</div>
+
+<div class="mt-4 rounded border border-slate-300 bg-white px-4 py-3 text-[13px] text-slate-700">
+  <code>mail schema</code> 定义事件，<code>on-event skill</code> 定义响应，<code>houmao-memo.md</code> 保持局部记忆，<code>harness</code> 保证读写可靠，<code>mailbox</code> 串起协作和记录。
+</div>
+
+</div>
+
+---
+
 # Authoring 产物总览
 
 <div class="text-[13px] leading-snug mt-4">
