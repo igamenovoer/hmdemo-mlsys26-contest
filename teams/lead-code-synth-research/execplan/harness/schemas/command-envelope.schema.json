@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead-code-synth-research.harness.command-envelope",
+  "title": "Harness Command Envelope",
+  "type": "object",
+  "required": ["success", "command", "loop_slug", "plan_revision", "data", "diagnostics", "warnings"],
+  "properties": {
+    "success": { "type": "boolean" },
+    "command": { "type": "string" },
+    "loop_slug": { "const": "lead-code-synth-research" },
+    "run_id": { "type": ["string", "null"] },
+    "plan_revision": { "type": "string" },
+    "data": { "type": ["object", "array", "string", "number", "boolean", "null"] },
+    "diagnostics": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

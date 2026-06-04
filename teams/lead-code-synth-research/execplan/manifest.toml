@@ -1,14 +1,14 @@
 # Generated execplan manifest for lead-code-synth-research.
 loop_slug = "lead-code-synth-research"
-plan_revision = "contract-stage-0001"
+plan_revision = "harness-stage-0001"
 generated_from = "teams/lead-code-synth-research/intention and execplan ADRs"
-current_stage = "execplan-specs-contract"
+current_stage = "execplan-harness"
 generated_source_posture = "execplan is generated operational material; intention and ADR files are editable source authority"
 
 [stage_status]
 process = "current"
 contracts = "current"
-harness = "not_generated"
+harness = "current"
 skills = "not_generated"
 agent_bindings = "not_generated"
 final_docs = "not_generated"
@@ -78,4 +78,24 @@ status = "current"
 [[artifacts]]
 path = "specs/run/run-artifacts.toml"
 kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "harness/commands.toml"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "harness/bin/lead-code-synth-research-harness"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "harness/src/lead_code_synth_research_harness.py"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "harness/schemas/command-envelope.schema.json"
+kind = "harness"
 status = "current"

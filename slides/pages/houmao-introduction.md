@@ -1242,7 +1242,7 @@ layout: section
 
 # `init`
 
-<div class="text-[14px] leading-snug mt-4">
+<div class="text-[15px] leading-snug mt-5">
 
 - **定位**：为一个新 agent loop 创建可编辑的 source 区域。
 - **输入**：loop 目录、operator 的初始目标、可选 project context。
@@ -1252,7 +1252,6 @@ layout: section
 
 | 文件 | 作用 |
 | --- | --- |
-| `intention/README.md` | intention source 的入口说明，告诉后续 authoring step 应该读哪些文件、哪些内容可以人工编辑 |
 | `intention/loop-overview.md` | loop 的核心意图：目标、参与者、协作流程、handoff、open questions |
 | `intention/project-context.md` | 当前项目的背景事实：repo 结构、可用命令、约束、已有约定和 workspace 假设 |
 
@@ -1272,7 +1271,6 @@ layout: section
 
 | 文件 | 作用 |
 | --- | --- |
-| `intention/README.md` | 最小 source 入口，说明 intention 目录是后续生成 execplan 的人工可编辑来源 |
 | `intention/loop-overview.md` | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
 
 </div>
@@ -1311,7 +1309,7 @@ layout: section
 
 | 文件组 | 作用 |
 | --- | --- |
-| `execplan/README.md`、子目录 `README.md`、`manifest.toml` | package shell 和索引：说明有哪些 generated artifacts、哪些默认层被省略 |
+| `execplan/manifest.toml` | package 索引：说明有哪些 generated artifacts、哪些默认层被省略 |
 | `execplan/specs/**` | generated authority：process model、contracts、schema、topology、state/workspace/run 约束 |
 | `execplan/harness/**`、`execplan/skills/**`、`execplan/agents/**` | 可执行表面：命令入口、agent 可用 skills、participant 到具体 agent 的绑定 |
 | `execplan/docs/**` | 给 operator 读的支持文档，只总结和链接 authoritative artifacts |
@@ -1342,33 +1340,23 @@ layout: section
 
 # `execplan-specs-process`
 
-<div class="text-[15px] leading-snug mt-5">
+<div class="text-[13px] leading-tight mt-3">
 
 - **定位**：先定义协作过程，作为后续 artifact 的 process authority。
 - **输入**：intention 中的目标、参与者、事件、handoff 和 recovery 设想。
 - **边界**：关注 phase、event、tick、handoff 和伪代码，不生成具体 agent 绑定。
 
-<div class="option-side-title" style="margin: 0.7rem 0 0.35rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1rem; font-weight: 700; line-height: 1.2;">核心文件</div>
-
-| 文件 | 作用 |
-| --- | --- |
-| `execplan/specs/collab/collab-overview.md` | 第一个 generated authority：定义 phases、events、handoffs、tick responsibilities、ownership、terminal posture、recovery posture |
-| fenced `python` pseudocode | 把 process 写成接近可执行的流程，标出条件、动作、state effects 和 stopping points |
-| fenced `mermaid` sequenceDiagram | 给人看的高层协作图，说明主要 participant/event/handoff flow |
-| provisional families | 在 process 层预告 participant、message、state、记录 families，供 contracts 阶段细化 |
-
-<div class="option-side-title" style="margin: 0.7rem 0 0.35rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1rem; font-weight: 700; line-height: 1.2;">`collab-overview.md` key sections</div>
-
-<div class="grid grid-cols-2 gap-x-5 gap-y-1 text-[13px] leading-snug">
-
-- scope / topology mode / cycle posture
-- phases / events / handoffs or exchanges
-- on-event / on-tick responsibilities
-- participant ownership / execution mode
-- mail family outline / result routing
-- terminal posture / recovery posture / unresolved decisions
-
+<div class="mt-3 rounded border border-slate-300 px-3 py-2 text-[12px] leading-tight">
+核心文件：`execplan/specs/collab/collab-overview.md`，第一个 generated authority。
 </div>
+
+<div class="option-side-title" style="margin: 0.55rem 0 0.3rem; padding-bottom: 0.16rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 0.95rem; font-weight: 700; line-height: 1.15;">`collab-overview.md` key sections</div>
+
+| 分组 | 目的 |
+| --- | --- |
+| process boundary | 定义 scope、topology/cycle posture、ownership 和 execution mode，划清 loop 边界 |
+| work movement | 定义 phases、events、handoffs、mail/result routing，以及 pseudocode/sequenceDiagram |
+| control posture | 定义 on-event/on-tick、terminal/recovery posture 和 unresolved decisions |
 
 </div>
 
@@ -1428,7 +1416,6 @@ layout: section
 
 | 文件组 | 作用 |
 | --- | --- |
-| `execplan/skills/README.md` | 说明 generated skill collection 的用途和内容 |
 | `<loop-slug>-shared-harness/SKILL.md` | 统一说明 agents 如何使用 generated harness、contracts 和 structured outputs |
 | `<loop-slug>-<role>-on-<message-family>/SKILL.md` | 处理一个具体 `schema_id` 或 event family，做一个 bounded action 后结束 |
 | `<loop-slug>-<role>-tick/`、`<loop-slug>-operator-control/` | 调度/恢复/完成检查，以及 operator 的 status、pause、resume、stop、manual step 等控制 |
@@ -1470,7 +1457,6 @@ layout: section
 
 | 文件组 | 作用 |
 | --- | --- |
-| `execplan/README.md`、各目录 `README.md` | orientation docs，只说明 Purpose 和 Contents，不放 authoritative behavior |
 | `execplan/manifest.toml` | final artifact index：路径、artifact kind、plan revision、generated-source posture、omissions |
 | `execplan/docs/artifact-index.md` | 给人快速查 package 里有什么，每个 artifact 去哪里读 |
 | `operator-guide.md`、`runtime-model.md`、`validation.md` | 总结如何操作、runtime 如何被 notifier/mail/skills 驱动、validation posture 是什么 |
@@ -1491,7 +1477,7 @@ layout: section
 
 | 文件组 | 检查什么 |
 | --- | --- |
-| `manifest.toml`、目录 `README.md` | package 是否可索引、路径是否存在、omission 是否被记录 |
+| `manifest.toml` | package 是否可索引、路径是否存在、omission 是否被记录 |
 | `execplan/specs/**` | process authority、contracts、topology、comms、state、workspace、run 是否一致 |
 | `harness/**`、`skills/**`、`agents/**` | command registry、generated skills、agent bindings 是否符合约定且互相引用正确 |
 | validation report | 报告缺失文件、parse/link failures、stale markers 和是否可进入 execution preparation |

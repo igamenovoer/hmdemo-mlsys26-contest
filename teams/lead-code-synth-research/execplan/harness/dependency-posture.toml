@@ -1,0 +1,12 @@
+# Dependency posture for the generated harness.
+[python]
+description = "The generated harness imports click, jinja2, and jsonschema for command grouping, renderer execution, and JSON Schema validation."
+posture = "environment-provided"
+import_check = "python -c \"import click, jinja2, jsonschema\""
+checked_interpreter = "current python on generation host"
+checked_result = "imports ok"
+
+[recovery]
+description = "Guidance if a runtime interpreter lacks generated harness dependencies."
+missing_dependency_message = "Install the missing package into the Python environment running this harness, or run through the Python environment associated with the installed Houmao uv tool."
+helpful_checks = ["uv tool list --show-paths --show-python", "uv tool install --force houmao"]
