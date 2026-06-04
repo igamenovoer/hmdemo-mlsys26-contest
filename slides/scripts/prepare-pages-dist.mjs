@@ -5,7 +5,7 @@ const base = '/hmdemo-mlsys26-contest/'
 const dist = path.resolve('dist')
 const indexPath = path.join(dist, 'index.html')
 
-const normalizer = `<script>(function(){var base='${base}';var legacy='#'+base;if(location.hash.indexOf(legacy)===0){location.replace(base+'#/'+location.hash.slice(legacy.length)+location.search);return}if(location.pathname.indexOf(base)===0&&location.pathname!==base&&!location.hash){var rest=location.pathname.slice(base.length);if(rest.charAt(rest.length-1)==='/')rest=rest.slice(0,-1);if(rest)location.replace(base+'#/'+rest+location.search)}})();</script>`
+const normalizer = `<script>(function(){var base='${base}';var legacy='#'+base;function normalize(){if(location.hash.indexOf(legacy)===0){location.replace(base+'#/'+location.hash.slice(legacy.length)+location.search);return true}if(location.pathname.indexOf(base)===0&&location.pathname!==base&&!location.hash){var rest=location.pathname.slice(base.length);if(rest.charAt(rest.length-1)==='/')rest=rest.slice(0,-1);if(rest){location.replace(base+'#/'+rest+location.search);return true}}return false}normalize();addEventListener('hashchange',normalize)})();</script>`
 
 const indexHtml = fs.readFileSync(indexPath, 'utf8')
 const patchedHtml = indexHtml.includes("var legacy='#'+base")
@@ -22,6 +22,14 @@ if (!indexAsset)
   throw new Error('Could not find built Slidev index asset')
 
 const bundle = fs.readFileSync(path.join(dist, 'assets', indexAsset), 'utf8')
+const routePathNeedle = `return\`${base}\${`
+const patchedBundle = bundle.replace(routePathNeedle, 'return`/${')
+
+if (patchedBundle === bundle)
+  throw new Error('Could not patch Slidev getSlidePath base prefix')
+
+fs.writeFileSync(path.join(dist, 'assets', indexAsset), patchedBundle)
+
 const slideNumbers = [...bundle.matchAll(/\bno:(\d+)\b/g)].map(match => Number(match[1]))
 const slideCount = Math.max(...slideNumbers)
 
