@@ -1,0 +1,60 @@
+# Run artifact contract.
+[run_artifacts]
+description = "Durable artifacts for each generated loop run."
+root = "teams/lead-code-synth-research/runs/<run-id>"
+preserve_mail_payloads = true
+preserve_rendered_mail = true
+preserve_send_or_reply_responses = true
+preserve_state_snapshots = true
+preserve_logs = true
+secret_policy = "Run artifacts may record sudo-backed NCU command shape and permission status, but must never include the NCU_ROOT_PW value."
+
+[[directories]]
+description = "Validated outgoing and received payload material."
+path = "payloads"
+contents = ["toml_payloads", "json_payloads", "validation_results"]
+
+[[directories]]
+description = "Rendered participant mail bodies."
+path = "rendered-mail"
+contents = ["markdown_render_outputs"]
+
+[[directories]]
+description = "Generated state snapshots and state export material."
+path = "state"
+contents = ["sqlite_database", "state_exports", "invariant_reports"]
+
+[[directories]]
+description = "Candidate implementation and evidence refs."
+path = "candidates"
+contents = ["candidate_manifests", "changed_file_summaries", "project_cli_variant_refs"]
+
+[[directories]]
+description = "Local check and profiling evidence."
+path = "evidence"
+contents = ["local_check_summaries", "profile_refs", "command_provenance"]
+
+[[directories]]
+description = "Official timing and evaluation evidence."
+path = "official-timing"
+contents = ["official_timing_outputs", "correctness_status", "speedup_or_latency_summary"]
+
+[[directories]]
+description = "Researcher outputs and source-scope notes."
+path = "research"
+contents = ["research_summaries", "source_attribution", "downloaded_reference_refs"]
+
+[[directories]]
+description = "Synthesizer reports and preserved ideas."
+path = "synthesis"
+contents = ["synthesis_reports", "lineage_notes", "preserved_ideas"]
+
+[[directories]]
+description = "Evaluator reports and anti-hacking review."
+path = "evaluation"
+contents = ["evaluation_reports", "rejection_evidence", "promotion_evidence"]
+
+[[directories]]
+description = "Operator controls and intervention audit."
+path = "operator"
+contents = ["operator_intent_events", "mode_changes", "stop_pause_resume_records"]

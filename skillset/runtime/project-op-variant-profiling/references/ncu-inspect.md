@@ -4,36 +4,49 @@ Set up and run a project variant under Nsight Compute. Delegate counter selectio
 
 ## Boundary
 
-| This Subskill Does | `krnopt-cuda-profiling` Does |
-|---|---|
-| Create or reuse a small local dataset. | Decide profiler sections, counters, and drill-downs. |
-| Pack the variant solution JSON. | Interpret NCU/NSYS reports. |
-| Pick an idle GPU. | Attribute bottlenecks to source. |
-| Find and run `ncu`. | Produce profiling diagnosis. |
-| Save report artifacts. | Guide follow-up profiling passes. |
+- This subskill creates or reuses a small local dataset; `krnopt-cuda-profiling` decides profiler sections, counters, and drill-downs.
+- This subskill packs the variant solution JSON; `krnopt-cuda-profiling` interprets NCU/NSYS reports.
+- This subskill picks an idle GPU; `krnopt-cuda-profiling` attributes bottlenecks to source.
+- This subskill finds and runs `ncu`; `krnopt-cuda-profiling` produces profiling diagnosis.
+- This subskill saves report artifacts; `krnopt-cuda-profiling` guides follow-up profiling passes.
 
 ## Steps
 
-| Step | Action |
-|---:|---|
-| 1 | Use `official-timing` to create or reuse a one-workload result directory. |
-| 2 | Check idle GPUs. |
-| 3 | Verify `pixi run -e cu130 ncu` resolves to a working NCU. |
-| 4 | Create `<result-dir>/ncu`. |
-| 5 | Run NCU inside the Pixi environment for the selected workload. |
-| 6 | Save command, logs, and `.ncu-rep` paths. |
-| 7 | Hand off to `krnopt-cuda-profiling`. |
+1. Use `official-timing` to create or reuse a one-workload result directory.
+2. Check idle GPUs.
+3. Verify `pixi run -e cu130 ncu` resolves to a working NCU.
+4. Create `<result-dir>/ncu`.
+5. Run NCU inside the Pixi environment for the selected workload.
+6. Save command, logs, and `.ncu-rep` paths.
+7. Hand off to `krnopt-cuda-profiling`.
 
 ## Probes
 
-| Need | Command |
-|---|---|
-| GPU state | `nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits` |
-| NCU in Pixi | `pixi run -e cu130 bash -lc 'command -v ncu; ncu --version 2>&1 | head -5'` |
-| NCU on host | `command -v ncu || true` |
-| NCU under CUDA_HOME | `find "${CUDA_HOME:-}" -type f -name ncu 2>/dev/null | head -5` |
+- GPU state: `nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits`
+- NCU in Pixi: `pixi run -e cu130 bash -lc 'command -v ncu; ncu --version 2>&1 | head -5'`
+- NCU on host: `command -v ncu || true`
+- NCU under CUDA_HOME: `find "${CUDA_HOME:-}" -type f -name ncu 2>/dev/null | head -5`
 
 Use bare `ncu` inside Pixi when the Pixi probe resolves to a working binary. If it is unavailable or fails because injection libraries are missing, try another discovered NCU path. If privileged counters are blocked, follow local machine policy and never print secrets.
+
+## Privileged NCU
+
+Some local machines require sudo for Nsight Compute counters. When NCU reports a permission or privileged-counter failure, read the sudo password only from the `NCU_ROOT_PW` environment variable. Never print `NCU_ROOT_PW`, never include its value in mail, state, command summaries, shell traces, logs, or artifacts, and never write it into Houmao profile defaults.
+
+Before a sudo-backed NCU retry, validate that `NCU_ROOT_PW` is present and that sudo accepts it:
+
+```bash
+test -n "${NCU_ROOT_PW:-}" || { echo "NCU_ROOT_PW is not set"; exit 126; }
+printf '%s\n' "$NCU_ROOT_PW" | sudo -S -p '' -v
+```
+
+If sudo is needed for the NCU process itself, keep the same NCU arguments and use `sudo -S -p '' -E` without echoing the password:
+
+```bash
+printf '%s\n' "$NCU_ROOT_PW" | sudo -S -p '' -E ncu ...
+```
+
+If `NCU_ROOT_PW` is missing, sudo rejects it, or local policy still blocks counters, record a permission-failure profiler status and follow the loop retry or blocker-report policy instead of waiting in chat.
 
 ## Run NCU
 
@@ -70,12 +83,10 @@ That wrapper order can block until timeout because NCU is profiling the Pixi lau
 
 ## Handoff
 
-| Field | Include |
-|---|---|
-| Command | Exact NCU command and whether Pixi or direct host execution was used. |
-| Target | GPU id, variant id/path, solution JSON path. |
-| Workload | Dataset root, category, definition, UUID, axes. |
-| Artifacts | `.ncu-rep`, `.out`, and any logs under `<result-dir>/ncu`. |
-| Status | Captured kernels, no-match, launch failure, or permission failure. |
+- Command: Exact NCU command and whether Pixi or direct host execution was used.
+- Target: GPU id, variant id/path, solution JSON path.
+- Workload: Dataset root, category, definition, UUID, axes.
+- Artifacts: `.ncu-rep`, `.out`, and any logs under `<result-dir>/ncu`.
+- Status: Captured kernels, no-match, launch failure, or permission failure.
 
 Next step: load `krnopt-cuda-profiling` with these artifacts for detailed analysis.

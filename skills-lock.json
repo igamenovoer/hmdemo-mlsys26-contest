@@ -43,6 +43,114 @@
       "skillPath": "skills/copywriting/SKILL.md",
       "computedHash": "d3191c3ad90610e0cacecf638d927418852264fabbd6e81c045094dad7d96f11"
     },
+    "houmao-adv-usage-pattern": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-adv-usage-pattern/SKILL.md",
+      "computedHash": "a353dd2c4ac2b5f2f6a8e26b46781fec637ba4fd4ab294ab987ea43b77e31bad"
+    },
+    "houmao-agent-definition": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-definition/SKILL.md",
+      "computedHash": "c136a79595099f82138ff0e2ad7b3f1a82cf340017d7a6eaf7990c9f96d3ccfe"
+    },
+    "houmao-agent-email-comms": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-email-comms/SKILL.md",
+      "computedHash": "e4bbde8951194d78d634551b2e21b43ba7d231bc9c089fe1ae8bae4641965ba6"
+    },
+    "houmao-agent-gateway": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-gateway/SKILL.md",
+      "computedHash": "50da53dec2d1685456bbe72aa58a49a97690f113fc91ba070cceb48aea17e055"
+    },
+    "houmao-agent-inspect": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-inspect/SKILL.md",
+      "computedHash": "0bb01c970eab5f403ecefcdc1bfc629f670cacc21dd949f431f79bf3bb506bc4"
+    },
+    "houmao-agent-instance": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-instance/SKILL.md",
+      "computedHash": "862330aa0bd753b8141fa92db8767c6446ed74356eb72823f3d0a4887f945166"
+    },
+    "houmao-agent-loop-lite": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-loop-lite/SKILL.md",
+      "computedHash": "85f6abc7fc7789cd1d8dd6e9d5aeba971a1fbc46091bc466c59d56d712d9723f"
+    },
+    "houmao-agent-loop-pro": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-loop-pro/SKILL.md",
+      "computedHash": "a971c22f6a4b842ce47f2c14408d3d9bc0b6ec7caa9b4bfa16a9b6566a77291c"
+    },
+    "houmao-agent-messaging": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-agent-messaging/SKILL.md",
+      "computedHash": "afb6d9f30bfded488e65f111efd56f459270fec666ea5dc1ac706a6377f290ca"
+    },
+    "houmao-credential-mgr": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-credential-mgr/SKILL.md",
+      "computedHash": "1d0f3379dac423e239ba91e43330a7d8377e1d477923e831d3fdc5f1d85daaf0"
+    },
+    "houmao-mailbox-mgr": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-mailbox-mgr/SKILL.md",
+      "computedHash": "410ac04f2235f3965631b4242ca35be5bb56768a0cf8831c4ab4676a7864c921"
+    },
+    "houmao-memory-mgr": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-memory-mgr/SKILL.md",
+      "computedHash": "a2827aea3ef959c7465f391c5641453c67ac79f86806db053f8924f8f3199710"
+    },
+    "houmao-operator-messaging": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-operator-messaging/SKILL.md",
+      "computedHash": "45c1cbb86a28a66163b285c5690f363cab23ce4f85a3f063b65c3abe005b1eca"
+    },
+    "houmao-process-emails-via-gateway": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-process-emails-via-gateway/SKILL.md",
+      "computedHash": "71689bd54724d0f0caba942f5629ec54b89be3e2fceba90356b710118540f138"
+    },
+    "houmao-project-mgr": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-project-mgr/SKILL.md",
+      "computedHash": "c90a1474fc09acb0888d4c5cb438fae5d42eec20c679d843984a3c321e923755"
+    },
+    "houmao-specialist-mgr": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-specialist-mgr/SKILL.md",
+      "computedHash": "bdf5938b1b0c6aa37843423e368d6f6d4397bd12b33bf9b097ca1222b7f8a020"
+    },
+    "houmao-touring": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-touring/SKILL.md",
+      "computedHash": "b9b029f98e2dd0fbb6892a13cb0130914aa6b045c7dac659acaa6cfbcae9566c"
+    },
+    "houmao-utils-workspace-mgr": {
+      "source": "igamenovoer/tool-skills",
+      "sourceType": "github",
+      "skillPath": "houmao/houmao-utils-workspace-mgr/SKILL.md",
+      "computedHash": "6f133936b51e28a31e8453e8f0205c55d04f75ee49d66d0b49c447bc5bf5a0f1"
+    },
     "image": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -60,6 +168,12 @@
       "sourceType": "github",
       "skillPath": "skills/product-marketing/SKILL.md",
       "computedHash": "2fe9e9093e385345d17e0e77d032d68015417c37ceffeb5fb34fc761c46c94a0"
+    },
+    "slidev": {
+      "source": "slidevjs/slidev",
+      "sourceType": "github",
+      "skillPath": "skills/slidev/SKILL.md",
+      "computedHash": "a495cfada5d3b29c66c2fbbccb4ef9887d6b12bd7e440d100deea89e529c1a7b"
     },
     "social": {
       "source": "coreyhaines31/marketingskills",

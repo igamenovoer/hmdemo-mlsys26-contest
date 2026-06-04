@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import sys
+
+_HARNESS_ROOT = Path(__file__).resolve().parents[1]
+_SRC = _HARNESS_ROOT / "src"
+_VENDOR = _HARNESS_ROOT / "vendor"
+
+if _VENDOR.exists():
+    sys.path.insert(0, str(_VENDOR))
+sys.path.insert(0, str(_SRC))
+
+from lead_code_synth_research_harness import main
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,42 @@
+[agent]
+description = "Planned Houmao profile config for Synthesizer."
+agent_id = "lcsr-synthesizer"
+participant_id = "synthesizer"
+role_id = "synthesizer"
+easy_profile = "lcsr-synthesizer"
+
+[cli]
+tool = "codex_official"
+command = "codex"
+credential_name = "codex-pro"
+credential_posture = "official-subscription"
+secret_storage = "external-to-execplan"
+
+[paths]
+definition = "definition.md"
+memo_seed = "memo-seed.md"
+notifier_prompt = "../../notifier-prompts/lcsr-synthesizer.md"
+workspace_contract = "../../../specs/workspace/workspace.toml"
+harness_command = "../../../harness/bin/lead-code-synth-research-harness"
+
+[skills]
+install_mode = "project-local-source"
+generated = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-coder-result", "lead-code-synth-research-on-research-summary", "lead-code-synth-research-synthesizer-tick"]
+project_runtime = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
+system_skill_posture = "preinstalled-by-houmao-managed-agent"
+
+[privileged_tools]
+ncu_may_require_sudo = true
+sudo_password_env = "NCU_ROOT_PW"
+secret_policy = "read only when NCU requires sudo; never print or persist the env value"
+
+[mail]
+mail_driven = true
+schema_ids = ["lead-code-synth-research.email.coder-result", "lead-code-synth-research.email.research-summary"]
+after_mail_tick = "lead-code-synth-research-synthesizer-tick"
+
+[workspace]
+policy_ref = "workspace.agents[agent_id=lcsr-synthesizer]"
+workspace_agent_name = "lcsr-synthesizer"
+launch_cwd_policy = "repo-root"
+source_mutation_surface = "none"

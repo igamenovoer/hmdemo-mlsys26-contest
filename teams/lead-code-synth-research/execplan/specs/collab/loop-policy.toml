@@ -1,0 +1,58 @@
+# Collaboration policy derived from the process overview.
+topology_mode = "generic-loop"
+terminal_authority = "human-operator-stop"
+
+[cycle]
+description = "Planning cycle policy."
+cycle_id_required = true
+ordinary_coder_slots = ["cuda-coder-1", "cuda-coder-2"]
+max_assignments_per_cycle = 2
+planner_reissue_same_direction_requires_new_context = true
+synthesizer_may_continue_with_partial_results = true
+
+[routing]
+description = "High-level result routing policy."
+coder_result_normal_recipient = "synthesizer"
+coder_result_planner_visibility = "state-or-run-artifact-query"
+gpu_wait_report_recipient = "planner"
+gpu_wait_synthesizer_visibility = "state-query"
+failure_report_recipient = "planner"
+failure_synthesizer_visibility = "state-query"
+synthesis_report_recipients = ["evaluator", "planner"]
+synthesis_report_planner_authority = "context-only"
+evaluation_report_recipient = "planner"
+
+[promotion]
+description = "Promotion and current-best authority."
+promotion_gate = "official-timing"
+promotion_evidence_writer = "evaluator"
+current_best_writer = "planner"
+synthesizer_can_promote = false
+evaluator_can_write_current_best = false
+
+[retry]
+description = "Retry and blocker policy."
+non_gpu_retry_limit = 3
+retry_in_chat_waiting_allowed = false
+after_retry_limit = "failure-report-to-planner"
+
+[gpu]
+description = "GPU capacity policy."
+selection = "dynamic-spare-local-gpu"
+hardcoded_gpu_id_allowed = false
+no_spare_gpu_state = "waiting-for-GPU"
+no_spare_gpu_mail = "gpu-wait-report"
+retry_after_later_wakeup = true
+
+[control]
+description = "Run control policy."
+initial_execution_mode = "auto"
+manual_mode_is_pause = false
+manual_stop_only_terminal = true
+operator_actions = ["stop", "pause", "resume", "redirect", "invalidate", "force-new-cycle", "mode-switch", "recover"]
+
+[tick]
+description = "Prompt-triggered tick policy."
+periodic_background_worker = false
+one_bounded_pass_per_prompt = true
+responsibilities = ["retry_one_eligible_non_gpu_blocker", "retry_one_waiting_for_gpu_if_woken", "reconcile_one_open_route_or_timeout", "apply_operator_controls"]

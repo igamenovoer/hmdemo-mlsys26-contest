@@ -1,0 +1,49 @@
+# Deterministic seed contract for state initialization.
+[seed]
+description = "Initial generated state values before start sends the first trigger."
+run_state = "not_started"
+execution_mode = "auto"
+plan_revision = "contract-stage-0001"
+operator_stop_requested = false
+
+[[participants]]
+participant_id = "planner"
+role_id = "planner"
+managed_agent = true
+workspace_required = true
+mailbox_required = true
+
+[[participants]]
+participant_id = "cuda-coder-1"
+role_id = "cuda-coder"
+managed_agent = true
+workspace_required = true
+mailbox_required = true
+
+[[participants]]
+participant_id = "cuda-coder-2"
+role_id = "cuda-coder"
+managed_agent = true
+workspace_required = true
+mailbox_required = true
+
+[[participants]]
+participant_id = "synthesizer"
+role_id = "synthesizer"
+managed_agent = true
+workspace_required = true
+mailbox_required = true
+
+[[participants]]
+participant_id = "researcher"
+role_id = "researcher"
+managed_agent = true
+workspace_required = true
+mailbox_required = true
+
+[[participants]]
+participant_id = "evaluator"
+role_id = "evaluator"
+managed_agent = true
+workspace_required = true
+mailbox_required = true

@@ -1,0 +1,48 @@
+# Notifier prompt and trigger contract. Concrete agent bindings are generated later.
+[notifier]
+description = "Mail notifier prompts wake agents for one bounded mail event and optional follow-up tick."
+default_execution_mode = "auto"
+manual_mode_posture = "suspend-or-disable-loop-notifier-wakeups; operator prompts one bounded participant turn"
+in_chat_waiting_allowed = false
+
+[[participant_prompts]]
+description = "Planner notifier contract."
+participant_id = "planner"
+mail_schema_ids = ["lead-code-synth-research.email.planning-cycle-start", "lead-code-synth-research.email.synthesis-report", "lead-code-synth-research.email.evaluation-report", "lead-code-synth-research.email.failure-report", "lead-code-synth-research.email.gpu-wait-report", "lead-code-synth-research.email.operator-intervention"]
+after_mail_tick = "lead-code-synth-research-planner-tick"
+bounded_turn = true
+
+[[participant_prompts]]
+description = "CUDA Coder notifier contract."
+participant_id = "cuda-coder-1"
+mail_schema_ids = ["lead-code-synth-research.email.optimization-assignment", "lead-code-synth-research.email.research-summary"]
+after_mail_tick = "lead-code-synth-research-coder-tick"
+bounded_turn = true
+
+[[participant_prompts]]
+description = "CUDA Coder notifier contract."
+participant_id = "cuda-coder-2"
+mail_schema_ids = ["lead-code-synth-research.email.optimization-assignment", "lead-code-synth-research.email.research-summary"]
+after_mail_tick = "lead-code-synth-research-coder-tick"
+bounded_turn = true
+
+[[participant_prompts]]
+description = "Synthesizer notifier contract."
+participant_id = "synthesizer"
+mail_schema_ids = ["lead-code-synth-research.email.coder-result", "lead-code-synth-research.email.research-summary"]
+after_mail_tick = "lead-code-synth-research-synthesizer-tick"
+bounded_turn = true
+
+[[participant_prompts]]
+description = "Researcher notifier contract."
+participant_id = "researcher"
+mail_schema_ids = ["lead-code-synth-research.email.research-request"]
+after_mail_tick = "lead-code-synth-research-researcher-tick"
+bounded_turn = true
+
+[[participant_prompts]]
+description = "Evaluator notifier contract."
+participant_id = "evaluator"
+mail_schema_ids = ["lead-code-synth-research.email.synthesis-report"]
+after_mail_tick = "lead-code-synth-research-evaluator-tick"
+bounded_turn = true

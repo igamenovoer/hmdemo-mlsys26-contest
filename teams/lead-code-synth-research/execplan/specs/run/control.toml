@@ -1,0 +1,67 @@
+# Loop control contract.
+[control]
+description = "Run lifecycle and execution mode control for this generated loop."
+default_run_state = "not_started"
+default_execution_mode = "auto"
+manual_is_pause = false
+terminal_run_state = "stopped"
+terminal_authority = "human-operator-stop"
+
+[control.run_state]
+description = "Allowed durable run lifecycle states."
+values = ["not_started", "running", "paused", "recovering", "stopped"]
+completed_omitted_reason = "The loop has no automatic success completion condition."
+
+[control.execution_mode]
+description = "Allowed wakeup authority modes."
+values = ["auto", "manual"]
+auto_notifier_posture = "notifier prompts are normal wakeup path"
+manual_notifier_posture = "notifier wakeups for this loop are suspended or disabled; operator prompts one bounded participant turn"
+
+[[operator_actions]]
+description = "Stop the loop."
+action = "stop"
+allowed_from = ["not_started", "running", "paused", "recovering"]
+result_run_state = "stopped"
+
+[[operator_actions]]
+description = "Pause normal progress."
+action = "pause"
+allowed_from = ["running", "recovering"]
+result_run_state = "paused"
+
+[[operator_actions]]
+description = "Resume a paused loop."
+action = "resume"
+allowed_from = ["paused"]
+result_run_state = "running"
+
+[[operator_actions]]
+description = "Change Planner priorities or abandon stale directions."
+action = "redirect"
+allowed_from = ["running", "paused", "recovering"]
+result_run_state = "unchanged"
+
+[[operator_actions]]
+description = "Mark candidate or evidence invalid."
+action = "invalidate"
+allowed_from = ["running", "paused", "recovering"]
+result_run_state = "unchanged"
+
+[[operator_actions]]
+description = "Ask Planner to start a new cycle from current-best and history."
+action = "force-new-cycle"
+allowed_from = ["running", "paused", "recovering"]
+result_run_state = "running"
+
+[[operator_actions]]
+description = "Switch execution mode."
+action = "mode-switch"
+allowed_from = ["not_started", "running", "paused", "recovering"]
+result_run_state = "unchanged"
+
+[[operator_actions]]
+description = "Enter or continue recovery."
+action = "recover"
+allowed_from = ["running", "paused", "recovering"]
+result_run_state = "recovering"

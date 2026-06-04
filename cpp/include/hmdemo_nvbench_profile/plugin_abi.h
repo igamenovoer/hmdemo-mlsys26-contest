@@ -6,7 +6,9 @@
 extern "C" {
 #endif
 
+#ifndef DLPACK_DLPACK_H_
 typedef struct DLTensor DLTensor;
+#endif
 
 #define HM_PROFILE_PLUGIN_ABI_VERSION 1
 #define HM_PROFILE_PLUGIN_ADAPTER_TVM_FFI_MOE "tvm-ffi-moe"

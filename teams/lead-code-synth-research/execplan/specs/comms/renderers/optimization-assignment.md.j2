@@ -1,0 +1,37 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+cycle_id = "{{ payload.cycle_id }}"
+assignment_id = "{{ payload.assignment_id }}"
+```
+
+# Optimization Assignment
+
+## Context
+
+- Cycle id: {{ payload.cycle_id }}
+- Assignment id: {{ payload.assignment_id }}
+- Coder slot: {{ payload.coder_slot }}
+- Current best ref: {{ payload.current_best_ref }}
+- Allowed edit surface: {{ payload.allowed_edit_surface | join(', ') }}
+- Failed direction summary: {{ payload.failed_direction_summary | default('none') }}
+
+## Direction
+
+{{ payload.direction }}
+
+## Evidence Expectations
+
+{% for item in payload.evidence_expectations %}- {{ item }}
+{% endfor %}
+
+## Requested Action
+
+Implement one bounded attempt in the assigned workspace, run local checks on a dynamically selected spare local GPU when available, produce or update a `project-cli` variant ref, send `coder-result` to Synthesizer or a blocker report to Planner, then stop.

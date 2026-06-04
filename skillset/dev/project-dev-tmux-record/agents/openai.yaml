@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Dev Tmux Record"
+  short_description: "Use this repo's tmux recorder"
+  default_prompt: "Use $project-dev-tmux-record to record a tmux session for project debugging."

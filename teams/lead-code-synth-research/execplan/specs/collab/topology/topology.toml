@@ -1,0 +1,152 @@
+# Generic-loop topology contract.
+[topology]
+description = "Directed generic-loop topology with parallel Coder branches and explicit result routing."
+mode = "generic-loop"
+terminal_authority = "human-operator-stop"
+direct_cycles_allowed = true
+tree_local_close_policy = "not-applicable"
+
+[cycle_control]
+description = "Generic-loop cycle control and dedupe posture."
+cycle_id_required = true
+assignment_id_required = true
+candidate_id_required = true
+repeat_participant_visits_allowed = true
+repeat_same_payload_without_new_context = "recovery-or-validation-concern"
+dedupe_keys = ["cycle_id", "assignment_id", "candidate_id", "payload_id", "schema_id"]
+
+[[nodes]]
+description = "Human control participant."
+node_id = "human-operator"
+kind = "human"
+
+[[nodes]]
+description = "Planner managed agent."
+node_id = "planner"
+kind = "managed-agent"
+
+[[nodes]]
+description = "First CUDA Coder managed agent."
+node_id = "cuda-coder-1"
+kind = "managed-agent"
+
+[[nodes]]
+description = "Second CUDA Coder managed agent."
+node_id = "cuda-coder-2"
+kind = "managed-agent"
+
+[[nodes]]
+description = "Synthesizer managed agent."
+node_id = "synthesizer"
+kind = "managed-agent"
+
+[[nodes]]
+description = "Researcher managed agent."
+node_id = "researcher"
+kind = "managed-agent"
+
+[[nodes]]
+description = "Evaluator managed agent."
+node_id = "evaluator"
+kind = "managed-agent"
+
+[[nodes]]
+description = "Profiler generated tool surface."
+node_id = "profiler-tool"
+kind = "tool-surface"
+
+[[routes]]
+description = "Operator control and start trigger to Planner."
+route_id = "operator-to-planner"
+from = "human-operator"
+to = "planner"
+message_families = ["planning-cycle-start", "operator-intervention"]
+result_policy = "planner-records-control-or-starts-cycle"
+
+[[routes]]
+description = "Planner assigns work to CUDA Coder 1."
+route_id = "planner-to-coder-1"
+from = "planner"
+to = "cuda-coder-1"
+message_families = ["optimization-assignment"]
+result_policy = "coder-result-to-synthesizer-or-blocker-report-to-planner"
+
+[[routes]]
+description = "Planner assigns work to CUDA Coder 2."
+route_id = "planner-to-coder-2"
+from = "planner"
+to = "cuda-coder-2"
+message_families = ["optimization-assignment"]
+result_policy = "coder-result-to-synthesizer-or-blocker-report-to-planner"
+
+[[routes]]
+description = "CUDA Coder 1 reports candidate result to Synthesizer."
+route_id = "coder-1-to-synthesizer"
+from = "cuda-coder-1"
+to = "synthesizer"
+message_families = ["coder-result"]
+result_policy = "synthesizer-records-and-may-synthesize"
+
+[[routes]]
+description = "CUDA Coder 2 reports candidate result to Synthesizer."
+route_id = "coder-2-to-synthesizer"
+from = "cuda-coder-2"
+to = "synthesizer"
+message_families = ["coder-result"]
+result_policy = "synthesizer-records-and-may-synthesize"
+
+[[routes]]
+description = "Managed agents request research support."
+route_id = "requester-to-researcher"
+from = "planner|cuda-coder-1|cuda-coder-2|synthesizer"
+to = "researcher"
+message_families = ["research-request"]
+result_policy = "research-summary-to-requester"
+
+[[routes]]
+description = "Researcher replies to requester."
+route_id = "researcher-to-requester"
+from = "researcher"
+to = "planner|cuda-coder-1|cuda-coder-2|synthesizer"
+message_families = ["research-summary"]
+result_policy = "reply-to-requester-and-optionally-forward-planning-relevance-to-planner"
+
+[[routes]]
+description = "Synthesizer submits promotion candidate to Evaluator."
+route_id = "synthesizer-to-evaluator"
+from = "synthesizer"
+to = "evaluator"
+message_families = ["synthesis-report"]
+result_policy = "evaluation-report-to-planner"
+
+[[routes]]
+description = "Synthesizer sends context-only report to Planner."
+route_id = "synthesizer-to-planner-context"
+from = "synthesizer"
+to = "planner"
+message_families = ["synthesis-report"]
+result_policy = "planner-records-context-only"
+
+[[routes]]
+description = "Evaluator reports accepted or rejected promotion evidence to Planner."
+route_id = "evaluator-to-planner"
+from = "evaluator"
+to = "planner"
+message_families = ["evaluation-report"]
+result_policy = "planner-current-best-write-only-if-accepted"
+
+[[routes]]
+description = "Blocker reports route to Planner."
+route_id = "coder-blocker-to-planner"
+from = "cuda-coder-1|cuda-coder-2"
+to = "planner"
+message_families = ["failure-report", "gpu-wait-report"]
+result_policy = "planner-recovers-or-defers"
+
+[[tool_routes]]
+description = "Managed agents invoke profiler tool surface without mail to a Profiler agent."
+route_id = "managed-agent-to-profiler-tool"
+from = "planner|cuda-coder-1|cuda-coder-2|synthesizer|evaluator"
+to = "profiler-tool"
+record_families = ["profile-request", "profile-report"]
+result_policy = "profile-report-artifact-to-invoking-agent"

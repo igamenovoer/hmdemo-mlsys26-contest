@@ -1,0 +1,473 @@
+# Generated execplan manifest for lead-code-synth-research.
+loop_slug = "lead-code-synth-research"
+plan_revision = "cli-credential-assignment-stage-0002"
+generated_from = "teams/lead-code-synth-research/intention and execplan ADRs"
+current_stage = "clarify-execplan"
+generated_source_posture = "execplan is generated operational material; intention and ADR files are editable source authority"
+generated_date = "2026-06-04"
+generated_with = "houmao-agent-loop-pro clarify-execplan cli-credential-assignment"
+scaffold_profile = "execplan-finalize-docs"
+
+[stage_status]
+process = "current"
+contracts = "current"
+harness = "current"
+skills = "current"
+agent_bindings = "current"
+final_docs = "current"
+
+[finalization]
+description = "Final generated support docs and metadata for operator review."
+support_docs = ["docs/artifact-index.md", "docs/operator-guide.md", "docs/runtime-model.md", "docs/validation.md"]
+validate_execplan_next = "$houmao-agent-loop-pro validate-execplan teams/lead-code-synth-research"
+platform_side_effects = "none"
+
+[omissions]
+description = "Default layers intentionally omitted at the contract stage."
+collab_records_dir = "omitted because topology, communication, and state contracts carry route and record authority"
+state_records_dir = "omitted because sqlite is the selected generated state authority for durable bookkeeping"
+platform_setup = "omitted because maintained Houmao skills own workspace, mailbox, gateway, launch, messaging, and inspection mechanics"
+runtime_execution = "omitted because prepare-agents, prepare-workspace, validate-loop, launch-agents, and start are later execution stages"
+profile_subdir_readmes = "omitted because profile subdirectories are indexed by agents/bindings.toml plus config.toml, definition.md, and memo-seed.md"
+gpu_dataset_checks = "omitted from default execplan validation because official timing and GPU benchmarking are runtime evaluation work"
+
+[agent_runtime_skills]
+assignment = "all-managed-agents"
+root = "../../../skillset/runtime"
+names = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
+
+[agent_cli_assignment]
+description = "Planned CLI launch distribution for the six managed lcsr-* agents."
+policy = "use-both-cli-tools"
+credential_boundary = "record credential display names and posture only; do not store subscription tokens or API keys in execplan artifacts"
+codex_official_agents = ["lcsr-cuda-coder-1", "lcsr-cuda-coder-2", "lcsr-synthesizer", "lcsr-researcher"]
+codex_official_credential = "codex-pro"
+claude_kimi_agents = ["lcsr-planner", "lcsr-evaluator"]
+claude_kimi_credential = "claude-kimi-cred"
+
+[[artifact_groups]]
+id = "specs"
+path = "specs/"
+artifact_kind = "dir"
+purpose = "authoritative generated loop contracts"
+
+[[artifact_groups]]
+id = "harness"
+path = "harness/"
+artifact_kind = "dir"
+purpose = "generated loop-local command surface"
+
+[[artifact_groups]]
+id = "skills"
+path = "skills/"
+artifact_kind = "dir"
+purpose = "generated loop-local skill packages"
+
+[[artifact_groups]]
+id = "agents"
+path = "agents/"
+artifact_kind = "dir"
+purpose = "planned concrete Houmao agent bindings and prompt material"
+
+[[artifact_groups]]
+id = "adrs"
+path = "adrs/"
+artifact_kind = "dir"
+purpose = "accepted execplan-generation decision records"
+
+[[artifact_groups]]
+id = "docs"
+path = "docs/"
+artifact_kind = "dir"
+purpose = "generated human support views that summarize authoritative artifacts"
+
+[consistency_notes]
+description = "Cross-artifact consistency notes for this current generated revision."
+stable_participant_ids = "planner, cuda-coder-1, cuda-coder-2, synthesizer, researcher, and evaluator remain unprefixed in topology, schemas, and state contracts."
+concrete_agent_ids = "Concrete Houmao-facing ids, profile dirs, workspace agent names, and notifier prompt files use the lcsr-* prefix."
+runtime_skill_assignment = "Every managed lcsr-* agent receives every directory under skillset/runtime/*, including symlinked krnopt-* skill dirs."
+workspace_materialization = "prepare-workspace should use standard in-repo Git worktrees under houmao-ws/lead-code-synth-research with one private repo/ worktree and states/ directory per lcsr-* agent."
+cli_distribution = "Codex CLI with project credential codex-pro launches CUDA Coder 1, CUDA Coder 2, Synthesizer, and Researcher; Claude CLI with project credential claude-kimi-cred launches Planner and Evaluator."
+privileged_profiling = "NCU sudo password, when needed for privileged counters, is read from runtime env NCU_ROOT_PW and never stored in execplan artifacts."
+terminal_authority = "The loop has no automatic success condition; human operator stop is the terminal authority."
+platform_boundary = "Clarification and finalization do not create profiles, workspaces, mailboxes, gateways, notifiers, memory, or live agents."
+
+[[artifacts]]
+path = "README.md"
+kind = "final-docs"
+status = "current"
+purpose = "package entrypoint"
+
+[[artifacts]]
+path = "specs/collab/collab-overview.md"
+kind = "process"
+status = "current"
+
+[[artifacts]]
+path = "specs/objective/objective.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/objective/policy.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/participants/participants.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/collab/loop-policy.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/collab/topology/topology.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/collab/topology/context-posture.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/comms/templates.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/comms/notifier-prompts.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/state/schema.sql"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/workspace/workspace.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/run/run-artifacts.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "harness/commands.toml"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "harness/bin/lead-code-synth-research-harness"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "harness/src/lead_code_synth_research_harness.py"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "harness/schemas/command-envelope.schema.json"
+kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "skills/README.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-shared-harness/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-planning-cycle-start/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-optimization-assignment/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-coder-result/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-research-request/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-research-summary/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-synthesis-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-evaluation-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-failure-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-gpu-wait-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-planner-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-coder-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-synthesizer-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-researcher-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-evaluator-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-operator-control/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "agents/bindings.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-planner/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-planner/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-planner/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-cuda-coder-1/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-cuda-coder-1/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-cuda-coder-1/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-cuda-coder-2/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-cuda-coder-2/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-cuda-coder-2/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-synthesizer/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-synthesizer/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-synthesizer/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-researcher/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-researcher/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-researcher/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-evaluator/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-evaluator/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/lcsr-evaluator/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/lcsr-planner.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/lcsr-cuda-coder-1.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/lcsr-cuda-coder-2.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/lcsr-synthesizer.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/lcsr-researcher.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/lcsr-evaluator.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "adrs/README.md"
+kind = "adr"
+status = "current"
+purpose = "ADR directory index"
+
+[[artifacts]]
+path = "adrs/0001-candidate-handoffs-use-project-cli-variant-refs.md"
+kind = "adr"
+status = "current"
+purpose = "candidate handoff decision"
+
+[[artifacts]]
+path = "adrs/0002-coder-results-route-to-synthesizer.md"
+kind = "adr"
+status = "current"
+purpose = "Coder result routing decision"
+
+[[artifacts]]
+path = "adrs/0003-gpu-wait-reports-route-to-planner.md"
+kind = "adr"
+status = "current"
+purpose = "GPU wait routing decision"
+
+[[artifacts]]
+path = "adrs/0004-failure-reports-route-to-planner.md"
+kind = "adr"
+status = "current"
+purpose = "failure report routing decision"
+
+[[artifacts]]
+path = "adrs/0005-synthesis-reports-route-to-evaluator-and-planner.md"
+kind = "adr"
+status = "current"
+purpose = "synthesis report routing decision"
+
+[[artifacts]]
+path = "adrs/0006-lcsr-agent-names-and-runtime-skills.md"
+kind = "adr"
+status = "current"
+purpose = "lcsr concrete naming and full runtime skill assignment decision"
+
+[[artifacts]]
+path = "adrs/0007-in-repo-git-worktree-workspaces.md"
+kind = "adr"
+status = "current"
+purpose = "standard in-repo Git worktree workspace materialization decision"
+
+[[artifacts]]
+path = "adrs/0008-cli-tool-distribution.md"
+kind = "adr"
+status = "current"
+purpose = "Codex official and Claude/Kimi CLI distribution decision"
+
+[[artifacts]]
+path = "docs/README.md"
+kind = "final-docs"
+status = "current"
+purpose = "final docs directory index"
+
+[[artifacts]]
+path = "docs/artifact-index.md"
+kind = "final-docs"
+status = "current"
+purpose = "operator artifact index support view"
+
+[[artifacts]]
+path = "docs/operator-guide.md"
+kind = "final-docs"
+status = "current"
+purpose = "operator execution-stage support view"
+
+[[artifacts]]
+path = "docs/runtime-model.md"
+kind = "final-docs"
+status = "current"
+purpose = "mail-driven runtime support view"
+
+[[artifacts]]
+path = "docs/validation.md"
+kind = "final-docs"
+status = "current"
+purpose = "validation support view"

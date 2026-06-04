@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead-code-synth-research.email.failure-report",
+  "title": "failure-report",
+  "type": "object",
+  "required": ["schema_id", "schema_version", "kind", "run_id", "plan_revision", "payload_id", "sender_id", "receiver_id", "payload"],
+  "properties": {
+    "schema_id": { "const": "lead-code-synth-research.email.failure-report" },
+    "schema_version": { "const": "1" },
+    "kind": { "const": "error" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "plan_revision": { "type": "string", "minLength": 1 },
+    "payload_id": { "type": "string", "minLength": 1 },
+    "sender_id": { "type": "string", "minLength": 1 },
+    "receiver_id": { "const": "planner" },
+    "route_id": { "type": "string" },
+    "payload": {
+      "type": "object",
+      "required": ["cycle_id", "assignment_id", "agent_id", "blocker_type", "retry_count", "retry_evidence_refs", "recommended_planner_followup"],
+      "properties": {
+        "cycle_id": { "type": "string", "minLength": 1 },
+        "assignment_id": { "type": "string", "minLength": 1 },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "candidate_id": { "type": "string" },
+        "blocker_type": { "type": "string", "minLength": 1 },
+        "retry_count": { "type": "integer", "minimum": 0 },
+        "retry_evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "completed_work_refs": { "type": "array", "items": { "type": "string" } },
+        "recommended_planner_followup": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

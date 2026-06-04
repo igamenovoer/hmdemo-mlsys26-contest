@@ -1,0 +1,46 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+cycle_id = "{{ payload.cycle_id }}"
+synthesis_id = "{{ payload.synthesis_id }}"
+candidate_id = "{{ payload.selected_candidate_id }}"
+```
+
+# Synthesis Report
+
+## Candidate
+
+- Selected candidate id: {{ payload.selected_candidate_id }}
+- Variant ref: {{ payload.project_cli_variant_ref }}
+- Workspace path: {{ payload.workspace_path }}
+- Source Coder candidates: {{ payload.source_coder_candidate_ids | join(', ') }}
+- Planner copy is context only: {{ payload.planner_copy_is_context_only }}
+
+## Lineage
+
+{{ payload.lineage }}
+
+## Merge Notes
+
+{{ payload.merge_notes | default('none') }}
+
+## Preserved Ideas
+
+{% for item in payload.preserved_ideas | default([]) %}- {{ item }}
+{% endfor %}
+
+## Evidence Bundle Refs
+
+{% for item in payload.evidence_bundle_refs %}- {{ item }}
+{% endfor %}
+
+## Requested Action
+
+Evaluator should review this as a promotion input. Planner should record it as context only and must not update current-best from this report.

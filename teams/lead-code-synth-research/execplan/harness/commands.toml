@@ -1,0 +1,166 @@
+# Generated harness command registry.
+loop_slug = "lead-code-synth-research"
+plan_revision = "harness-stage-0001"
+entrypoint = "bin/lead-code-synth-research-harness"
+output_envelope_schema = "schemas/command-envelope.schema.json"
+
+[[commands]]
+description = "Validate harness dependencies and referenced generated contracts."
+name = "self-check"
+reads = ["commands.toml", "../manifest.toml", "../specs/comms/templates.toml", "../specs/state/schema.sql"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Validate generated topology contract."
+name = "topology validate"
+reads = ["../specs/collab/topology/topology.toml", "../specs/collab/loop-policy.toml"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Query generated topology routes and mode."
+name = "topology query"
+reads = ["../specs/collab/topology/topology.toml"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Validate predecessor context posture."
+name = "context validate"
+reads = ["../specs/collab/topology/context-posture.toml"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Query predecessor context posture by message family."
+name = "context query"
+reads = ["../specs/collab/topology/context-posture.toml"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Resolve a mail template name or schema id."
+name = "email schema"
+reads = ["../specs/comms/templates.toml", "../specs/comms/schemas/*.schema.json"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Validate TOML or JSON mail payload against its generated JSON Schema."
+name = "email validate"
+reads = ["../specs/comms/templates.toml", "../specs/comms/schemas/*.schema.json"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Render a validated TOML or JSON mail payload through the generated Markdown renderer."
+name = "email render"
+reads = ["../specs/comms/templates.toml", "../specs/comms/schemas/*.schema.json", "../specs/comms/renderers/*.md.j2"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Record mail payload lifecycle facts in generated state. This is not mailbox delivery."
+name = "email apply"
+reads = ["../specs/comms/templates.toml", "../specs/comms/schemas/*.schema.json", "../specs/state/schema.sql"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Query mail schema dispatch facts or payload lifecycle records."
+name = "email query"
+reads = ["../specs/comms/templates.toml", "../specs/state/schema.sql"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Initialize sqlite state from generated schema and seed contracts."
+name = "state init"
+reads = ["../specs/state/schema.sql", "../specs/state/seed.toml"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Validate sqlite state schema, foreign keys, and generated invariants."
+name = "state validate"
+reads = ["../specs/state/schema.sql", "../specs/state/invariants.toml"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Query read-only state views for participants and schedulers."
+name = "state query"
+reads = ["../specs/state/schema.sql"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Export compact state recovery view."
+name = "state export"
+reads = ["../specs/state/schema.sql"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Validate a record or mail payload against a generated schema."
+name = "record validate"
+reads = ["../specs/comms/schemas/*.schema.json"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Apply a schema-valid mail lifecycle record to sqlite state."
+name = "record apply"
+reads = ["../specs/comms/schemas/*.schema.json", "../specs/state/schema.sql"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Report run state, execution mode, blockers, and next operator posture."
+name = "control status"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql"]
+writes = []
+supports_explain = true
+
+[[commands]]
+description = "Return the current execution mode, defaulting to auto when state is absent."
+name = "control get-mode"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql"]
+writes = []
+supports_explain = false
+
+[[commands]]
+description = "Record requested execution mode change."
+name = "control set-mode"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Record pause intent and paused run posture."
+name = "control pause"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Record resume intent and running posture."
+name = "control resume"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Record stop intent and stopped posture."
+name = "control stop"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql"]
+writes = ["sqlite_state_db"]
+supports_explain = false
+
+[[commands]]
+description = "Return participant-specific context for one manual-mode pass."
+name = "control manual-context"
+reads = ["../specs/run/control.toml", "../specs/state/schema.sql", "../specs/participants/participants.toml"]
+writes = []
+supports_explain = false

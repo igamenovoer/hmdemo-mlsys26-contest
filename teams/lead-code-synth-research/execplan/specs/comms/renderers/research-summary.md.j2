@@ -1,0 +1,39 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+request_id = "{{ payload.request_id }}"
+```
+
+# Research Summary
+
+## Summary
+
+{{ payload.summary }}
+
+## Source Scope
+
+- Scope used: {{ payload.source_scope_used }}
+- Local refs: {{ payload.local_refs | default([]) | join(', ') }}
+- Network refs: {{ payload.network_refs | default([]) | join(', ') }}
+
+## Reusable Patterns
+
+{% for item in payload.reusable_patterns %}- {{ item }}
+{% endfor %}
+
+## Speculative Ideas
+
+{% for item in payload.speculative_ideas | default([]) %}- {{ item }}
+{% endfor %}
+
+## Risk Notes
+
+{% for item in payload.risk_notes %}- {{ item }}
+{% endfor %}

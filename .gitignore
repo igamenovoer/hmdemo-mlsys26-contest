@@ -2,6 +2,13 @@
 solution.json
 tmp/
 
+# Slidev / Node
+slides/node_modules/
+slides/pages/node_modules/
+slides/dist/
+slides/pages/dist/
+slides/*.pdf
+
 # Local agent homes
 .agents/
 .codex-home/

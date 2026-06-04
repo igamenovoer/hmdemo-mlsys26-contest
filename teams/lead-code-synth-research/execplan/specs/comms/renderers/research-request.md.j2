@@ -1,0 +1,30 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+request_id = "{{ payload.request_id }}"
+```
+
+# Research Request
+
+## Question
+
+{{ payload.question }}
+
+## Context
+
+- Requester: {{ payload.requester_id }}
+- Target kernel family: {{ payload.target_kernel_family }}
+- Source scope: {{ payload.source_scope }}
+- Bottleneck context: {{ payload.bottleneck_context | default('none') }}
+- Known failed attempts: {{ payload.known_failed_attempts | default([]) | join(', ') }}
+
+## Requested Action
+
+Researcher should answer using the requested source scope. The default source scope is parallel local-and-network search, and the summary must distinguish local, network, and shared support for important ideas.

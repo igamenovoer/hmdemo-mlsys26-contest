@@ -1,0 +1,37 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id | default('coder-blocker-to-planner') }}"
+cycle_id = "{{ payload.cycle_id }}"
+assignment_id = "{{ payload.assignment_id }}"
+```
+
+# Failure Report
+
+## Blocker
+
+- Agent id: {{ payload.agent_id }}
+- Assignment id: {{ payload.assignment_id }}
+- Candidate id: {{ payload.candidate_id | default('none') }}
+- Blocker type: {{ payload.blocker_type }}
+- Retry count: {{ payload.retry_count }}
+
+## Retry Evidence
+
+{% for item in payload.retry_evidence_refs %}- {{ item }}
+{% endfor %}
+
+## Completed Work
+
+{% for item in payload.completed_work_refs | default([]) %}- {{ item }}
+{% endfor %}
+
+## Requested Action
+
+Planner should record failure status, keep Synthesizer visibility through generated state, and decide whether to reassign, redirect, preserve partial findings, or escalate.

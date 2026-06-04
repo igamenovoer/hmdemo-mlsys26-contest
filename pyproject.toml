@@ -1,16 +1,20 @@
 [project]
 authors = [{name = "igamenovoer", email = "igamenovoer@xx.com"}]
 dependencies = [
+    "asciinema>=2.4.0,<3",
     "attrs>=26.1.0,<27",
     "click>=8.4.1,<9",
     "flashinfer-bench>=0.1.2,<0.2",
+    "ijson>=3.5.0,<4",
     "imageio>=2.37.3,<3",
+    "jsonlines>=4.0.0,<5",
     "mdutils>=1.8.1,<2",
     "mkdocs-material>=9.7.6,<10",
     "modal>=1.4.3,<2",
     "mypy>=2.1.0,<3",
     "numpy>=2.4.6,<3",
     "omegaconf>=2.3.0,<3",
+    "orjson>=3.11.9,<4",
     "pytest>=9.0.3,<10",
     "ruff>=0.15.14,<0.16",
     "scipy>=1.17.1,<2",
@@ -24,6 +28,7 @@ version = "0.1.0"
 
 [project.scripts]
 project-cli = "hmdemo_mlsys26_contest.cli:main"
+terminal-record = "hmdemo_mlsys26_contest.terminal_record.cli:main"
 
 [build-system]
 build-backend = "hatchling.build"
@@ -49,11 +54,16 @@ cpp-test = "ctest --test-dir cpp/build/Release --output-on-failure"
 lint = "ruff check ."
 modal-bench = "modal run scripts/run_modal.py"
 pack = "python scripts/pack_solution.py"
+slides-install = "cd slides && env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u NO_PROXY -u http_proxy -u https_proxy -u all_proxy -u no_proxy -u npm_config_proxy -u npm_config_https_proxy -u npm_config_all_proxy bun install"
+slides = "cd slides && bun run dev"
+slides-build = "cd slides && bun run build"
+slides-export = "cd slides && bun run export"
 test = "pytest tests/unit tests/integration"
 typecheck = "mypy src scripts"
 
 [tool.pixi.dependencies]
 python = "3.12.*"
+jq = ">=1.8.1,<2"
 
 [tool.pixi.feature.cu130.target.linux-64.activation.env]
 CUDA_HOME = "$CONDA_PREFIX/lib/python3.12/site-packages/nvidia/cu13"

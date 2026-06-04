@@ -428,7 +428,7 @@ void profile_moe(nvbench::state& state) {
     TVMFFIStreamHandle old_stream = nullptr;
     TVMFFIEnvSetStream(kDLCUDA, g_device, launch.get_stream(), &old_stream);
     timer.start();
-    moe_tvm_ffi::Kernel(
+    hmdemo_mlsys26_contest::kernel(
       workload.tensors.at("routing_logits").view,
       workload.tensors.at("routing_bias").view,
       workload.tensors.at("hidden_states").view,
@@ -470,6 +470,14 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${{CMAKE_BINARY_DIR}}")
 
 find_package(CUDAToolkit REQUIRED)
 
+if(TARGET CUDA::cudart)
+  set(HM_PROFILE_CUDART CUDA::cudart)
+elseif(DEFINED CUDA_CUDART)
+  set(HM_PROFILE_CUDART "${{CUDA_CUDART}}")
+else()
+  find_library(HM_PROFILE_CUDART cudart REQUIRED)
+endif()
+
 add_library(hm_profile_kernel_plugin SHARED src/plugin.cu)
 target_include_directories(hm_profile_kernel_plugin PRIVATE
   "{artifact_src}"
@@ -482,13 +490,18 @@ target_include_directories(hm_profile_kernel_plugin PRIVATE
 target_compile_options(hm_profile_kernel_plugin PRIVATE
   $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr {compiler_flags}>
 )
-target_link_libraries(hm_profile_kernel_plugin PRIVATE CUDA::cudart)
+target_link_directories(hm_profile_kernel_plugin PRIVATE "{tvm_ffi_lib}")
+target_link_libraries(hm_profile_kernel_plugin PRIVATE ${{HM_PROFILE_CUDART}} tvm_ffi)
+set_target_properties(hm_profile_kernel_plugin PROPERTIES
+  BUILD_RPATH "{tvm_ffi_lib}"
+)
 )cmake",
       fmt::arg("cuda_arch", manifest.cuda_arch == "100a" ? "100a" : manifest.cuda_arch),
       fmt::arg("artifact_src", artifact_src.string()),
       fmt::arg("profiler_include_root", manifest.profiler_include_root.lexically_normal().string()),
       fmt::arg("tvm_ffi_include", (manifest.tvm_ffi_root / "include").lexically_normal().string()),
       fmt::arg("tvm_ffi_dlpack", (manifest.tvm_ffi_root / "3rdparty/dlpack/include").lexically_normal().string()),
+      fmt::arg("tvm_ffi_lib", (manifest.tvm_ffi_root / "lib").lexically_normal().string()),
       fmt::arg("include_roots", [&] {
         std::string result;
         for (const auto& root : manifest.include_roots) {
@@ -553,7 +566,7 @@ HM_PROFILE_PLUGIN_EXPORT int hm_profile_moe_kernel_v1(
     DLTensor* output) {
   try {
     g_last_error.clear();
-    moe_tvm_ffi::Kernel(
+    hmdemo_mlsys26_contest::kernel(
       view(routing_logits),
       view(routing_bias),
       view(hidden_states),

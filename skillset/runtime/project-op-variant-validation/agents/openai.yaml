@@ -1,0 +1,4 @@
+interface:
+  display_name: "Variant Validation Ops"
+  short_description: "Check whether contest kernel variants are valid."
+  default_prompt: "Use $project-op-variant-validation to check whether a contest kernel variant passes FlashInfer correctness validation."

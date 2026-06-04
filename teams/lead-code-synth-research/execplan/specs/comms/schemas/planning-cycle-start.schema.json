@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead-code-synth-research.email.planning-cycle-start",
+  "title": "planning-cycle-start",
+  "type": "object",
+  "required": ["schema_id", "schema_version", "kind", "run_id", "plan_revision", "payload_id", "sender_id", "receiver_id", "payload"],
+  "properties": {
+    "schema_id": { "const": "lead-code-synth-research.email.planning-cycle-start" },
+    "schema_version": { "const": "1" },
+    "kind": { "const": "request" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "plan_revision": { "type": "string", "minLength": 1 },
+    "payload_id": { "type": "string", "minLength": 1 },
+    "sender_id": { "type": "string", "minLength": 1 },
+    "receiver_id": { "const": "planner" },
+    "route_id": { "type": "string" },
+    "payload": {
+      "type": "object",
+      "required": ["cycle_intent", "trigger_source", "current_best_ref", "history_refs"],
+      "properties": {
+        "cycle_intent": { "type": "string", "minLength": 1 },
+        "trigger_source": { "type": "string", "minLength": 1 },
+        "operator_constraints": { "type": "array", "items": { "type": "string" } },
+        "current_best_ref": { "type": "string", "minLength": 1 },
+        "history_refs": { "type": "array", "items": { "type": "string" } },
+        "previous_evaluation_report_ref": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead-code-synth-research.email.coder-result",
+  "title": "coder-result",
+  "type": "object",
+  "required": ["schema_id", "schema_version", "kind", "run_id", "plan_revision", "payload_id", "sender_id", "receiver_id", "payload"],
+  "properties": {
+    "schema_id": { "const": "lead-code-synth-research.email.coder-result" },
+    "schema_version": { "const": "1" },
+    "kind": { "const": "result" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "plan_revision": { "type": "string", "minLength": 1 },
+    "payload_id": { "type": "string", "minLength": 1 },
+    "sender_id": { "enum": ["cuda-coder-1", "cuda-coder-2"] },
+    "receiver_id": { "const": "synthesizer" },
+    "route_id": { "enum": ["coder-1-to-synthesizer", "coder-2-to-synthesizer"] },
+    "payload": {
+      "type": "object",
+      "required": ["cycle_id", "assignment_id", "candidate_id", "project_cli_variant_ref", "workspace_path", "changed_files", "commands_run", "local_check_status", "recommended_followup"],
+      "properties": {
+        "cycle_id": { "type": "string", "minLength": 1 },
+        "assignment_id": { "type": "string", "minLength": 1 },
+        "candidate_id": { "type": "string", "minLength": 1 },
+        "project_cli_variant_ref": { "type": "string", "minLength": 1 },
+        "workspace_path": { "type": "string", "minLength": 1 },
+        "changed_files": { "type": "array", "items": { "type": "string" } },
+        "commands_run": { "type": "array", "items": { "type": "string" } },
+        "local_check_status": { "type": "string", "minLength": 1 },
+        "local_evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "profile_refs": { "type": "array", "items": { "type": "string" } },
+        "blocker_state": { "type": "string" },
+        "recommended_followup": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
