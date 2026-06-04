@@ -1,16 +1,16 @@
 # Generated execplan manifest for lead-code-synth-research.
 loop_slug = "lead-code-synth-research"
-plan_revision = "harness-stage-0001"
+plan_revision = "agent-bindings-stage-0001"
 generated_from = "teams/lead-code-synth-research/intention and execplan ADRs"
-current_stage = "execplan-harness"
+current_stage = "execplan-agent-bindings"
 generated_source_posture = "execplan is generated operational material; intention and ADR files are editable source authority"
 
 [stage_status]
 process = "current"
 contracts = "current"
 harness = "current"
-skills = "not_generated"
-agent_bindings = "not_generated"
+skills = "current"
+agent_bindings = "current"
 final_docs = "not_generated"
 
 [omissions]
@@ -98,4 +98,214 @@ status = "current"
 [[artifacts]]
 path = "harness/schemas/command-envelope.schema.json"
 kind = "harness"
+status = "current"
+
+[[artifacts]]
+path = "skills/README.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-shared-harness/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-planning-cycle-start/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-optimization-assignment/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-coder-result/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-research-request/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-research-summary/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-synthesis-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-evaluation-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-failure-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-on-gpu-wait-report/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-planner-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-coder-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-synthesizer-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-researcher-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-evaluator-tick/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "skills/lead-code-synth-research-operator-control/SKILL.md"
+kind = "skills"
+status = "current"
+
+[[artifacts]]
+path = "agents/bindings.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/planner/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/planner/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/planner/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/cuda-coder-1/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/cuda-coder-1/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/cuda-coder-1/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/cuda-coder-2/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/cuda-coder-2/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/cuda-coder-2/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/synthesizer/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/synthesizer/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/synthesizer/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/researcher/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/researcher/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/researcher/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/evaluator/config.toml"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/evaluator/definition.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/profiles/evaluator/memo-seed.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/planner.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/cuda-coder-1.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/cuda-coder-2.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/synthesizer.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/researcher.md"
+kind = "agent-bindings"
+status = "current"
+
+[[artifacts]]
+path = "agents/notifier-prompts/evaluator.md"
+kind = "agent-bindings"
 status = "current"
