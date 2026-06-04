@@ -1,0 +1,93 @@
+# Workspace contract for prepare-workspace.
+[workspace]
+description = "Six isolated managed-agent workspaces for the live Houmao loop."
+flavor = "in-repo"
+task_name = "lead-code-synth-research"
+repo_root = "auto"
+ws_root = "houmao-ws"
+launch_cwd_policy = "repo-root"
+coordination_policy = "houmao-mail-generated-state-run-artifacts-explicit-refs"
+
+[workspace.shared_kb]
+description = "Cross-run task knowledge requirements."
+required = true
+
+[workspace.owner_states]
+description = "Per-run task-owner bookkeeping requirements."
+required = true
+subdir = "<run-id>"
+
+[workspace.validation]
+description = "Readiness checks that avoid GPU or dataset-dependent benchmark work."
+commands = ["pixi run test", "pixi run project-cli variant list", "pixi run project-cli workload source list"]
+gpu_dependent_checks_in_default_validation = false
+
+[workspace.manual_evidence]
+description = "Facts validate-loop needs when prepare-workspace is not used."
+required_fields = ["workspace_paths_distinct", "repo_roots_available", "agent_state_dirs_available", "coder_worktrees_writable", "non_coder_worktrees_readable", "shared_kb_available", "owner_states_available"]
+
+[[workspace.agents]]
+description = "Planner workspace requirements."
+agent_id = "planner"
+workspace_agent_name = "planner"
+expected_role_profile = "planner"
+needs_worktree = true
+needs_states = true
+needs_memo_seed = true
+source_mutation_surface = "none"
+read_write_policy = "planning-notes-cycle-state-current-best-records"
+
+[[workspace.agents]]
+description = "CUDA Coder 1 workspace requirements."
+agent_id = "cuda-coder-1"
+workspace_agent_name = "cuda-coder-1"
+expected_role_profile = "cuda-coder"
+needs_worktree = true
+needs_states = true
+needs_memo_seed = true
+source_mutation_surface = "candidate-solution-or-variant"
+read_write_policy = "candidate-source-local-evidence-profiler-artifacts"
+
+[[workspace.agents]]
+description = "CUDA Coder 2 workspace requirements."
+agent_id = "cuda-coder-2"
+workspace_agent_name = "cuda-coder-2"
+expected_role_profile = "cuda-coder"
+needs_worktree = true
+needs_states = true
+needs_memo_seed = true
+source_mutation_surface = "candidate-solution-or-variant"
+read_write_policy = "candidate-source-local-evidence-profiler-artifacts"
+
+[[workspace.agents]]
+description = "Synthesizer workspace requirements."
+agent_id = "synthesizer"
+workspace_agent_name = "synthesizer"
+expected_role_profile = "synthesizer"
+needs_worktree = true
+needs_states = true
+needs_memo_seed = true
+source_mutation_surface = "none"
+read_write_policy = "candidate-comparison-synthesis-reports-preserved-ideas"
+
+[[workspace.agents]]
+description = "Researcher workspace requirements."
+agent_id = "researcher"
+workspace_agent_name = "researcher"
+expected_role_profile = "researcher"
+needs_worktree = true
+needs_states = true
+needs_memo_seed = true
+source_mutation_surface = "none"
+read_write_policy = "research-notes-source-attribution-reference-summaries"
+
+[[workspace.agents]]
+description = "Evaluator workspace requirements."
+agent_id = "evaluator"
+workspace_agent_name = "evaluator"
+expected_role_profile = "evaluator"
+needs_worktree = true
+needs_states = true
+needs_memo_seed = true
+source_mutation_surface = "none"
+read_write_policy = "official-timing-evidence-anti-hacking-review-evaluation-records"

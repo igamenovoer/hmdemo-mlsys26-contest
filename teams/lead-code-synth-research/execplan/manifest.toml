@@ -1,0 +1,81 @@
+# Generated execplan manifest for lead-code-synth-research.
+loop_slug = "lead-code-synth-research"
+plan_revision = "contract-stage-0001"
+generated_from = "teams/lead-code-synth-research/intention and execplan ADRs"
+current_stage = "execplan-specs-contract"
+generated_source_posture = "execplan is generated operational material; intention and ADR files are editable source authority"
+
+[stage_status]
+process = "current"
+contracts = "current"
+harness = "not_generated"
+skills = "not_generated"
+agent_bindings = "not_generated"
+final_docs = "not_generated"
+
+[omissions]
+description = "Default layers intentionally omitted at the contract stage."
+collab_records_dir = "omitted because topology, communication, and state contracts carry route and record authority"
+state_records_dir = "omitted because sqlite is the selected generated state authority for durable bookkeeping"
+platform_setup = "omitted because maintained Houmao skills own workspace, mailbox, gateway, launch, messaging, and inspection mechanics"
+runtime_execution = "omitted because prepare-agents, prepare-workspace, validate-loop, launch-agents, and start are later execution stages"
+
+[[artifacts]]
+path = "specs/collab/collab-overview.md"
+kind = "process"
+status = "current"
+
+[[artifacts]]
+path = "specs/objective/objective.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/objective/policy.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/participants/participants.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/collab/loop-policy.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/collab/topology/topology.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/collab/topology/context-posture.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/comms/templates.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/comms/notifier-prompts.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/state/schema.sql"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/workspace/workspace.toml"
+kind = "contract"
+status = "current"
+
+[[artifacts]]
+path = "specs/run/run-artifacts.toml"
+kind = "contract"
+status = "current"

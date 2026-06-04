@@ -1268,13 +1268,12 @@ layout: section
 - **输入**：loop 目录、operator 对目标和参与者的描述。
 - **边界**：不做 project context 探测，也不进入 execplan 生成阶段。
 
-<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出与依赖</div>
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出文件</div>
 
-| 文件 | 类型 | 作用 |
-| --- | --- | --- |
-| `intention/project-context.md` | 依赖 | 项目背景事实：repo 结构、可用命令、约束、已有约定和 workspace 假设 |
-| `intention/README.md` | 输出 | 最小 source 入口，说明 intention 目录是后续生成 execplan 的人工可编辑来源 |
-| `intention/loop-overview.md` | 输出 | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
+| 文件 | 作用 |
+| --- | --- |
+| `intention/README.md` | 最小 source 入口，说明 intention 目录是后续生成 execplan 的人工可编辑来源 |
+| `intention/loop-overview.md` | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
 
 </div>
 
@@ -1295,7 +1294,6 @@ layout: section
 | `<loop-dir>/adrs/*.md` | 记录已接受的 intent decision：问了什么、为什么重要、最终怎么决定 |
 | `intention/loop-overview.md` | 更新目标、参与者、生命周期、拓扑和整体操作模型 |
 | `intention/*.md` | 按主题补充 `participants.md`、`workflow.md`、`communication.md`、`state.md`、`workspace.md`、`constraints.md` 等 source docs |
-| stale report | 如果现有 `execplan/` 已经不再匹配 intention，需要明确报告它变 stale |
 
 </div>
 

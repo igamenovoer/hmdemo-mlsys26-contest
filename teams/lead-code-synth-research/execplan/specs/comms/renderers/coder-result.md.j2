@@ -1,0 +1,46 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+cycle_id = "{{ payload.cycle_id }}"
+assignment_id = "{{ payload.assignment_id }}"
+candidate_id = "{{ payload.candidate_id }}"
+```
+
+# Coder Result
+
+## Candidate
+
+- Candidate id: {{ payload.candidate_id }}
+- Assignment id: {{ payload.assignment_id }}
+- Variant ref: {{ payload.project_cli_variant_ref }}
+- Workspace path: {{ payload.workspace_path }}
+- Local check status: {{ payload.local_check_status }}
+- Blocker state: {{ payload.blocker_state | default('none') }}
+
+## Changed Files
+
+{% for item in payload.changed_files %}- {{ item }}
+{% endfor %}
+
+## Commands Run
+
+{% for item in payload.commands_run %}- `{{ item }}`
+{% endfor %}
+
+## Evidence Refs
+
+{% for item in payload.local_evidence_refs | default([]) %}- {{ item }}
+{% endfor %}
+{% for item in payload.profile_refs | default([]) %}- {{ item }}
+{% endfor %}
+
+## Requested Action
+
+Synthesizer should record this result, query generated state for sibling Coder slot status, decide whether available results are sufficient, and either synthesize a promotion candidate or wait for more evidence.

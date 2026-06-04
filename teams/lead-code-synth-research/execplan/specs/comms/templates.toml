@@ -1,0 +1,152 @@
+# Mail template registry. Each schema_id is the generated event type.
+plan_revision = "contract-stage-0001"
+
+[[templates]]
+description = "Planner cycle start trigger."
+name = "planning-cycle-start"
+schema_id = "lead-code-synth-research.email.planning-cycle-start"
+schema_path = "schemas/planning-cycle-start.schema.json"
+renderer_path = "renderers/planning-cycle-start.md.j2"
+payload_format = "toml"
+kind = "request"
+sender_roles = ["human-operator", "planner", "evaluator"]
+receiver_roles = ["planner"]
+reply_expectation = "none"
+event_skill = "lead-code-synth-research-on-planning-cycle-start"
+tick_after_success = "lead-code-synth-research-planner-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Planner assigns one bounded optimization direction to one Coder."
+name = "optimization-assignment"
+schema_id = "lead-code-synth-research.email.optimization-assignment"
+schema_path = "schemas/optimization-assignment.schema.json"
+renderer_path = "renderers/optimization-assignment.md.j2"
+payload_format = "toml"
+kind = "request"
+sender_roles = ["planner"]
+receiver_roles = ["cuda-coder"]
+reply_expectation = "coder-result or blocker report"
+event_skill = "lead-code-synth-research-on-optimization-assignment"
+tick_after_success = "lead-code-synth-research-coder-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Coder reports candidate result to Synthesizer only."
+name = "coder-result"
+schema_id = "lead-code-synth-research.email.coder-result"
+schema_path = "schemas/coder-result.schema.json"
+renderer_path = "renderers/coder-result.md.j2"
+payload_format = "toml"
+kind = "result"
+sender_roles = ["cuda-coder"]
+receiver_roles = ["synthesizer"]
+reply_expectation = "none"
+event_skill = "lead-code-synth-research-on-coder-result"
+tick_after_success = "lead-code-synth-research-synthesizer-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Managed participant requests local-and-network research by default."
+name = "research-request"
+schema_id = "lead-code-synth-research.email.research-request"
+schema_path = "schemas/research-request.schema.json"
+renderer_path = "renderers/research-request.md.j2"
+payload_format = "toml"
+kind = "request"
+sender_roles = ["planner", "cuda-coder", "synthesizer"]
+receiver_roles = ["researcher"]
+reply_expectation = "research-summary"
+event_skill = "lead-code-synth-research-on-research-request"
+tick_after_success = "lead-code-synth-research-researcher-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Researcher replies with source-backed summary."
+name = "research-summary"
+schema_id = "lead-code-synth-research.email.research-summary"
+schema_path = "schemas/research-summary.schema.json"
+renderer_path = "renderers/research-summary.md.j2"
+payload_format = "toml"
+kind = "result"
+sender_roles = ["researcher"]
+receiver_roles = ["planner", "cuda-coder", "synthesizer"]
+reply_expectation = "none"
+event_skill = "lead-code-synth-research-on-research-summary"
+tick_after_success = "role-specific-tick-if-schedulable"
+archive_after_success = true
+
+[[templates]]
+description = "Synthesizer submits promotion candidate to Evaluator and context-only copy to Planner."
+name = "synthesis-report"
+schema_id = "lead-code-synth-research.email.synthesis-report"
+schema_path = "schemas/synthesis-report.schema.json"
+renderer_path = "renderers/synthesis-report.md.j2"
+payload_format = "toml"
+kind = "result"
+sender_roles = ["synthesizer"]
+receiver_roles = ["evaluator", "planner"]
+reply_expectation = "evaluation-report from Evaluator only"
+event_skill = "lead-code-synth-research-on-synthesis-report"
+tick_after_success = "lead-code-synth-research-evaluator-or-planner-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Evaluator reports accepted or rejected promotion evidence to Planner."
+name = "evaluation-report"
+schema_id = "lead-code-synth-research.email.evaluation-report"
+schema_path = "schemas/evaluation-report.schema.json"
+renderer_path = "renderers/evaluation-report.md.j2"
+payload_format = "toml"
+kind = "result"
+sender_roles = ["evaluator"]
+receiver_roles = ["planner"]
+reply_expectation = "planning-cycle-start if Planner continues"
+event_skill = "lead-code-synth-research-on-evaluation-report"
+tick_after_success = "lead-code-synth-research-planner-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Non-GPU blocker after retry limit or unrecoverable blocker reports to Planner only."
+name = "failure-report"
+schema_id = "lead-code-synth-research.email.failure-report"
+schema_path = "schemas/failure-report.schema.json"
+renderer_path = "renderers/failure-report.md.j2"
+payload_format = "toml"
+kind = "error"
+sender_roles = ["planner", "cuda-coder", "synthesizer", "researcher", "evaluator"]
+receiver_roles = ["planner"]
+reply_expectation = "planner-recovery-or-next-cycle"
+event_skill = "lead-code-synth-research-on-failure-report"
+tick_after_success = "lead-code-synth-research-planner-tick"
+archive_after_success = true
+
+[[templates]]
+description = "No spare local GPU report to Planner only."
+name = "gpu-wait-report"
+schema_id = "lead-code-synth-research.email.gpu-wait-report"
+schema_path = "schemas/gpu-wait-report.schema.json"
+renderer_path = "renderers/gpu-wait-report.md.j2"
+payload_format = "toml"
+kind = "blocked"
+sender_roles = ["cuda-coder", "planner", "synthesizer", "evaluator"]
+receiver_roles = ["planner"]
+reply_expectation = "later notifier or operator wakeup retries GPU selection"
+event_skill = "lead-code-synth-research-on-gpu-wait-report"
+tick_after_success = "lead-code-synth-research-planner-tick"
+archive_after_success = true
+
+[[templates]]
+description = "Structured operator control, override, or recovery instruction."
+name = "operator-intervention"
+schema_id = "lead-code-synth-research.email.operator-intervention"
+schema_path = "schemas/operator-intervention.schema.json"
+renderer_path = "renderers/operator-intervention.md.j2"
+payload_format = "toml"
+kind = "control"
+sender_roles = ["human-operator"]
+receiver_roles = ["planner"]
+reply_expectation = "operator-control-record"
+event_skill = "lead-code-synth-research-operator-control"
+tick_after_success = "lead-code-synth-research-planner-tick-if-running"
+archive_after_success = false

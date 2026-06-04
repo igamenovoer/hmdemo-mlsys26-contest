@@ -1,0 +1,28 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+```
+
+# Operator Intervention
+
+## Control
+
+- Action: {{ payload.control_action }}
+- Priority: {{ payload.priority }}
+- Execution mode: {{ payload.execution_mode | default('unchanged') }}
+- Target refs: {{ payload.target_refs | default([]) | join(', ') }}
+
+## Rationale
+
+{{ payload.operator_rationale | default('none') }}
+
+## Requested Action
+
+Planner or the generated operator-control skill should record the operator intent event, apply the allowed lifecycle or mode transition, and avoid platform mechanics that belong to maintained Houmao skills.

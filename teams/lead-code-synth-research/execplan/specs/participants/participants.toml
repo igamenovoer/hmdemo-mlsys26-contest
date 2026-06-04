@@ -1,0 +1,107 @@
+# Participant contract. Agent bindings are generated later.
+loop_slug = "lead-code-synth-research"
+
+[[roles]]
+description = "Human operator role for control and oversight."
+role_id = "human-operator"
+managed_agent = false
+role_doc = "human-operator.md"
+
+[[roles]]
+description = "Planner owns planning cycles and current-best writes after accepted Evaluator evidence."
+role_id = "planner"
+managed_agent = true
+role_doc = "planner.md"
+
+[[roles]]
+description = "Shared CUDA Coder role for bounded implementation attempts."
+role_id = "cuda-coder"
+managed_agent = true
+role_doc = "cuda-coder.md"
+
+[[roles]]
+description = "Synthesizer selects or merges Coder outputs into promotion submissions."
+role_id = "synthesizer"
+managed_agent = true
+role_doc = "synthesizer.md"
+
+[[roles]]
+description = "Researcher searches local references and network sources concurrently by default."
+role_id = "researcher"
+managed_agent = true
+role_doc = "researcher.md"
+
+[[roles]]
+description = "Evaluator validates promotion eligibility through official-timing."
+role_id = "evaluator"
+managed_agent = true
+role_doc = "evaluator.md"
+
+[[roles]]
+description = "Profiler is a generated tool surface, not a live managed agent."
+role_id = "profiler-tool"
+managed_agent = false
+role_doc = "profiler-tool.md"
+
+[[instances]]
+description = "Stable human operator participant."
+participant_id = "human-operator"
+role_id = "human-operator"
+workspace_required = false
+mailbox_required = false
+
+[[instances]]
+description = "Stable Planner participant instance."
+participant_id = "planner"
+role_id = "planner"
+workspace_required = true
+mailbox_required = true
+state_write_families = ["planning_cycles", "assignments", "current_best", "operator_context", "synthesis_context"]
+
+[[instances]]
+description = "First CUDA Coder participant instance."
+participant_id = "cuda-coder-1"
+role_id = "cuda-coder"
+workspace_required = true
+mailbox_required = true
+state_write_families = ["attempts", "candidates", "evidence", "gpu_wait_records", "retry_records"]
+
+[[instances]]
+description = "Second CUDA Coder participant instance."
+participant_id = "cuda-coder-2"
+role_id = "cuda-coder"
+workspace_required = true
+mailbox_required = true
+state_write_families = ["attempts", "candidates", "evidence", "gpu_wait_records", "retry_records"]
+
+[[instances]]
+description = "Stable Synthesizer participant instance."
+participant_id = "synthesizer"
+role_id = "synthesizer"
+workspace_required = true
+mailbox_required = true
+state_write_families = ["synthesis_reports", "candidate_lineage", "preserved_ideas"]
+
+[[instances]]
+description = "Stable Researcher participant instance."
+participant_id = "researcher"
+role_id = "researcher"
+workspace_required = true
+mailbox_required = true
+state_write_families = ["research_summaries", "source_scope_notes"]
+
+[[instances]]
+description = "Stable Evaluator participant instance."
+participant_id = "evaluator"
+role_id = "evaluator"
+workspace_required = true
+mailbox_required = true
+state_write_families = ["evaluation_reports", "promotion_recommendations", "rejection_evidence"]
+
+[[instances]]
+description = "Profiler tool surface invoked by managed agents."
+participant_id = "profiler-tool"
+role_id = "profiler-tool"
+workspace_required = false
+mailbox_required = false
+state_write_families = ["profile_reports"]

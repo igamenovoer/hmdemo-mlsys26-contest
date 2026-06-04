@@ -1,0 +1,36 @@
+# State invariants for generated validation.
+[[invariants]]
+description = "Only Planner writes current-best history."
+id = "planner-only-current-best-write"
+query = "SELECT COUNT(*) AS violations FROM current_best_history WHERE written_by_participant_id <> 'planner';"
+expect = "violations == 0"
+
+[[invariants]]
+description = "Current-best writes require accepted Evaluator evidence."
+id = "current-best-requires-accepted-evaluation"
+query = "SELECT COUNT(*) AS violations FROM current_best_history cb JOIN evaluation_reports er ON cb.evaluation_id = er.evaluation_id WHERE er.decision <> 'accepted';"
+expect = "violations == 0"
+
+[[invariants]]
+description = "Non-GPU retry count cannot exceed three without failure reporting."
+id = "non-gpu-retry-limit"
+query = "SELECT COUNT(*) AS violations FROM retry_records WHERE retry_count > 3 AND status <> 'failure_reported';"
+expect = "violations == 0"
+
+[[invariants]]
+description = "Waiting-for-GPU records must not be modeled as in-chat waits."
+id = "gpu-wait-is-state"
+query = "SELECT COUNT(*) AS violations FROM waiting_for_gpu WHERE status = 'waiting' AND next_wakeup_need = '';"
+expect = "violations == 0"
+
+[[invariants]]
+description = "Coder result mail routes to Synthesizer only."
+id = "coder-result-recipient"
+query = "SELECT COUNT(*) AS violations FROM mail_payloads WHERE schema_id = 'lead-code-synth-research.email.coder-result' AND receiver_id <> 'synthesizer';"
+expect = "violations == 0"
+
+[[invariants]]
+description = "Synthesis report to Planner is context only."
+id = "planner-synthesis-context-only"
+query = "SELECT COUNT(*) AS violations FROM synthesis_reports WHERE planner_context_only <> 1;"
+expect = "violations == 0"

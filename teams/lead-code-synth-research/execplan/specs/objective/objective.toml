@@ -1,0 +1,34 @@
+# Objective contract for the first generated loop.
+[objective]
+description = "Optimize the active Fused MoE FlashInfer contest workload through a live Houmao multi-agent CUDA kernel search loop."
+loop_slug = "lead-code-synth-research"
+workload_scope = "fused-moe-only"
+active_definition = "moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048"
+runtime_posture = "launchable-live-houmao-loop"
+topology_mode = "generic-loop"
+terminal_success = "none"
+terminal_authority = "human-operator-stop"
+
+[promotion]
+description = "Promotion eligibility for current-best update."
+required_gate = "official-timing"
+promotion_writer = "planner"
+promotion_evidence_source = "evaluator"
+local_checks_are_promotional = false
+profiler_evidence_is_promotional = false
+synthesis_report_is_promotional = false
+
+[evidence]
+description = "Evidence needed for reproducible decisions."
+required_for_candidate = ["candidate_id", "project_cli_variant_ref", "workspace_path", "changed_files", "commands_run", "local_check_status", "evidence_refs"]
+required_for_promotion = ["candidate_id", "project_cli_variant_ref", "official_timing_command", "correctness_status", "speedup_or_latency_summary", "previous_best_ref", "changed_files", "anti_hacking_review"]
+required_for_rejection = ["candidate_id", "reason", "evidence_refs", "recommended_planner_followup"]
+
+[completion]
+description = "Loop completion posture."
+automatic_success_condition = "none"
+promotion_stops_loop = false
+budget_pressure_stops_loop = false
+plateau_stops_loop = false
+blocked_search_stops_loop = false
+manual_stop_required = true

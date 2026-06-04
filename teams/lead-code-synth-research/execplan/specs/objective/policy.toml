@@ -1,0 +1,31 @@
+# Safety and acceptance policies for generated loop artifacts.
+[correctness]
+description = "Correctness gates precede performance claims."
+reject_on = ["numerical_mismatch", "runtime_failure", "timeout", "invalid_output", "missing_required_output", "benchmark_invalidity"]
+promotion_requires = "official-timing"
+local_checks_role = "exploratory-evidence"
+
+[anti_hacking]
+description = "Disallowed benchmark exploitation and non-deployable shortcuts."
+forbidden = ["benchmark_harness_edits", "dataset_edits", "reference_implementation_edits", "config_semantic_edits", "input_identity_caches", "cross_iteration_sample_reuse", "sample_specific_shortcuts", "hidden_global_state_for_answers", "precomputed_answers"]
+deployable_cache_rule = "Report cold-path and warm-path behavior and explain why the cache is valid outside the harness."
+
+[edit_surface]
+description = "Normal candidate edit boundaries."
+normal_coder_edits = ["candidate_solution_source", "variant_source"]
+normal_coder_excludes = ["benchmark_harness", "datasets", "reference_code", "contest_config_semantics", "solution.json", ".pixi", "tmp", "extern/orphan"]
+requires_operator_approval = ["project_workflow_edits", "benchmark_edits", "docs_or_config_changes_outside_candidate_surface"]
+first_scope_excludes = ["dsa_topk", "dsa_sparse_attention"]
+
+[resource]
+description = "Resource and retry posture for generated contracts."
+gpu_selection = "dynamic-spare-local-gpu"
+hardcoded_gpu_id_allowed = false
+gpu_unavailable_state = "waiting-for-GPU"
+non_gpu_retry_limit = 3
+in_chat_waiting_allowed = false
+
+[human_operator]
+description = "Human role boundaries."
+may_control = ["stop", "pause", "resume", "redirect", "invalidate", "force-new-cycle", "budget", "constraints"]
+normal_kernel_hand_tuning = "out-of-loop"

@@ -1,0 +1,70 @@
+# Predecessor-context posture by message family.
+[[message_contexts]]
+description = "Planner cycle trigger context."
+message_family = "planning-cycle-start"
+receiver = "planner"
+carried_fields = ["run_id", "cycle_intent", "trigger_source", "operator_constraints", "current_best_ref", "history_refs", "previous_evaluation_report_ref"]
+explicit_omission = "No full predecessor mail bodies are carried; state and artifact refs are authoritative."
+
+[[message_contexts]]
+description = "Coder assignment context."
+message_family = "optimization-assignment"
+receiver = "cuda-coder"
+carried_fields = ["run_id", "cycle_id", "assignment_id", "coder_slot", "direction", "current_best_ref", "allowed_edit_surface", "failed_direction_summary", "evidence_expectations", "risk_notes", "selected_research_refs", "selected_profile_refs"]
+explicit_omission = "No complete run history is carried; Coder receives compact summaries and refs."
+
+[[message_contexts]]
+description = "Coder result context for Synthesizer."
+message_family = "coder-result"
+receiver = "synthesizer"
+carried_fields = ["run_id", "cycle_id", "assignment_id", "candidate_id", "project_cli_variant_ref", "workspace_path", "changed_files", "commands_run", "local_check_status", "local_evidence_refs", "profile_refs", "blocker_state", "recommended_followup"]
+explicit_omission = "Planner does not receive duplicate routine Coder result mail; Planner queries generated state or run artifacts."
+
+[[message_contexts]]
+description = "Research request context."
+message_family = "research-request"
+receiver = "researcher"
+carried_fields = ["run_id", "request_id", "requester_id", "target_kernel_family", "question", "known_failed_attempts", "bottleneck_context", "source_scope_override", "requested_output_shape"]
+explicit_omission = "No broad unrestricted browsing task is implied; request context scopes the research."
+
+[[message_contexts]]
+description = "Research summary context."
+message_family = "research-summary"
+receiver = "requester"
+carried_fields = ["run_id", "request_id", "source_scope_used", "local_refs", "network_refs", "reusable_patterns", "speculative_ideas", "applicability_notes", "risk_notes"]
+explicit_omission = "Full downloaded sources stay in research artifacts or references; mail carries attribution and summaries."
+
+[[message_contexts]]
+description = "Synthesis report context for Evaluator and Planner."
+message_family = "synthesis-report"
+receiver = "evaluator|planner"
+carried_fields = ["run_id", "cycle_id", "source_coder_candidate_ids", "selected_candidate_id", "project_cli_variant_ref", "workspace_path", "lineage", "merge_notes", "rejected_changes", "preserved_ideas", "evidence_bundle_refs"]
+explicit_omission = "Planner's copy is context only and cannot trigger current-best writes."
+
+[[message_contexts]]
+description = "Evaluation report context for Planner."
+message_family = "evaluation-report"
+receiver = "planner"
+carried_fields = ["run_id", "candidate_id", "project_cli_variant_ref", "decision", "official_timing_provenance", "correctness_status", "speedup_or_latency_summary", "anti_hacking_review", "rejection_reason", "recommended_planner_followup"]
+explicit_omission = "Evaluator does not write current-best state directly."
+
+[[message_contexts]]
+description = "Failure report context for Planner."
+message_family = "failure-report"
+receiver = "planner"
+carried_fields = ["run_id", "cycle_id", "assignment_id", "agent_id", "candidate_id", "blocker_type", "retry_count", "retry_evidence_refs", "completed_work_refs", "recommended_planner_followup"]
+explicit_omission = "Synthesizer does not receive direct failure mail; it queries generated state for failed slot status."
+
+[[message_contexts]]
+description = "GPU wait report context for Planner."
+message_family = "gpu-wait-report"
+receiver = "planner"
+carried_fields = ["run_id", "cycle_id", "assignment_id", "agent_id", "attempted_gpu_selection_evidence", "blocked_action", "next_wakeup_need"]
+explicit_omission = "Synthesizer does not receive direct GPU wait mail; it queries generated state for waiting slot status."
+
+[[message_contexts]]
+description = "Operator intervention context."
+message_family = "operator-intervention"
+receiver = "planner|operator-control"
+carried_fields = ["run_id", "control_action", "target_refs", "operator_rationale", "mode", "priority"]
+explicit_omission = "Platform mechanics for notifier and agent prompting remain with maintained Houmao skills."

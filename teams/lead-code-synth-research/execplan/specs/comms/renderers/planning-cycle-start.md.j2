@@ -1,0 +1,25 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id | default('operator-to-planner') }}"
+```
+
+# Planning Cycle Start
+
+## Context
+
+- Trigger source: {{ payload.trigger_source }}
+- Cycle intent: {{ payload.cycle_intent }}
+- Current best ref: {{ payload.current_best_ref }}
+- History refs: {{ payload.history_refs | default([]) | join(', ') }}
+- Previous evaluation report ref: {{ payload.previous_evaluation_report_ref | default('none') }}
+
+## Requested Action
+
+Planner should open or resume one planning cycle, issue up to two distinct Coder assignments, record cycle state, then stop the turn.

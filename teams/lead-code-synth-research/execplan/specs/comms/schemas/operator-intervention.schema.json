@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead-code-synth-research.email.operator-intervention",
+  "title": "operator-intervention",
+  "type": "object",
+  "required": ["schema_id", "schema_version", "kind", "run_id", "plan_revision", "payload_id", "sender_id", "receiver_id", "payload"],
+  "properties": {
+    "schema_id": { "const": "lead-code-synth-research.email.operator-intervention" },
+    "schema_version": { "const": "1" },
+    "kind": { "const": "control" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "plan_revision": { "type": "string", "minLength": 1 },
+    "payload_id": { "type": "string", "minLength": 1 },
+    "sender_id": { "const": "human-operator" },
+    "receiver_id": { "const": "planner" },
+    "route_id": { "const": "operator-to-planner" },
+    "payload": {
+      "type": "object",
+      "required": ["control_action", "priority"],
+      "properties": {
+        "control_action": { "enum": ["stop", "pause", "resume", "redirect", "invalidate", "force-new-cycle", "mode-switch", "recover"] },
+        "target_refs": { "type": "array", "items": { "type": "string" } },
+        "operator_rationale": { "type": "string" },
+        "execution_mode": { "enum": ["auto", "manual"] },
+        "priority": { "enum": ["normal", "high"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

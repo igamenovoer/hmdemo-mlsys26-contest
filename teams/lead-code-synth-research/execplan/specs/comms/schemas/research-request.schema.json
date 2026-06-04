@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead-code-synth-research.email.research-request",
+  "title": "research-request",
+  "type": "object",
+  "required": ["schema_id", "schema_version", "kind", "run_id", "plan_revision", "payload_id", "sender_id", "receiver_id", "payload"],
+  "properties": {
+    "schema_id": { "const": "lead-code-synth-research.email.research-request" },
+    "schema_version": { "const": "1" },
+    "kind": { "const": "request" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "plan_revision": { "type": "string", "minLength": 1 },
+    "payload_id": { "type": "string", "minLength": 1 },
+    "sender_id": { "enum": ["planner", "cuda-coder-1", "cuda-coder-2", "synthesizer"] },
+    "receiver_id": { "const": "researcher" },
+    "route_id": { "const": "requester-to-researcher" },
+    "payload": {
+      "type": "object",
+      "required": ["request_id", "requester_id", "target_kernel_family", "question", "source_scope", "requested_output_shape"],
+      "properties": {
+        "request_id": { "type": "string", "minLength": 1 },
+        "requester_id": { "enum": ["planner", "cuda-coder-1", "cuda-coder-2", "synthesizer"] },
+        "target_kernel_family": { "const": "fused-moe" },
+        "question": { "type": "string", "minLength": 1 },
+        "known_failed_attempts": { "type": "array", "items": { "type": "string" } },
+        "bottleneck_context": { "type": "string" },
+        "source_scope": { "enum": ["local-and-network", "local-only", "network-only"] },
+        "requested_output_shape": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

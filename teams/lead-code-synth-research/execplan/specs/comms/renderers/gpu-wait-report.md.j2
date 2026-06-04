@@ -1,0 +1,27 @@
+```houmao-email-metadata
+schema_id = "{{ schema_id }}"
+schema_version = "{{ schema_version }}"
+kind = "{{ kind }}"
+run_id = "{{ run_id }}"
+plan_revision = "{{ plan_revision }}"
+payload_id = "{{ payload_id }}"
+sender_id = "{{ sender_id }}"
+receiver_id = "{{ receiver_id }}"
+route_id = "{{ route_id }}"
+cycle_id = "{{ payload.cycle_id }}"
+assignment_id = "{{ payload.assignment_id }}"
+```
+
+# GPU Wait Report
+
+## Waiting State
+
+- Agent id: {{ payload.agent_id }}
+- Assignment id: {{ payload.assignment_id }}
+- Blocked action: {{ payload.blocked_action }}
+- Attempted GPU selection evidence: {{ payload.attempted_gpu_selection_evidence }}
+- Next wakeup need: {{ payload.next_wakeup_need }}
+
+## Requested Action
+
+Planner should record waiting-for-GPU state and schedule retry only through a later notifier or operator wakeup. No agent should sleep, poll, or wait in chat for GPU capacity.
