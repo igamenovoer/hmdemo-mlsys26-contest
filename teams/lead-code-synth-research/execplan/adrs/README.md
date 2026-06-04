@@ -12,3 +12,5 @@ This generated directory records accepted clarification decisions about generate
 - `0004-failure-reports-route-to-planner.md`: accepted decision for non-GPU failure report routing and Synthesizer slot-status visibility.
 - `0005-synthesis-reports-route-to-evaluator-and-planner.md`: accepted decision for `synthesis-report` routing and Planner context-only handling.
 - `0006-lcsr-agent-names-and-runtime-skills.md`: accepted decision for concrete `lcsr-*` agent names and project runtime skill assignment.
+- `0007-in-repo-git-worktree-workspaces.md`: accepted decision for standard in-repo Git worktree workspace materialization.
+- `0008-cli-tool-distribution.md`: accepted decision for Codex official and Claude/Kimi CLI distribution across managed agents.

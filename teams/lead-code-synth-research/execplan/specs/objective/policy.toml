@@ -25,6 +25,13 @@ gpu_unavailable_state = "waiting-for-GPU"
 non_gpu_retry_limit = 3
 in_chat_waiting_allowed = false
 
+[resource.privileged_profiler]
+description = "NCU may need sudo for privileged counters on local machines."
+sudo_password_env = "NCU_ROOT_PW"
+applies_to = ["ncu-inspect", "krnopt-cuda-profiling when it runs Nsight Compute"]
+secret_policy = "read the env value only at command execution time; never print or persist it in mail, state, logs, artifacts, or profiles"
+missing_or_rejected_password_status = "permission-failure"
+
 [human_operator]
 description = "Human role boundaries."
 may_control = ["stop", "pause", "resume", "redirect", "invalidate", "force-new-cycle", "budget", "constraints"]

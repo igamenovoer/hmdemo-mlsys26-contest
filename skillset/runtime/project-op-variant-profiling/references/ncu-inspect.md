@@ -29,6 +29,25 @@ Set up and run a project variant under Nsight Compute. Delegate counter selectio
 
 Use bare `ncu` inside Pixi when the Pixi probe resolves to a working binary. If it is unavailable or fails because injection libraries are missing, try another discovered NCU path. If privileged counters are blocked, follow local machine policy and never print secrets.
 
+## Privileged NCU
+
+Some local machines require sudo for Nsight Compute counters. When NCU reports a permission or privileged-counter failure, read the sudo password only from the `NCU_ROOT_PW` environment variable. Never print `NCU_ROOT_PW`, never include its value in mail, state, command summaries, shell traces, logs, or artifacts, and never write it into Houmao profile defaults.
+
+Before a sudo-backed NCU retry, validate that `NCU_ROOT_PW` is present and that sudo accepts it:
+
+```bash
+test -n "${NCU_ROOT_PW:-}" || { echo "NCU_ROOT_PW is not set"; exit 126; }
+printf '%s\n' "$NCU_ROOT_PW" | sudo -S -p '' -v
+```
+
+If sudo is needed for the NCU process itself, keep the same NCU arguments and use `sudo -S -p '' -E` without echoing the password:
+
+```bash
+printf '%s\n' "$NCU_ROOT_PW" | sudo -S -p '' -E ncu ...
+```
+
+If `NCU_ROOT_PW` is missing, sudo rejects it, or local policy still blocks counters, record a permission-failure profiler status and follow the loop retry or blocker-report policy instead of waiting in chat.
+
 ## Run NCU
 
 Prefer a harness that loads the local trace dataset and packed solution, builds official inputs for one workload, warms once, calls CUDA profiler start/stop around the solution launch, and synchronizes. If no harness exists, run the one-workload official benchmark under NCU and keep `--target-processes all`.

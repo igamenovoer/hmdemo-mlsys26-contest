@@ -5,17 +5,40 @@ flavor = "in-repo"
 task_name = "lead-code-synth-research"
 repo_root = "auto"
 ws_root = "houmao-ws"
+task_root = "houmao-ws/lead-code-synth-research"
 launch_cwd_policy = "repo-root"
 coordination_policy = "houmao-mail-generated-state-run-artifacts-explicit-refs"
+workspace_manager_default_operation = "plan"
+workspace_manager_create_requires_operator_approval = true
+ignore_rule_policy = "prefer .git/info/exclude entry /houmao-ws/"
+shared_visibility_surface = "<repo-root>"
+source_mutation_rule = "agents edit source only inside their own private repo/ Git worktree"
+
+[workspace.git_worktrees]
+description = "Accepted workspace materialization strategy."
+required = true
+per_agent_repo_subdir = "repo"
+branch_template = "houmao/lead-code-synth-research/<agent-name>/main"
+task_root_template = "<repo-root>/houmao-ws/lead-code-synth-research"
+launch_cwd = "<repo-root>"
+parent_checkout_write_policy = "read-only by default"
+sibling_worktree_policy = "read-only by default for non-owning agents"
 
 [workspace.shared_kb]
 description = "Cross-run task knowledge requirements."
 required = true
+path = "houmao-ws/lead-code-synth-research/shared-kb"
 
 [workspace.owner_states]
 description = "Per-run task-owner bookkeeping requirements."
 required = true
 subdir = "<run-id>"
+path_template = "houmao-ws/lead-code-synth-research/owner-states/<run-id>"
+
+[workspace.repo_index]
+description = "Workspace-manager local docs expected for the in-repo workspace."
+repo_level_index = "houmao-ws/workspaces.md"
+task_contract = "houmao-ws/lead-code-synth-research/workspace.md"
 
 [workspace.validation]
 description = "Readiness checks that avoid GPU or dataset-dependent benchmark work."
@@ -24,7 +47,7 @@ gpu_dependent_checks_in_default_validation = false
 
 [workspace.manual_evidence]
 description = "Facts validate-loop needs when prepare-workspace is not used."
-required_fields = ["workspace_paths_distinct", "repo_roots_available", "agent_state_dirs_available", "coder_worktrees_writable", "non_coder_worktrees_readable", "shared_kb_available", "owner_states_available"]
+required_fields = ["workspace_paths_distinct", "repo_roots_available", "agent_state_dirs_available", "agent_worktree_branches_available", "coder_worktrees_writable", "non_coder_worktrees_readable", "shared_kb_available", "owner_states_available"]
 
 [[workspace.agents]]
 description = "Planner workspace requirements."
@@ -34,6 +57,9 @@ expected_role_profile = "lcsr-planner"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
+worktree_path = "houmao-ws/lead-code-synth-research/lcsr-planner/repo"
+branch = "houmao/lead-code-synth-research/lcsr-planner/main"
+states_path = "houmao-ws/lead-code-synth-research/lcsr-planner/states"
 source_mutation_surface = "none"
 read_write_policy = "planning-notes-cycle-state-current-best-records"
 
@@ -45,6 +71,9 @@ expected_role_profile = "lcsr-cuda-coder-1"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
+worktree_path = "houmao-ws/lead-code-synth-research/lcsr-cuda-coder-1/repo"
+branch = "houmao/lead-code-synth-research/lcsr-cuda-coder-1/main"
+states_path = "houmao-ws/lead-code-synth-research/lcsr-cuda-coder-1/states"
 source_mutation_surface = "candidate-solution-or-variant"
 read_write_policy = "candidate-source-local-evidence-profiler-artifacts"
 
@@ -56,6 +85,9 @@ expected_role_profile = "lcsr-cuda-coder-2"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
+worktree_path = "houmao-ws/lead-code-synth-research/lcsr-cuda-coder-2/repo"
+branch = "houmao/lead-code-synth-research/lcsr-cuda-coder-2/main"
+states_path = "houmao-ws/lead-code-synth-research/lcsr-cuda-coder-2/states"
 source_mutation_surface = "candidate-solution-or-variant"
 read_write_policy = "candidate-source-local-evidence-profiler-artifacts"
 
@@ -67,6 +99,9 @@ expected_role_profile = "lcsr-synthesizer"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
+worktree_path = "houmao-ws/lead-code-synth-research/lcsr-synthesizer/repo"
+branch = "houmao/lead-code-synth-research/lcsr-synthesizer/main"
+states_path = "houmao-ws/lead-code-synth-research/lcsr-synthesizer/states"
 source_mutation_surface = "none"
 read_write_policy = "candidate-comparison-synthesis-reports-preserved-ideas"
 
@@ -78,6 +113,9 @@ expected_role_profile = "lcsr-researcher"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
+worktree_path = "houmao-ws/lead-code-synth-research/lcsr-researcher/repo"
+branch = "houmao/lead-code-synth-research/lcsr-researcher/main"
+states_path = "houmao-ws/lead-code-synth-research/lcsr-researcher/states"
 source_mutation_surface = "none"
 read_write_policy = "research-notes-source-attribution-reference-summaries"
 
@@ -89,5 +127,8 @@ expected_role_profile = "lcsr-evaluator"
 needs_worktree = true
 needs_states = true
 needs_memo_seed = true
+worktree_path = "houmao-ws/lead-code-synth-research/lcsr-evaluator/repo"
+branch = "houmao/lead-code-synth-research/lcsr-evaluator/main"
+states_path = "houmao-ws/lead-code-synth-research/lcsr-evaluator/states"
 source_mutation_surface = "none"
 read_write_policy = "official-timing-evidence-anti-hacking-review-evaluation-records"

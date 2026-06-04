@@ -5,6 +5,13 @@ participant_id = "planner"
 role_id = "planner"
 easy_profile = "lcsr-planner"
 
+[cli]
+tool = "claude_kimi"
+command = "claude"
+credential_name = "claude-kimi-cred"
+credential_posture = "operator-provided-kimi-key"
+secret_storage = "external-to-execplan"
+
 [paths]
 definition = "definition.md"
 memo_seed = "memo-seed.md"
@@ -17,6 +24,11 @@ install_mode = "project-local-source"
 generated = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-planning-cycle-start", "lead-code-synth-research-on-synthesis-report", "lead-code-synth-research-on-evaluation-report", "lead-code-synth-research-on-failure-report", "lead-code-synth-research-on-gpu-wait-report", "lead-code-synth-research-planner-tick", "lead-code-synth-research-operator-control"]
 project_runtime = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 system_skill_posture = "preinstalled-by-houmao-managed-agent"
+
+[privileged_tools]
+ncu_may_require_sudo = true
+sudo_password_env = "NCU_ROOT_PW"
+secret_policy = "read only when NCU requires sudo; never print or persist the env value"
 
 [mail]
 mail_driven = true

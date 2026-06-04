@@ -1252,7 +1252,7 @@ layout: section
 
 | 文件 | 作用 |
 | --- | --- |
-| `intention/loop-overview.md` | loop 的核心意图：目标、参与者、协作流程、handoff、open questions |
+| `intention/loop-overview.md` | 只是 skeleton：预留目标、参与者、协作流程、handoff、open questions 等字段 |
 | `intention/project-context.md` | 当前项目的背景事实：repo 结构、可用命令、约束、已有约定和 workspace 假设 |
 
 </div>
@@ -1266,12 +1266,15 @@ layout: section
 - **定位**：创建最小 intention source，用来承载 loop 的初始意图。
 - **输入**：loop 目录、operator 对目标和参与者的描述。
 - **边界**：不做 project context 探测，也不进入 execplan 生成阶段。
+- **输出**：`intention/loop-overview.md`，最小 intention source。
 
-<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出文件</div>
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">`loop-overview.md` key sections</div>
 
-| 文件 | 作用 |
+| 分组 | 目的 |
 | --- | --- |
-| `intention/loop-overview.md` | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
+| goal boundary | 说明这个 loop 想完成什么，以及当前还不处理什么 |
+| participants | 记录预期参与者、责任分工，以及哪些角色还需要澄清 |
+| workflow sketch | 勾勒初始协作流程、handoff 和 open questions，供后续 clarify/execplan 使用 |
 
 </div>
 
@@ -1297,47 +1300,6 @@ layout: section
 
 ---
 
-# `execplan-fast-forward`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：一次性把 intention source 推进成完整 execplan package。
-- **输入**：已经足够清晰的 `intention/`。
-- **边界**：适合快速产出骨架，不启动 agents，不替代后续 validation。
-
-<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">生成文件组</div>
-
-| 文件组 | 作用 |
-| --- | --- |
-| `execplan/manifest.toml` | package 索引：说明有哪些 generated artifacts、哪些默认层被省略 |
-| `execplan/specs/**` | generated authority：process model、contracts、schema、topology、state/workspace/run 约束 |
-| `execplan/harness/**`、`execplan/skills/**`、`execplan/agents/**` | 可执行表面：命令入口、agent 可用 skills、participant 到具体 agent 的绑定 |
-| `execplan/docs/**` | 给 operator 读的支持文档，只总结和链接 authoritative artifacts |
-
-</div>
-
----
-
-# `execplan-step-by-step`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：按阶段生成 execplan，让 operator 在每个关键点确认设计。
-- **输入**：`intention/`，以及 operator 对每一阶段问题的回答。
-- **边界**：比 fast-forward 更可控，但需要更多人工确认。
-
-<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">生成文件组</div>
-
-| 文件组 | 作用 |
-| --- | --- |
-| `execplan/adrs/*.md` | 记录 generation-time decisions：每一步为什么这样生成、会影响哪些 artifacts |
-| `execplan/specs/**` | 逐步建立 process authority 和 contracts，让后续阶段有明确来源 |
-| `execplan/harness/**`、`skills/**`、`agents/**`、`docs/**`、`manifest.toml` | 按已确认的 specs 生成 commands、skills、agent bindings、docs 和 artifact index |
-
-</div>
-
----
-
 # `execplan-specs-process`
 
 <div class="text-[13px] leading-tight mt-3">
@@ -1351,10 +1313,12 @@ layout: section
 
 | 分组 | 目的 |
 | --- | --- |
-| scope boundary | 说清这个 loop 做什么、不做什么，避免后续 artifact 扩大范围 |
-| topology model | 说清参与者如何协作，谁负责什么，以及整体运行模式 |
-| event flow | 说清工作如何从触发、交接、流转到下一步状态 |
-| runtime contract | 说清 mail 如何驱动 agent，以及 operator 如何控制、恢复和结束 run |
+| scope boundary | 说明这个 loop 解决什么问题、暂时不解决什么问题，避免后续 artifact 偷偷扩大范围 |
+| topology model | 说明参与者之间是什么协作形状，谁拥有哪类工作，以及运行时按什么模式推进 |
+| event flow | 说明一次工作如何从触发开始，经过哪些阶段、交接和分支，最后到达下一步状态 |
+| mail routing | 说明消息如何成为事件、结果应该发给谁，以及哪些 mail family 会变成具体 contract |
+| runtime control | 说明 agent 每次被唤醒该做什么，以及 operator 如何暂停、恢复、修复或结束 run |
+| derivation aids | 用伪代码、时序图和未决问题，把抽象流程变成后续 contract 可以派生的依据 |
 
 </div>
 

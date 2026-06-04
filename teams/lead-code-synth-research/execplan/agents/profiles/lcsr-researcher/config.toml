@@ -5,6 +5,13 @@ participant_id = "researcher"
 role_id = "researcher"
 easy_profile = "lcsr-researcher"
 
+[cli]
+tool = "codex_official"
+command = "codex"
+credential_name = "codex-pro"
+credential_posture = "official-subscription"
+secret_storage = "external-to-execplan"
+
 [paths]
 definition = "definition.md"
 memo_seed = "memo-seed.md"
@@ -17,6 +24,11 @@ install_mode = "project-local-source"
 generated = ["lead-code-synth-research-shared-harness", "lead-code-synth-research-on-research-request", "lead-code-synth-research-researcher-tick"]
 project_runtime = ["krnopt-cuda-coding", "krnopt-cuda-domain-optimization", "krnopt-cuda-generic-optimization", "krnopt-cuda-profiling", "krnopt-cuda-structural-optimization", "krnopt-hw-aware-optimization", "krnopt-low-precision-kernel-formats", "project-op-variant-comparison", "project-op-variant-profiling", "project-op-variant-validation"]
 system_skill_posture = "preinstalled-by-houmao-managed-agent"
+
+[privileged_tools]
+ncu_may_require_sudo = true
+sudo_password_env = "NCU_ROOT_PW"
+secret_policy = "read only when NCU requires sudo; never print or persist the env value"
 
 [mail]
 mail_driven = true

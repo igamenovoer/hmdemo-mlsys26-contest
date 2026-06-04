@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This generated directory binds stable loop participants to concrete planned Houmao agent profiles, generated skills, project runtime skills, memo seeds, workspace policy refs, launch posture, and notifier prompts. Concrete Houmao-facing agent ids use the `lcsr-*` prefix so live loop agents are easy to identify.
+This generated directory binds stable loop participants to concrete planned Houmao agent profiles, CLI tool assignments, generated skills, project runtime skills, memo seeds, workspace policy refs, launch posture, and notifier prompts. Concrete Houmao-facing agent ids use the `lcsr-*` prefix so live loop agents are easy to identify.
 
 ## Contents
 

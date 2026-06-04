@@ -7,6 +7,7 @@ preserve_rendered_mail = true
 preserve_send_or_reply_responses = true
 preserve_state_snapshots = true
 preserve_logs = true
+secret_policy = "Run artifacts may record sudo-backed NCU command shape and permission status, but must never include the NCU_ROOT_PW value."
 
 [[directories]]
 description = "Validated outgoing and received payload material."
