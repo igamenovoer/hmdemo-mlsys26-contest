@@ -1,0 +1,52 @@
+schema_id = "lead-code-synth-research.email.optimization-assignment"
+schema_version = "1"
+kind = "request"
+run_id = "run-20260604T053237Z"
+plan_revision = "harness-stage-0001"
+payload_id = "optimization-assignment-coder2-cycle3-run-20260604T053237Z"
+sender_id = "planner"
+receiver_id = "cuda-coder-2"
+route_id = "planner-to-coder-2"
+
+[payload]
+cycle_id = "cycle-20260604T062500Z-003"
+assignment_id = "assignment-c2-20260604T062500Z-tf32"
+coder_slot = "cuda-coder-2"
+current_best_ref = "initial-baseline:solution/cuda/kernel.cu"
+allowed_edit_surface = ["solution/cuda/kernel.cu"]
+evidence_expectations = [
+  "Local check: kernel compiles without errors",
+  "Local check: kernel runs on a dynamically selected spare local GPU",
+  "Produce or update a project-cli variant ref for the changed kernel",
+  "Changed files summary listing all modified files"
+]
+risk_notes = [
+  "Cutlass 2.x TF32 GEMM requires OpClassTensorOp and Sm80+ arch tag",
+  "The default BasicGemm uses OpClassSimt; changing to OpClassTensorOp requires different template parameters",
+  "TF32 has 10-bit mantissa vs 23-bit for FP32; verify numerical correctness against baseline"
+]
+failed_direction_summary = "Cycle 1 c2 (routing-fusion) parallelized routing but regressed at seq_len=32 (0.35x). Cycle 2 primary (fp8v2) failed due to missing FP8 library support. Cycle 2 redirect (memopt) regressed to 0.45x at seq_len=1 and 0.61x at seq_len=32. All attempts to restructure kernels or optimize memory patterns have added overhead exceeding gains."
+selected_research_refs = []
+selected_profile_refs = []
+
+direction = """TF32 (TensorFloat-32) tensor-core GEMM via Cutlass 2.x.
+
+Replace the float32 Cutlass BasicGemm with a TF32-enabled GEMM that uses tensor cores while keeping float32 inputs and outputs.
+
+TF32 is a 19-bit floating-point format (1 sign, 8 exponent, 10 mantissa) supported natively on Ampere (SM80+) and Hopper GPUs. It provides ~8x GEMM throughput compared to FP32 SIMT with minimal precision loss. Critically, TF32 GEMM accepts float32 inputs and produces float32 outputs — NO dequantization or type conversion is needed.
+
+Your task:
+1. Replace `run_basic_gemm` with a Cutlass 2.x GEMM using `OpClassTensorOp` and `arch::Sm80` (or higher) with float data types. The compute operation should use TF32 tensor cores (e.g., `cutlass::arch::OpMultiplyAddFastF32` or the default TF32 path).
+2. Keep all other kernels unchanged — do NOT modify routing, dequantization, SwiGLU, or accumulation. Only change the GEMM calls.
+3. The inputs to the GEMM are already float32 (from dequantization), so no data conversion is needed.
+4. Verify numerical correctness carefully — TF32 has 10-bit mantissa vs 23-bit for FP32. The contest requires matched_ratio >= 0.9.
+
+Key constraints and hints:
+- GEMM1: M = count[expert], N = 4096, K = 7168
+- GEMM2: M = count[expert], N = 7168, K = 2048
+- Use Cutlass 2.x `Gemm` template with `OpClassTensorOp`, not `OpClassSimt`
+- The arch tag should be `arch::Sm80` or higher (the B200 supports SM100)
+- Keep the same TVM FFI entry point signature
+- Run local checks on a dynamically selected spare local GPU
+- If no spare GPU is available, report waiting-for-GPU and stop
+- If you hit non-GPU blockers, retry up to 3 times, then report failure"""

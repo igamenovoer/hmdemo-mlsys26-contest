@@ -1,0 +1,23 @@
+schema_id = "lead-code-synth-research.email.synthesis-report"
+schema_version = "1"
+kind = "result"
+run_id = "run-20260604T053237Z"
+plan_revision = "harness-stage-0001"
+payload_id = "synthesis-report-cycle-20260604T054000Z-001-c1-to-planner"
+sender_id = "synthesizer"
+receiver_id = "planner"
+route_id = "synthesizer-to-planner-context"
+
+[payload]
+cycle_id = "cycle-20260604T054000Z-001"
+synthesis_id = "synthesis-cycle-20260604T054000Z-001-c1-selection"
+source_coder_candidate_ids = ["candidate-c1-20260604T054000Z-bf16-tensor-gemm", "candidate-c2-routingfuse-20260604T0548Z"]
+selected_candidate_id = "candidate-c1-20260604T054000Z-bf16-tensor-gemm"
+project_cli_variant_ref = "c1-bf16-tensor-gemm"
+workspace_path = "/data/ssd1/huangzhe/code/hmdemo-mlsys26-contest"
+lineage = "Selected cuda-coder-1 candidate c1-bf16-tensor-gemm from cycle cycle-20260604T054000Z-001 after comparing it with cuda-coder-2 candidate c2-routingfuse. The selected candidate has a passing selected contest-local MoE check on GPU 1 for workload e05c6c03-5603-4a1c-b34c-dcce0ecaeea4 at seq_len=1 with latency 4.652851295471192 ms, reference latency 11.864211082458496 ms, and speedup 2.5498797036574996. The c2-routingfuse candidate also passes correctness and is slightly faster on seq_len=1, but it reports seq_len=32 latency 47.163 ms versus reference 16.572 ms, speedup 0.35x, so its routing-fusion changes are not merged into this promotion input."
+merge_notes = "No merge performed. Promote c1-bf16-tensor-gemm as the cleaner evaluation candidate and preserve c2-routingfuse for targeted follow-up on the seq_len=32 routing regression."
+rejected_changes = ["c2-routingfuse route_topk_kernel group top-2 and final top-k parallelization because the coder evidence shows a seq_len=32 slowdown, 47.163 ms versus 16.572 ms reference."]
+preserved_ideas = ["c2-routingfuse warp/block reductions for route_topk_kernel may still be useful if retuned or gated by sequence length, but it should not be promoted without fixing the seq_len=32 regression.", "Coder-slot state still listed both assignments as implementing, but both coder-result mails for the cycle were available and neither reported a blocker."]
+evidence_bundle_refs = ["tmp/lcsr-coder1/cycle-20260604T054000Z-001/c1-bf16-tensor-gemm-validation/traces/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048.jsonl", "tmp/lcsr-coder1/cycle-20260604T054000Z-001/c1-bf16-tensor-gemm-validation/solutions/local/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048/c1-bf16-tensor-gemm-validation.json", "tmp/c2-routingfuse-validation-20260604T0548Z/traces/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048.jsonl", "tmp/c2-routingfuse-validation-20260604T0548Z/solutions/local/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048/c2-routingfuse-validation.json", "project-cli variant diff c2-routingfuse: No differences between live CUDA bundle and variant c2-routingfuse."]
+planner_copy_is_context_only = true

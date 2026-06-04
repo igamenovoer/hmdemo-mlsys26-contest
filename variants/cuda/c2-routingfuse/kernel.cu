@@ -16,7 +16,6 @@
 #include <vector>
 
 #include <cutlass/cutlass.h>
-#include <cutlass/arch/mma.h>
 #include <cutlass/bfloat16.h>
 #include <cutlass/gemm/device/gemm.h>
 #include <cutlass/layout/matrix.h>
@@ -37,16 +36,7 @@ constexpr int32_t kGemm1OutBlocks = kGemm1OutSize / kBlockSize;
 constexpr int32_t kTopK = 8;
 constexpr int32_t kNumGroups = 8;
 constexpr int32_t kTopKGroup = 4;
-constexpr int32_t kBf16GemmCountThreshold = 8;
 constexpr uint8_t kDTypeFloat8E4M3Fn = static_cast<uint8_t>(kDLFloat8_e4m3fn);
-
-using BasicGemm = cutlass::gemm::device::Gemm<
-    float,
-    cutlass::layout::RowMajor,
-    float,
-    cutlass::layout::RowMajor,
-    float,
-    cutlass::layout::RowMajor>;
 
 using TensorGemm = cutlass::gemm::device::Gemm<
     cutlass::bfloat16_t,
@@ -55,9 +45,7 @@ using TensorGemm = cutlass::gemm::device::Gemm<
     cutlass::layout::RowMajor,
     float,
     cutlass::layout::RowMajor,
-    float,
-    cutlass::arch::OpClassTensorOp,
-    cutlass::arch::Sm80>;
+    float>;
 
 void check_cuda(cudaError_t status, const char* context) {
   if (status != cudaSuccess) {
@@ -313,6 +301,38 @@ __device__ __forceinline__ float fp8_e4m3_to_float(uint8_t byte) {
   return static_cast<float>(value);
 }
 
+__device__ __forceinline__ bool route_candidate_better(
+    float lhs_value,
+    int32_t lhs_index,
+    float rhs_value,
+    int32_t rhs_index) {
+  return lhs_value > rhs_value ||
+         (lhs_value == rhs_value && lhs_index >= 0 &&
+          (rhs_index < 0 || lhs_index < rhs_index));
+}
+
+__device__ __forceinline__ void route_insert_top2(
+    float value,
+    int32_t index,
+    float& first_value,
+    int32_t& first_index,
+    float& second_value,
+    int32_t& second_index) {
+  if (route_candidate_better(value, index, first_value, first_index)) {
+    if (index != first_index) {
+      second_value = first_value;
+      second_index = first_index;
+    }
+    first_value = value;
+    first_index = index;
+  } else if (
+      index != first_index &&
+      route_candidate_better(value, index, second_value, second_index)) {
+    second_value = value;
+    second_index = index;
+  }
+}
+
 __global__ void route_topk_kernel(
     const float* __restrict__ routing_logits,
     const __nv_bfloat16* __restrict__ routing_bias,
@@ -328,73 +348,104 @@ __global__ void route_topk_kernel(
 
   __shared__ float biased_scores[kNumExpertsGlobal];
   __shared__ float scores[kNumExpertsGlobal];
+  __shared__ float group_scores[kNumGroups];
+  __shared__ bool selected_groups[kNumGroups];
+  __shared__ float reduce_values[kNumExpertsGlobal];
+  __shared__ int32_t reduce_indices[kNumExpertsGlobal];
+  __shared__ int32_t selected_experts[kTopK];
+  __shared__ float selected_scores[kTopK];
 
   const float logit = routing_logits[token * kNumExpertsGlobal + expert];
   const float score = 1.0f / (1.0f + expf(-logit));
   scores[expert] = score;
   biased_scores[expert] = score + __bfloat162float(routing_bias[expert]);
+  if (expert < kNumGroups) {
+    selected_groups[expert] = false;
+  }
   __syncthreads();
+
+  const int32_t group = expert / warpSize;
+  const int32_t lane = expert & (warpSize - 1);
+  float first_value = biased_scores[expert];
+  int32_t first_index = expert;
+  float second_value = -FLT_MAX;
+  int32_t second_index = -1;
+  constexpr unsigned kFullWarpMask = 0xffffffffU;
+  for (int32_t delta = warpSize / 2; delta > 0; delta >>= 1) {
+    const float other_first_value = __shfl_down_sync(kFullWarpMask, first_value, delta);
+    const int32_t other_first_index = __shfl_down_sync(kFullWarpMask, first_index, delta);
+    const float other_second_value = __shfl_down_sync(kFullWarpMask, second_value, delta);
+    const int32_t other_second_index = __shfl_down_sync(kFullWarpMask, second_index, delta);
+    route_insert_top2(
+        other_first_value,
+        other_first_index,
+        first_value,
+        first_index,
+        second_value,
+        second_index);
+    route_insert_top2(
+        other_second_value,
+        other_second_index,
+        first_value,
+        first_index,
+        second_value,
+        second_index);
+  }
+  if (lane == 0) {
+    group_scores[group] = first_value + second_value;
+  }
+  __syncthreads();
+
+  if (expert == 0) {
+    for (int32_t slot = 0; slot < kTopKGroup; ++slot) {
+      float best = -FLT_MAX;
+      int32_t best_group = -1;
+      for (int32_t candidate_group = 0; candidate_group < kNumGroups; ++candidate_group) {
+        if (!selected_groups[candidate_group] &&
+            route_candidate_better(
+                group_scores[candidate_group], candidate_group, best, best_group)) {
+          best = group_scores[candidate_group];
+          best_group = candidate_group;
+        }
+      }
+      if (best_group >= 0) {
+        selected_groups[best_group] = true;
+      }
+    }
+  }
+  __syncthreads();
+
+  for (int32_t slot = 0; slot < kTopK; ++slot) {
+    const float candidate_value = selected_groups[group] ? biased_scores[expert] : -FLT_MAX;
+    const int32_t candidate_index = selected_groups[group] ? expert : -1;
+    reduce_values[expert] = candidate_value;
+    reduce_indices[expert] = candidate_index;
+    __syncthreads();
+
+    for (int32_t stride = kNumExpertsGlobal / 2; stride > 0; stride >>= 1) {
+      if (expert < stride) {
+        const float other_value = reduce_values[expert + stride];
+        const int32_t other_index = reduce_indices[expert + stride];
+        if (route_candidate_better(other_value, other_index, reduce_values[expert], reduce_indices[expert])) {
+          reduce_values[expert] = other_value;
+          reduce_indices[expert] = other_index;
+        }
+      }
+      __syncthreads();
+    }
+
+    if (expert == 0) {
+      selected_experts[slot] = reduce_indices[0];
+      selected_scores[slot] = reduce_indices[0] >= 0 ? scores[reduce_indices[0]] : 0.0f;
+      if (reduce_indices[0] >= 0) {
+        biased_scores[reduce_indices[0]] = -FLT_MAX;
+      }
+    }
+    __syncthreads();
+  }
 
   if (expert != 0) {
     return;
-  }
-
-  float group_scores[kNumGroups];
-  for (int32_t group = 0; group < kNumGroups; ++group) {
-    float first = -FLT_MAX;
-    float second = -FLT_MAX;
-    const int32_t base = group * (kNumExpertsGlobal / kNumGroups);
-    for (int32_t offset = 0; offset < kNumExpertsGlobal / kNumGroups; ++offset) {
-      const float value = biased_scores[base + offset];
-      if (value > first) {
-        second = first;
-        first = value;
-      } else if (value > second) {
-        second = value;
-      }
-    }
-    group_scores[group] = first + second;
-  }
-
-  bool selected_groups[kNumGroups] = {};
-  for (int32_t slot = 0; slot < kTopKGroup; ++slot) {
-    float best = -FLT_MAX;
-    int32_t best_group = -1;
-    for (int32_t group = 0; group < kNumGroups; ++group) {
-      if (!selected_groups[group] && group_scores[group] > best) {
-        best = group_scores[group];
-        best_group = group;
-      }
-    }
-    if (best_group >= 0) {
-      selected_groups[best_group] = true;
-    }
-  }
-
-  int32_t selected_experts[kTopK];
-  float selected_scores[kTopK];
-  for (int32_t slot = 0; slot < kTopK; ++slot) {
-    float best = -FLT_MAX;
-    int32_t best_expert = -1;
-    for (int32_t group = 0; group < kNumGroups; ++group) {
-      if (!selected_groups[group]) {
-        continue;
-      }
-      const int32_t base = group * (kNumExpertsGlobal / kNumGroups);
-      for (int32_t offset = 0; offset < kNumExpertsGlobal / kNumGroups; ++offset) {
-        const int32_t candidate = base + offset;
-        const float value = biased_scores[candidate];
-        if (value > best) {
-          best = value;
-          best_expert = candidate;
-        }
-      }
-    }
-    selected_experts[slot] = best_expert;
-    selected_scores[slot] = best_expert >= 0 ? scores[best_expert] : 0.0f;
-    if (best_expert >= 0) {
-      biased_scores[best_expert] = -FLT_MAX;
-    }
   }
 
   float score_sum = 0.0f;
@@ -463,91 +514,6 @@ __global__ void dequant_compact_activations_kernel(
     const uint8_t* __restrict__ hidden_states,
     const float* __restrict__ hidden_states_scale,
     const int32_t* __restrict__ compact_slot_ids,
-    float* __restrict__ activations,
-    int32_t start,
-    int32_t count,
-    int32_t seq_len) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(count) * kHiddenSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t row = static_cast<int32_t>(linear / kHiddenSize);
-  const int32_t hidden = static_cast<int32_t>(linear - static_cast<int64_t>(row) * kHiddenSize);
-  const int32_t slot = compact_slot_ids[start + row];
-  const int32_t token = slot / kTopK;
-  const float scale = hidden_states_scale[(hidden / kBlockSize) * seq_len + token];
-  activations[linear] =
-      fp8_e4m3_to_float(hidden_states[static_cast<int64_t>(token) * kHiddenSize + hidden]) * scale;
-}
-
-__global__ void dequant_gemm1_weights_kernel(
-    const uint8_t* __restrict__ gemm1_weights,
-    const float* __restrict__ gemm1_weights_scale,
-    float* __restrict__ gemm1_weight_t,
-    int32_t local_expert) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(kHiddenSize) * kGemm1OutSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t hidden = static_cast<int32_t>(linear / kGemm1OutSize);
-  const int32_t out = static_cast<int32_t>(linear - static_cast<int64_t>(hidden) * kGemm1OutSize);
-  const float scale =
-      gemm1_weights_scale[(local_expert * kGemm1OutBlocks + (out / kBlockSize)) * kHiddenBlocks +
-                          (hidden / kBlockSize)];
-  gemm1_weight_t[linear] =
-      fp8_e4m3_to_float(gemm1_weights[(static_cast<int64_t>(local_expert) * kGemm1OutSize + out) *
-                                       kHiddenSize + hidden]) *
-      scale;
-}
-
-__global__ void swiglu_kernel(
-    const float* __restrict__ gemm1_out,
-    float* __restrict__ gated,
-    int32_t count) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(count) * kIntermediateSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t row = static_cast<int32_t>(linear / kIntermediateSize);
-  const int32_t i = static_cast<int32_t>(linear - static_cast<int64_t>(row) * kIntermediateSize);
-  const int64_t base = static_cast<int64_t>(row) * kGemm1OutSize;
-  const float up = gemm1_out[base + i];
-  const float gate = gemm1_out[base + kIntermediateSize + i];
-  const float silu_gate = gate / (1.0f + expf(-gate));
-  gated[linear] = silu_gate * up;
-}
-
-__global__ void dequant_gemm2_weights_kernel(
-    const uint8_t* __restrict__ gemm2_weights,
-    const float* __restrict__ gemm2_weights_scale,
-    float* __restrict__ gemm2_weight_t,
-    int32_t local_expert) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(kIntermediateSize) * kHiddenSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t intermediate =
-      static_cast<int32_t>(linear / kHiddenSize);
-  const int32_t hidden =
-      static_cast<int32_t>(linear - static_cast<int64_t>(intermediate) * kHiddenSize);
-  const float scale =
-      gemm2_weights_scale[(local_expert * kHiddenBlocks + (hidden / kBlockSize)) *
-                              kIntermediateBlocks +
-                          (intermediate / kBlockSize)];
-  gemm2_weight_t[linear] =
-      fp8_e4m3_to_float(gemm2_weights[(static_cast<int64_t>(local_expert) * kHiddenSize + hidden) *
-                                       kIntermediateSize + intermediate]) *
-      scale;
-}
-
-__global__ void dequant_compact_activations_bf16_kernel(
-    const uint8_t* __restrict__ hidden_states,
-    const float* __restrict__ hidden_states_scale,
-    const int32_t* __restrict__ compact_slot_ids,
     cutlass::bfloat16_t* __restrict__ activations,
     int32_t start,
     int32_t count,
@@ -567,7 +533,7 @@ __global__ void dequant_compact_activations_bf16_kernel(
   activations[linear] = cutlass::bfloat16_t(value);
 }
 
-__global__ void dequant_gemm1_weights_bf16_kernel(
+__global__ void dequant_gemm1_weights_kernel(
     const uint8_t* __restrict__ gemm1_weights,
     const float* __restrict__ gemm1_weights_scale,
     cutlass::bfloat16_t* __restrict__ gemm1_weight_t,
@@ -589,7 +555,7 @@ __global__ void dequant_gemm1_weights_bf16_kernel(
   gemm1_weight_t[linear] = cutlass::bfloat16_t(value);
 }
 
-__global__ void swiglu_bf16_kernel(
+__global__ void swiglu_kernel(
     const float* __restrict__ gemm1_out,
     cutlass::bfloat16_t* __restrict__ gated,
     int32_t count) {
@@ -607,7 +573,7 @@ __global__ void swiglu_bf16_kernel(
   gated[linear] = cutlass::bfloat16_t(silu_gate * up);
 }
 
-__global__ void dequant_gemm2_weights_bf16_kernel(
+__global__ void dequant_gemm2_weights_kernel(
     const uint8_t* __restrict__ gemm2_weights,
     const float* __restrict__ gemm2_weights_scale,
     cutlass::bfloat16_t* __restrict__ gemm2_weight_t,
@@ -617,7 +583,8 @@ __global__ void dequant_gemm2_weights_bf16_kernel(
   if (linear >= total) {
     return;
   }
-  const int32_t intermediate = static_cast<int32_t>(linear / kHiddenSize);
+  const int32_t intermediate =
+      static_cast<int32_t>(linear / kHiddenSize);
   const int32_t hidden =
       static_cast<int32_t>(linear - static_cast<int64_t>(intermediate) * kHiddenSize);
   const float scale =
@@ -661,30 +628,6 @@ __global__ void cast_output_kernel(
   if (idx < count) {
     output[idx] = __float2bfloat16(input[idx]);
   }
-}
-
-void run_basic_gemm(
-    int32_t m,
-    int32_t n,
-    int32_t k,
-    const float* a,
-    const float* b,
-    float* c,
-    cudaStream_t stream,
-    const char* context) {
-  if (m == 0 || n == 0 || k == 0) {
-    return;
-  }
-  BasicGemm gemm;
-  BasicGemm::Arguments args(
-      {m, n, k},
-      {a, k},
-      {b, n},
-      {c, n},
-      {c, n},
-      {1.0f, 0.0f});
-  check_cutlass(BasicGemm::can_implement(args), context);
-  check_cutlass(gemm(args, nullptr, stream), context);
 }
 
 void run_tensor_gemm(
@@ -833,13 +776,13 @@ void kernel(
     DeviceBuffer activations(
         checked_mul(
             checked_mul(max_count, kHiddenSize, "activation elements"),
-            sizeof(float),
+            sizeof(cutlass::bfloat16_t),
             "activations"),
         stream);
     DeviceBuffer gemm1_weight_t(
         checked_mul(
             checked_mul(kHiddenSize, kGemm1OutSize, "gemm1 weight elements"),
-            sizeof(float),
+            sizeof(cutlass::bfloat16_t),
             "gemm1 weights"),
         stream);
     DeviceBuffer gemm1_out(
@@ -851,13 +794,13 @@ void kernel(
     DeviceBuffer gated(
         checked_mul(
             checked_mul(max_count, kIntermediateSize, "gated elements"),
-            sizeof(float),
+            sizeof(cutlass::bfloat16_t),
             "gated"),
         stream);
     DeviceBuffer gemm2_weight_t(
         checked_mul(
             checked_mul(kIntermediateSize, kHiddenSize, "gemm2 weight elements"),
-            sizeof(float),
+            sizeof(cutlass::bfloat16_t),
             "gemm2 weights"),
         stream);
     DeviceBuffer expert_output(
@@ -865,30 +808,6 @@ void kernel(
             checked_mul(max_count, kHiddenSize, "expert output elements"),
             sizeof(float),
             "expert output"),
-        stream);
-    DeviceBuffer activations_bf16(
-        checked_mul(
-            checked_mul(max_count, kHiddenSize, "bf16 activation elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 activations"),
-        stream);
-    DeviceBuffer gemm1_weight_bf16(
-        checked_mul(
-            checked_mul(kHiddenSize, kGemm1OutSize, "bf16 gemm1 weight elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 gemm1 weights"),
-        stream);
-    DeviceBuffer gated_bf16(
-        checked_mul(
-            checked_mul(max_count, kIntermediateSize, "bf16 gated elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 gated"),
-        stream);
-    DeviceBuffer gemm2_weight_bf16(
-        checked_mul(
-            checked_mul(kIntermediateSize, kHiddenSize, "bf16 gemm2 weight elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 gemm2 weights"),
         stream);
 
     for (int32_t local_expert = 0; local_expert < kNumLocalExperts; ++local_expert) {
@@ -900,135 +819,70 @@ void kernel(
 
       const int64_t activation_elems = static_cast<int64_t>(count) * kHiddenSize;
       const int64_t gemm1_weight_elems = static_cast<int64_t>(kHiddenSize) * kGemm1OutSize;
-      const int64_t gemm2_weight_elems = static_cast<int64_t>(kIntermediateSize) * kHiddenSize;
+      dequant_compact_activations_kernel<<<
+          static_cast<int32_t>((activation_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(
+          static_cast<const uint8_t*>(hidden_states.data_ptr()),
+          static_cast<const float*>(hidden_states_scale.data_ptr()),
+          compact_slot_ids.data<int32_t>(),
+          activations.data<cutlass::bfloat16_t>(),
+          start,
+          count,
+          seq_len);
+      check_launch("dequant_compact_activations_kernel");
+
+      dequant_gemm1_weights_kernel<<<
+          static_cast<int32_t>((gemm1_weight_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(
+          static_cast<const uint8_t*>(gemm1_weights.data_ptr()),
+          static_cast<const float*>(gemm1_weights_scale.data_ptr()),
+          gemm1_weight_t.data<cutlass::bfloat16_t>(),
+          local_expert);
+      check_launch("dequant_gemm1_weights_kernel");
+
+      run_tensor_gemm(
+          count,
+          kGemm1OutSize,
+          kHiddenSize,
+          activations.data<cutlass::bfloat16_t>(),
+          gemm1_weight_t.data<cutlass::bfloat16_t>(),
+          gemm1_out.data<float>(),
+          stream,
+          "cutlass gemm1");
+
       const int64_t gated_elems = static_cast<int64_t>(count) * kIntermediateSize;
-      if (count < kBf16GemmCountThreshold) {
-        dequant_compact_activations_bf16_kernel<<<
-            static_cast<int32_t>((activation_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(hidden_states.data_ptr()),
-            static_cast<const float*>(hidden_states_scale.data_ptr()),
-            compact_slot_ids.data<int32_t>(),
-            activations_bf16.data<cutlass::bfloat16_t>(),
-            start,
-            count,
-            seq_len);
-        check_launch("dequant_compact_activations_bf16_kernel");
+      swiglu_kernel<<<
+          static_cast<int32_t>((gated_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(gemm1_out.data<float>(), gated.data<cutlass::bfloat16_t>(), count);
+      check_launch("swiglu_kernel");
 
-        dequant_gemm1_weights_bf16_kernel<<<
-            static_cast<int32_t>((gemm1_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm1_weights.data_ptr()),
-            static_cast<const float*>(gemm1_weights_scale.data_ptr()),
-            gemm1_weight_bf16.data<cutlass::bfloat16_t>(),
-            local_expert);
-        check_launch("dequant_gemm1_weights_bf16_kernel");
+      const int64_t gemm2_weight_elems = static_cast<int64_t>(kIntermediateSize) * kHiddenSize;
+      dequant_gemm2_weights_kernel<<<
+          static_cast<int32_t>((gemm2_weight_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(
+          static_cast<const uint8_t*>(gemm2_weights.data_ptr()),
+          static_cast<const float*>(gemm2_weights_scale.data_ptr()),
+          gemm2_weight_t.data<cutlass::bfloat16_t>(),
+          local_expert);
+      check_launch("dequant_gemm2_weights_kernel");
 
-        run_tensor_gemm(
-            count,
-            kGemm1OutSize,
-            kHiddenSize,
-            activations_bf16.data<cutlass::bfloat16_t>(),
-            gemm1_weight_bf16.data<cutlass::bfloat16_t>(),
-            gemm1_out.data<float>(),
-            stream,
-            "cutlass bf16 gemm1");
-
-        swiglu_bf16_kernel<<<
-            static_cast<int32_t>((gated_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(gemm1_out.data<float>(), gated_bf16.data<cutlass::bfloat16_t>(), count);
-        check_launch("swiglu_bf16_kernel");
-
-        dequant_gemm2_weights_bf16_kernel<<<
-            static_cast<int32_t>((gemm2_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm2_weights.data_ptr()),
-            static_cast<const float*>(gemm2_weights_scale.data_ptr()),
-            gemm2_weight_bf16.data<cutlass::bfloat16_t>(),
-            local_expert);
-        check_launch("dequant_gemm2_weights_bf16_kernel");
-
-        run_tensor_gemm(
-            count,
-            kHiddenSize,
-            kIntermediateSize,
-            gated_bf16.data<cutlass::bfloat16_t>(),
-            gemm2_weight_bf16.data<cutlass::bfloat16_t>(),
-            expert_output.data<float>(),
-            stream,
-            "cutlass bf16 gemm2");
-      } else {
-        dequant_compact_activations_kernel<<<
-            static_cast<int32_t>((activation_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(hidden_states.data_ptr()),
-            static_cast<const float*>(hidden_states_scale.data_ptr()),
-            compact_slot_ids.data<int32_t>(),
-            activations.data<float>(),
-            start,
-            count,
-            seq_len);
-        check_launch("dequant_compact_activations_kernel");
-
-        dequant_gemm1_weights_kernel<<<
-            static_cast<int32_t>((gemm1_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm1_weights.data_ptr()),
-            static_cast<const float*>(gemm1_weights_scale.data_ptr()),
-            gemm1_weight_t.data<float>(),
-            local_expert);
-        check_launch("dequant_gemm1_weights_kernel");
-
-        run_basic_gemm(
-            count,
-            kGemm1OutSize,
-            kHiddenSize,
-            activations.data<float>(),
-            gemm1_weight_t.data<float>(),
-            gemm1_out.data<float>(),
-            stream,
-            "cutlass fp32 gemm1");
-
-        swiglu_kernel<<<
-            static_cast<int32_t>((gated_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(gemm1_out.data<float>(), gated.data<float>(), count);
-        check_launch("swiglu_kernel");
-
-        dequant_gemm2_weights_kernel<<<
-            static_cast<int32_t>((gemm2_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm2_weights.data_ptr()),
-            static_cast<const float*>(gemm2_weights_scale.data_ptr()),
-            gemm2_weight_t.data<float>(),
-            local_expert);
-        check_launch("dequant_gemm2_weights_kernel");
-
-        run_basic_gemm(
-            count,
-            kHiddenSize,
-            kIntermediateSize,
-            gated.data<float>(),
-            gemm2_weight_t.data<float>(),
-            expert_output.data<float>(),
-            stream,
-            "cutlass fp32 gemm2");
-      }
+      run_tensor_gemm(
+          count,
+          kHiddenSize,
+          kIntermediateSize,
+          gated.data<cutlass::bfloat16_t>(),
+          gemm2_weight_t.data<cutlass::bfloat16_t>(),
+          expert_output.data<float>(),
+          stream,
+          "cutlass gemm2");
 
       const int64_t expert_output_elems = static_cast<int64_t>(count) * kHiddenSize;
       accumulate_weighted_output_kernel<<<

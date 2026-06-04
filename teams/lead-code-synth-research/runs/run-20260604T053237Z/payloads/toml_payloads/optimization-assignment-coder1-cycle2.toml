@@ -1,0 +1,49 @@
+schema_id = "lead-code-synth-research.email.optimization-assignment"
+schema_version = "1"
+kind = "request"
+run_id = "run-20260604T053237Z"
+plan_revision = "harness-stage-0001"
+payload_id = "optimization-assignment-coder1-cycle2-run-20260604T053237Z"
+sender_id = "planner"
+receiver_id = "cuda-coder-1"
+route_id = "planner-to-coder-1"
+
+[payload]
+cycle_id = "cycle-20260604T060500Z-002"
+assignment_id = "assignment-c1-20260604T060500Z-batchedgemm"
+coder_slot = "cuda-coder-1"
+current_best_ref = "initial-baseline:solution/cuda/kernel.cu"
+allowed_edit_surface = ["solution/cuda/kernel.cu"]
+evidence_expectations = [
+  "Local check: kernel compiles without errors",
+  "Local check: kernel runs on a dynamically selected spare local GPU",
+  "Produce or update a project-cli variant ref for the changed kernel",
+  "Changed files summary listing all modified files"
+]
+risk_notes = [
+  "Batched GEMM requires constructing arrays of pointers to each expert weights and activations",
+  "Activation counts vary per expert; use grouped GEMM with problem-size arrays or pad to max_count",
+  "Shared memory and register pressure from larger thread blocks may affect occupancy"
+]
+failed_direction_summary = "Cycle 1 attempt (c1-bf16-tensor-gemm) used BF16 tensor-core GEMM but regressed on 16/19 workloads due to per-expert launch overhead. The GEMM itself was fast for small seq_len (2.62x at seq_len=1) but the sequential expert loop and host sync dominated at larger seq_len."
+selected_research_refs = []
+selected_profile_refs = []
+
+direction = """Replace the sequential per-expert host loop with CUBLAS batched GEMM or CUTLASS grouped GEMM to process all local experts in parallel.
+
+The baseline loops over 32 experts sequentially on the host, launching separate kernels per expert for dequant, GEMM1, SwiGLU, GEMM2, and accumulation. This creates massive kernel launch overhead and forces a host sync barrier (cudaStreamSynchronize) before the loop starts.
+
+Your task: Replace the sequential expert loop with batched/grouped GEMM calls that process all experts in parallel:
+1. For GEMM1: all 32 experts' M dimensions vary (token counts per expert). Use CUBLAS batched GEMM with an array of pointers and problem sizes, or CUTLASS grouped GEMM with a problem-size array.
+2. For GEMM2: similarly batch all 32 experts.
+3. Keep SwiGLU as a single batched kernel or fuse it into the GEMM pipeline if feasible.
+4. Eliminate the host cudaStreamSynchronize by pre-allocating maximum-size buffers and using GPU-side data only.
+
+Key constraints and hints:
+- GEMM1 dims per expert: M = count[expert], N = 4096, K = 7168
+- GEMM2 dims per expert: M = count[expert], N = 7168, K = 2048
+- The counts vary; grouped GEMM is preferred over uniform batched GEMM
+- Keep the same TVM FFI entry point signature
+- Run local checks on a dynamically selected spare local GPU
+- If no spare GPU is available, report waiting-for-GPU and stop
+- If you hit non-GPU blockers, retry up to 3 times, then report failure"""

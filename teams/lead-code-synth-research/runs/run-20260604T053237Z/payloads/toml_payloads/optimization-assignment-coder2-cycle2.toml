@@ -1,0 +1,53 @@
+schema_id = "lead-code-synth-research.email.optimization-assignment"
+schema_version = "1"
+kind = "request"
+run_id = "run-20260604T053237Z"
+plan_revision = "harness-stage-0001"
+payload_id = "optimization-assignment-coder2-cycle2-run-20260604T053237Z"
+sender_id = "planner"
+receiver_id = "cuda-coder-2"
+route_id = "planner-to-coder-2"
+
+[payload]
+cycle_id = "cycle-20260604T060500Z-002"
+assignment_id = "assignment-c2-20260604T060500Z-fp8v2"
+coder_slot = "cuda-coder-2"
+current_best_ref = "initial-baseline:solution/cuda/kernel.cu"
+allowed_edit_surface = ["solution/cuda/kernel.cu"]
+evidence_expectations = [
+  "Local check: kernel compiles without errors",
+  "Local check: kernel runs on a dynamically selected spare local GPU",
+  "Produce or update a project-cli variant ref for the changed kernel",
+  "Changed files summary listing all modified files"
+]
+risk_notes = [
+  "CUTLASS 3.5 FP8 block-scaled GEMM APIs are complex and may require specific scale tensor layouts",
+  "cuBLASLt may have simpler FP8 GEMM APIs but may not support arbitrary block-scale layouts",
+  "Numerical correctness must be verified carefully since FP8 has limited dynamic range"
+]
+failed_direction_summary = "Cycle 1 attempt (c2-routingfuse) parallelized routing and fused some kernels but regressed at seq_len=32 (0.35x, 47ms vs 16ms ref). The routing fusion added overhead that hurt medium-sequence performance. The seq_len=1 case was slightly faster than baseline."
+selected_research_refs = []
+selected_profile_refs = []
+
+direction = """Implement true FP8 e4m3fn tensor-core GEMM with block scaling using CUTLASS 3.5 or cuBLASLt, replacing both the float32 dequantization and the float32 GEMM.
+
+The baseline dequantizes FP8 weights and activations to float32, then runs float32 GEMM via Cutlass 2.x BasicGemm. The cycle-1 c1 attempt fell back to BF16 tensor-core GEMM because implementing true FP8 block-scaled GEMM requires correct scale tensor layout handling.
+
+Your task: Implement a true FP8 tensor-core GEMM pipeline:
+1. Replace `run_basic_gemm` with CUTLASS 3.5 or cuBLASLt FP8 GEMM calls.
+2. The inputs are already FP8 e4m3fn; do NOT dequantize to float32 or BF16 first.
+3. Apply the provided block scales correctly:
+   - hidden_states_scale: per 128-element block of hidden dim, per token. Shape [hidden_blocks, seq_len].
+   - gemm1_weights_scale: per 128x128 block of weight matrix. Shape [expert, gemm1_out_blocks, hidden_blocks].
+   - gemm2_weights_scale: per 128x128 block of weight matrix. Shape [expert, hidden_blocks, intermediate_blocks].
+4. CUTLASS 3.5 FP8 GEMM supports block scaling via separate scale tensors. Check the CUTLASS 3.5 examples for the exact scale tensor layout contract.
+5. If CUTLASS 3.5 proves too complex in one bounded attempt, cuBLASLt's cublasLtMatmul with CUBLAS_COMPUTE_32F_FAST_TF32 and FP8 inputs may be a viable fallback, though it may not support arbitrary block scales.
+
+Key constraints and hints:
+- GEMM1: M = expert_token_count, N = 4096, K = 7168
+- GEMM2: M = expert_token_count, N = 7168, K = 2048
+- Keep the same TVM FFI entry point signature
+- Verify numerical correctness carefully; FP8 dynamic range is small
+- Run local checks on a dynamically selected spare local GPU
+- If no spare GPU is available, report waiting-for-GPU and stop
+- If you hit non-GPU blockers, retry up to 3 times, then report failure"""

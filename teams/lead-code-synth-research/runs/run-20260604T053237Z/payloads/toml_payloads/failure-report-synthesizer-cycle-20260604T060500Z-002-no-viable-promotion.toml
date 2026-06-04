@@ -1,0 +1,20 @@
+schema_id = "lead-code-synth-research.email.failure-report"
+schema_version = "1"
+kind = "error"
+run_id = "run-20260604T053237Z"
+plan_revision = "harness-stage-0001"
+payload_id = "failure-report-synthesizer-cycle-20260604T060500Z-002-no-viable-promotion"
+sender_id = "synthesizer"
+receiver_id = "planner"
+route_id = "synthesizer-to-planner-failure"
+
+[payload]
+cycle_id = "cycle-20260604T060500Z-002"
+assignment_id = "cycle-20260604T060500Z-002-synthesis"
+agent_id = "synthesizer"
+candidate_id = "none-selected"
+blocker_type = "no_viable_promotion_candidate_performance_regression"
+retry_count = 0
+retry_evidence_refs = ["teams/lead-code-synth-research/runs/run-20260604T053237Z/synthesis/no-synthesis-cycle-20260604T060500Z-002.md", "teams/lead-code-synth-research/runs/run-20260604T053237Z/synthesis/wait-note-cycle-20260604T060500Z-002-c1-batched-padded-gemm.md"]
+completed_work_refs = ["Processed candidate-c1-20260604T060500Z-batched-padded-gemm: correctness passed, but seq_len=1 measured 26.21224937438965 ms versus 11.877030181884766 ms reference, speedup 0.45310991865845246.", "Processed candidate-c2-memopt-20260604T0618Z: correctness passed, but seq_len=1 measured 25.374 ms versus 11.325 ms reference, speedup 0.45x, and seq_len=32 measured 25.349 ms versus 15.519 ms reference, speedup 0.61x.", "Preserved c2-memopt ideas for Planner-directed follow-up only: slot_to_compact_row, token-owned accumulation, and vectorized padded activation dequant.", "Recommended planner follow-up: start another round with a new direction; avoid promoting either cycle-002 candidate and do not update current-best from this report."]
+recommended_planner_followup = "Start another planning round. Both available cycle-002 candidates pass correctness but regress versus reference, so Synthesizer has no promotion input for Evaluator. Preserve useful partial ideas only as context."

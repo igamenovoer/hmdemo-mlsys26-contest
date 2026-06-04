@@ -114,3 +114,175 @@ const currentSection = computed(() => {
   white-space: nowrap;
 }
 </style>
+
+<style>
+.loop-example-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: start;
+  margin-top: 0.65rem;
+}
+
+.loop-example-grid-wide-ai {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.loop-example-grid-side {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 0.85rem;
+}
+
+.loop-example-grid-side .loop-example-panel {
+  padding: 0.62rem;
+}
+
+.loop-example-grid-side .loop-example-code {
+  font-size: 0.85rem;
+  line-height: 1.32;
+}
+
+.loop-example-panel {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 0.58rem;
+}
+
+.loop-example-label {
+  color: #0f172a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 0.45rem;
+}
+
+.loop-example-code {
+  min-height: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: 8px;
+  background: #111827;
+  color: #e5e7eb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.28;
+  padding: 0.5rem;
+}
+
+.tmux-response-title {
+  margin-bottom: 0.35rem;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.tmux-response-text {
+  margin: 0.3rem 0 0.45rem;
+  color: #e5e7eb;
+}
+
+.tmux-table {
+  width: 100%;
+  margin: 0.3rem 0 0.45rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.tmux-table th {
+  padding: 0.18rem 0.35rem;
+  border-bottom: 2px solid #94a3b8;
+  color: #f8fafc;
+  font-weight: 700;
+  text-align: left;
+}
+
+.tmux-table td {
+  padding: 0.22rem 0.35rem;
+  border-top: 1px solid #475569;
+  vertical-align: top;
+}
+
+.tmux-table tbody tr:first-child td {
+  border-top: 0;
+}
+
+.tmux-col-narrow {
+  width: 4.4rem;
+}
+
+.tmux-col-medium {
+  width: 9rem;
+}
+
+.tmux-col-wide {
+  width: auto;
+}
+
+.loop-example-code code,
+.loop-example-code .tmux-table code {
+  border-radius: 0;
+  background: transparent !important;
+  color: #93c5fd !important;
+  font-weight: 700;
+  padding: 0;
+}
+
+.tmux-impact-table {
+  font-size: 0.85rem;
+  line-height: 1.2;
+  table-layout: fixed;
+}
+
+.tmux-impact-table th,
+.tmux-impact-table td {
+  padding: 0.18rem 0.3rem;
+  white-space: normal;
+}
+
+.tmux-impact-table .tmux-col-medium {
+  width: auto;
+}
+
+.tmux-exec-table {
+  font-size: 0.85rem;
+  line-height: 1.22;
+}
+
+.tmux-agent-status-table {
+  line-height: 1.18;
+}
+
+.tmux-agent-status-table th,
+.tmux-agent-status-table td {
+  padding: 0.16rem 0.26rem;
+}
+
+.tmux-agent-status-table th:nth-child(1),
+.tmux-agent-status-table td:nth-child(1) {
+  width: 9.8rem;
+}
+
+.tmux-agent-status-table th:nth-child(2),
+.tmux-agent-status-table td:nth-child(2) {
+  width: 12.4rem;
+}
+
+.tmux-exec-command {
+  width: 9.6rem;
+}
+
+.tmux-exec-prompt {
+  width: 17.5rem;
+}
+
+.loop-example-note {
+  margin-top: 0.05rem;
+  color: #475569;
+  font-size: 0.55rem;
+  line-height: 1.1;
+}
+</style>

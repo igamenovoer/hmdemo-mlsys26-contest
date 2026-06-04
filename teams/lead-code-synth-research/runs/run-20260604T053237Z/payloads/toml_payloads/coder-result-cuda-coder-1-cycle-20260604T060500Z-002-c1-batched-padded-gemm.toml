@@ -1,0 +1,23 @@
+schema_id = "lead-code-synth-research.email.coder-result"
+schema_version = "1"
+kind = "result"
+run_id = "run-20260604T053237Z"
+plan_revision = "harness-stage-0001"
+payload_id = "coder-result-cuda-coder-1-cycle-20260604T060500Z-002-c1-batched-padded-gemm"
+sender_id = "cuda-coder-1"
+receiver_id = "synthesizer"
+route_id = "coder-1-to-synthesizer"
+
+[payload]
+cycle_id = "cycle-20260604T060500Z-002"
+assignment_id = "assignment-c1-20260604T060500Z-batchedgemm"
+candidate_id = "candidate-c1-20260604T060500Z-batched-padded-gemm"
+project_cli_variant_ref = "c1-batched-padded-gemm"
+workspace_path = "/data/ssd1/huangzhe/code/hmdemo-mlsys26-contest"
+changed_files = ["solution/cuda/kernel.cu", "configs/variants.toml", "variants/cuda/c1-batched-padded-gemm/kernel.cu", "variants/cuda/c1-batched-padded-gemm/binding.py", "variants/cuda/c1-batched-padded-gemm/variant.toml"]
+commands_run = ["teams/lead-code-synth-research/execplan/harness/bin/lead-code-synth-research-harness control status --run-id run-20260604T053237Z", "teams/lead-code-synth-research/execplan/harness/bin/lead-code-synth-research-harness control get-mode --run-id run-20260604T053237Z", "nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits", "pixi run project-cli variant new c1-batched-padded-gemm --definition moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048", "pixi run project-cli variant stock c1-batched-padded-gemm", "pixi run -e cu130 python skillset/runtime/project-op-variant-validation/scripts/pack_variant_solution.py --variant c1-batched-padded-gemm --name c1-batched-padded-gemm-validation --output tmp/lcsr-coder1/cycle-20260604T060500Z-002/c1-batched-padded-gemm-validation/solutions/local/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048/c1-batched-padded-gemm-validation.json", "CUDA_VISIBLE_DEVICES=1 pixi run -e cu130 flashinfer-bench run --local tmp/lcsr-coder1/cycle-20260604T060500Z-002/c1-batched-padded-gemm-validation --definitions moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048 --solutions c1-batched-padded-gemm-validation --save-results --use-isolated-runner --log-level INFO --timeout 300 --warmup-runs 0 --iterations 1 --num-trials 5 --atol 1 --rtol 0.3 --required-matched-ratio 0.9"]
+local_check_status = "PASSED selected FlashInfer-Bench MoE correctness on GPU 1 (NVIDIA B200) for workload e05c6c03-5603-4a1c-b34c-dcce0ecaeea4, axes seq_len=1. Status PASSED; matched_ratio=0.9896763392857143; latency_ms=26.21224937438965; reference_latency_ms=11.877030181884766; speedup_factor=0.45310991865845246. This validates compile/runtime but is slower than reference on the selected workload."
+local_evidence_refs = ["tmp/lcsr-coder1/cycle-20260604T060500Z-002/c1-batched-padded-gemm-validation/traces/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048.jsonl", "tmp/lcsr-coder1/cycle-20260604T060500Z-002/c1-batched-padded-gemm-validation/solutions/local/moe/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048/c1-batched-padded-gemm-validation.json"]
+profile_refs = []
+blocker_state = "none"
+recommended_followup = "Wait for sibling coder evidence before synthesis. Do not promote this candidate as-is because selected workload latency is slower than reference."

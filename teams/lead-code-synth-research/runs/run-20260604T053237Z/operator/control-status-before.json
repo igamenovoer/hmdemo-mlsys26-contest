@@ -1,0 +1,26 @@
+{
+  "command": "control status",
+  "data": {
+    "active_assignments": [],
+    "blockers": {
+      "retry_records": [],
+      "waiting_for_gpu": []
+    },
+    "control_state": {
+      "execution_mode": "auto",
+      "operator_stop_requested": 0,
+      "plan_revision": "contract-stage-0001",
+      "run_id": "run-20260604T053237Z",
+      "run_state": "not_started",
+      "updated_at": "2026-06-04T05:33:07+00:00"
+    },
+    "notifier_posture": "platform-owned-by-houmao-agent-gateway",
+    "run_id": "run-20260604T053237Z"
+  },
+  "diagnostics": [],
+  "loop_slug": "lead-code-synth-research",
+  "plan_revision": "harness-stage-0001",
+  "run_id": "run-20260604T053237Z",
+  "success": true,
+  "warnings": []
+}

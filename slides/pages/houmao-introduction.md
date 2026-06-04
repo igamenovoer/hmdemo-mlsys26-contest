@@ -193,6 +193,176 @@ layout: default
   gap: 1.5rem;
 }
 
+.loop-example-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: start;
+  margin-top: 0.65rem;
+}
+
+.loop-example-grid-wide-ai {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.loop-example-grid-side {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 0.85rem;
+}
+
+.loop-example-grid-side .loop-example-panel {
+  padding: 0.62rem;
+}
+
+.loop-example-grid-side .loop-example-code {
+  font-size: 0.85rem;
+  line-height: 1.32;
+}
+
+.loop-example-panel {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 0.58rem;
+}
+
+.loop-example-label {
+  color: #0f172a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 0.45rem;
+}
+
+.loop-example-code {
+  min-height: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: 8px;
+  background: #111827;
+  color: #e5e7eb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.28;
+  padding: 0.5rem;
+}
+
+.tmux-response-title {
+  margin-bottom: 0.35rem;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.tmux-response-text {
+  margin: 0.3rem 0 0.45rem;
+  color: #e5e7eb;
+}
+
+.tmux-table {
+  width: 100%;
+  margin: 0.3rem 0 0.45rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.tmux-table th {
+  padding: 0.18rem 0.35rem;
+  border-bottom: 2px solid #94a3b8;
+  color: #f8fafc;
+  font-weight: 700;
+  text-align: left;
+}
+
+.tmux-table td {
+  padding: 0.22rem 0.35rem;
+  border-top: 1px solid #475569;
+  vertical-align: top;
+}
+
+.tmux-table tbody tr:first-child td {
+  border-top: 0;
+}
+
+.tmux-col-narrow {
+  width: 4.4rem;
+}
+
+.tmux-col-medium {
+  width: 9rem;
+}
+
+.tmux-col-wide {
+  width: auto;
+}
+
+.loop-example-code code,
+.loop-example-code .tmux-table code {
+  border-radius: 0;
+  background: transparent !important;
+  color: #93c5fd !important;
+  font-weight: 700;
+  padding: 0;
+}
+
+.tmux-impact-table {
+  font-size: 0.85rem;
+  line-height: 1.2;
+  table-layout: fixed;
+}
+
+.tmux-impact-table th,
+.tmux-impact-table td {
+  padding: 0.18rem 0.3rem;
+  white-space: normal;
+}
+
+.tmux-impact-table .tmux-col-medium {
+  width: auto;
+}
+
+.tmux-exec-table {
+  font-size: 0.85rem;
+  line-height: 1.22;
+}
+
+.tmux-agent-status-table {
+  line-height: 1.18;
+}
+
+.tmux-agent-status-table th,
+.tmux-agent-status-table td {
+  padding: 0.16rem 0.26rem;
+}
+
+.tmux-agent-status-table th:nth-child(1),
+.tmux-agent-status-table td:nth-child(1) {
+  width: 9.8rem;
+}
+
+.tmux-agent-status-table th:nth-child(2),
+.tmux-agent-status-table td:nth-child(2) {
+  width: 12.4rem;
+}
+
+.tmux-exec-command {
+  width: 9.6rem;
+}
+
+.tmux-exec-prompt {
+  width: 17.5rem;
+}
+
+.loop-example-note {
+  margin-top: 0.05rem;
+  color: #475569;
+  font-size: 0.55rem;
+  line-height: 1.1;
+}
+
 .agent-square {
   position: relative;
   width: 100%;
@@ -1259,6 +1429,27 @@ layout: section
 
 ---
 
+# Example: init
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro init<br>teams/lead-code-synth-research</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Initialized intention source.<br><br>Created:<br>- intention/README.md<br>- intention/loop-overview.md<br>- intention/project-context.md<br><br>No execplan/ or adrs/ generated.</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s000203</code> → <code>s000622</code>. 适合展示：init 只建立 source 区域，先不碰运行时 artifact。</div>
+
+</div>
+
+---
+
 # `create-intention`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1280,6 +1471,27 @@ layout: section
 
 ---
 
+# Example: create-intention
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">read the paper teams/lead-code-synth-research/source/mlsys26-tech-report.pdf, we want to implement such a multi agent system</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Created loop intent from the paper.<br><br>Updated loop-overview.md.<br>Added focused intent files:<br>- paper-notes.md<br>- participants.md<br>- workflow.md<br>- constraints.md<br><br>No execplan/ generated.</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s000967</code> → <code>s001789</code>. 适合展示：operator 可以用自然语言和资料文件生成第一版 intention。</div>
+
+</div>
+
+---
+
 # `clarify-intent`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1295,6 +1507,53 @@ layout: section
 | `<loop-dir>/adrs/*.md` | 记录已接受的 intent decision：问了什么、为什么重要、最终怎么决定 |
 | `intention/loop-overview.md` | 更新目标、参与者、生命周期、拓扑和整体操作模型 |
 | `intention/*.md` | 按主题补充 `participants.md`、`workflow.md`、`communication.md`、`state.md`、`workspace.md`、`constraints.md` 等 source docs |
+
+</div>
+
+---
+
+# Example: clarify-intent
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro clarify intent</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">
+      <div class="tmux-response-title">Question 1: First Scope</div>
+      <div class="tmux-response-text">Which implementation scope should this Houmao loop target first?</div>
+      <table class="tmux-table">
+        <thead>
+          <tr>
+            <th class="tmux-col-narrow">Option</th>
+            <th class="tmux-col-wide">Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A</td>
+            <td>Recommended: Active Fused MoE only for the first implementation.</td>
+          </tr>
+          <tr>
+            <td>B</td>
+            <td>Build a reusable framework, but run the first concrete cycle on Fused MoE.</td>
+          </tr>
+          <tr>
+            <td>C</td>
+            <td>Support Fused MoE, DSA TopK, and DSA Sparse Attention from day one.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tmux-response-text">Reply with A, recommended, yes, or a short alternative.</div>
+    </div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s001838</code> / <code>s002034</code>. 这个例子重点展示：AI 的 response 末尾会给 operator 一个可选择的决策表。</div>
 
 </div>
 
@@ -1324,6 +1583,27 @@ layout: section
 
 ---
 
+# Example: execplan-specs-process
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">execplan-specs-process</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Generated process-stage files:<br><br>- execplan/specs/README.md<br>- execplan/specs/collab/README.md<br>- execplan/specs/collab/collab-overview.md<br><br>Next step:<br>execplan-specs-contract</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s005202</code> → <code>s005566</code>. 适合展示：先生成 process authority，再让后续 contract 派生。</div>
+
+</div>
+
+---
+
 # `execplan-specs-contract`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1340,6 +1620,27 @@ layout: section
 | `specs/collab/topology/` | 定义 `tree-loop` 或 `generic-loop`、route graph、cycle posture、context posture |
 | `specs/comms/` | 定义 mail templates、`schema_id`、JSON schemas、Markdown renderers 和 reply expectation |
 | `specs/state/`、`specs/workspace/`、`specs/run/` | 定义 bookkeeping state、workspace policy、run artifacts 和结构化记录 schema |
+
+</div>
+
+---
+
+# Example: execplan-specs-contract
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">execplan-specs-contract</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Generated contract layer:<br><br>- objective/<br>- participants/<br>- collab/topology/<br>- comms/<br>- state/<br>- workspace/<br>- run/<br><br>Validated TOML, JSON and SQL.</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s006457</code> → <code>s007138</code>. 可用 <code>s006763</code> 展示 contract 生成中的文件批次。</div>
 
 </div>
 
@@ -1366,6 +1667,27 @@ layout: section
 
 ---
 
+# Example: execplan-harness
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">execplan-harness</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Generated harness stage:<br><br>- commands.toml<br>- bin/lead-code-synth-research-harness<br>- src/..._harness.py<br>- command-envelope.schema.json<br>- dependency-posture.toml<br><br>Smoke tests passed.</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s007138</code> → <code>s007436</code>. 适合展示：generated package 自带可调用的验证和控制入口。</div>
+
+</div>
+
+---
+
 # `execplan-skills`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1381,6 +1703,27 @@ layout: section
 | `<loop-slug>-shared-harness/SKILL.md` | 统一说明 agents 如何使用 generated harness、contracts 和 structured outputs |
 | `<loop-slug>-<role>-on-<message-family>/SKILL.md` | 处理一个具体 `schema_id` 或 event family，做一个 bounded action 后结束 |
 | `<loop-slug>-<role>-tick/`、`<loop-slug>-operator-control/` | 调度/恢复/完成检查，以及 operator 的 status、pause、resume、stop、manual step 等控制 |
+
+</div>
+
+---
+
+# Example: execplan-skills
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">go next</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Routed to execplan-skills.<br><br>Generated 16 flat skill dirs:<br>- shared harness usage<br>- 9 on-event handlers<br>- 5 role tick handlers<br>- operator control<br><br>Next step:<br>execplan-agent-bindings</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s007436</code> → <code>s007595</code>. 这里 user 用自然语言继续，AI 推断下一阶段。</div>
 
 </div>
 
@@ -1407,6 +1750,27 @@ layout: section
 
 ---
 
+# Example: execplan-agent-bindings
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">next</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Generated agent bindings:<br><br>- agents/bindings.toml<br>- six planned profile configs<br>- role definitions<br>- memo seeds<br>- notifier prompts<br><br>No live agents were launched.</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s007595</code> → <code>s007794</code>. 后续 refinement 用 <code>s008140</code> 展示 <code>lcsr-*</code> 命名和 runtime skills 分配。</div>
+
+</div>
+
+---
+
 # `execplan-finalize`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1422,6 +1786,27 @@ layout: section
 | `execplan/manifest.toml` | final artifact index：路径、artifact kind、plan revision、generated-source posture、omissions |
 | `execplan/docs/artifact-index.md` | 给人快速查 package 里有什么，每个 artifact 去哪里读 |
 | `operator-guide.md`、`runtime-model.md`、`validation.md` | 总结如何操作、runtime 如何被 notifier/mail/skills 驱动、validation posture 是什么 |
+
+</div>
+
+---
+
+# Example: execplan-finalize
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">finalize execplan</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Generated final support layer:<br><br>- manifest.toml<br>- docs/artifact-index.md<br>- docs/operator-guide.md<br>- docs/runtime-model.md<br>- docs/validation.md<br><br>Package is ready for validation.</div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s008171</code> → <code>s008400</code>. 适合展示：finalize 不新增行为，而是整理读者和 operator 入口。</div>
 
 </div>
 
@@ -1448,6 +1833,60 @@ layout: section
 
 ---
 
+# Example: validate-execplan
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">validate execplan</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">
+      <div class="tmux-response-title">Validation summary</div>
+      <table class="tmux-table">
+        <thead>
+          <tr>
+            <th class="tmux-col-medium">Check</th>
+            <th class="tmux-col-wide">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>manifest paths</td>
+            <td>ok</td>
+          </tr>
+          <tr>
+            <td>TOML / JSON / SQL</td>
+            <td>ok</td>
+          </tr>
+          <tr>
+            <td>harness self-check</td>
+            <td>ok</td>
+          </tr>
+          <tr>
+            <td>binding/profile consistency</td>
+            <td>ok</td>
+          </tr>
+          <tr>
+            <td>live profile readiness</td>
+            <td>missing credentials/profiles</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tmux-response-text">Next: clarify CLI credentials, then prepare-agents.</div>
+    </div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s008560</code> → <code>s008842</code>. 适合展示：validation 会暴露进入 live preparation 前的缺口。</div>
+
+</div>
+
+---
+
 # `clarify-execplan`
 
 <div class="text-[15px] leading-snug mt-5">
@@ -1463,6 +1902,52 @@ layout: section
 | `execplan/adrs/*.md` | 记录 accepted execplan implementation decisions，以及影响哪些 generated artifacts |
 | `execplan/specs/**`、`harness/**`、`skills/**`、`agents/**` | 修正 contracts、commands、skill trigger/procedure、agent binding 或 notifier prompt |
 | stale-artifact notes | 标出受影响的下游 artifacts：哪些已更新，哪些需要 regeneration 或已经 stale |
+
+</div>
+
+---
+
+# Example: clarify-execplan
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">clarify the workspace execplan</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">
+      <div class="tmux-response-title">Question: Workspace Materialization</div>
+      <table class="tmux-table">
+        <thead>
+          <tr>
+            <th class="tmux-col-narrow">Option</th>
+            <th class="tmux-col-wide">Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A</td>
+            <td>Recommended: in-repo Git worktrees, one private repo/ per <code>lcsr-*</code> agent.</td>
+          </tr>
+          <tr>
+            <td>B</td>
+            <td>Shared repo with per-agent states only.</td>
+          </tr>
+          <tr>
+            <td>C</td>
+            <td>External workspaces outside the repo.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tmux-response-text">After answer: record execplan ADR, update workspace contract and final docs.</div>
+    </div>
+  </div>
+</div>
+
+<div class="loop-example-note">Snapshot: <code>s008400</code> → <code>s008560</code>. 也可用 <code>s009962</code> 展示 CLI credential 分配类 clarification。</div>
 
 </div>
 
@@ -1488,6 +1973,56 @@ layout: section
 </div>
 
 ---
+
+# Example: update-execplan
+
+<div class="text-[14px] leading-snug mt-4">
+
+<div class="loop-example-grid loop-example-grid-wide-ai">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro update-execplan teams/lead-code-synth-research<br><br>intention/workspace.md changed: use in-repo worktrees.</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">
+      <div class="tmux-response-title">Impact plan</div>
+      <table class="tmux-table tmux-impact-table">
+        <thead>
+          <tr>
+            <th class="tmux-col-medium">Changed area</th>
+            <th class="tmux-col-medium">Earliest stage</th>
+            <th class="tmux-col-wide">Refresh</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>intention/workspace.md</td>
+            <td>execplan-specs-contract</td>
+            <td>workspace, harness refs, skills, bindings, docs</td>
+          </tr>
+          <tr>
+            <td>collab-overview.md</td>
+            <td>execplan-specs-process</td>
+            <td>all downstream artifacts</td>
+          </tr>
+          <tr>
+            <td>agents/bindings.toml</td>
+            <td>execplan-agent-bindings</td>
+            <td>profiles, notifier prompts, final docs</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tmux-response-text">Run validate-execplan last.</div>
+    </div>
+  </div>
+</div>
+
+<div class="loop-example-note">Recording 中没有单独的 <code>update-execplan</code> run；这个 slide 展示同类 refresh 逻辑。相关 workspace clarification snapshots: <code>s008400</code> → <code>s008560</code>。</div>
+
+</div>
+
+---
 layout: section
 ---
 
@@ -1506,6 +2041,37 @@ layout: section
 - **输出**：specialists、launch profiles、已安装 skills 和准备报告。
 - **边界**：只准备 agent 材料，不启动 CLI 进程。
 
+<div class="loop-example-grid loop-example-grid-side">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro prepare-agents teams/lead-code-synth-research</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">
+      <div class="tmux-response-title">Prepared agents: ready.</div>
+      <div class="tmux-response-text">Created six specialists/profiles. Registered generated + runtime skills, memo seeds, notifier appendices, and repo-root workdir.</div>
+      <table class="tmux-table tmux-agent-status-table">
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Launch / credential</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>lcsr-planner</code></td><td>tui / <code>claude-kimi-cred</code></td><td>ready, not launched</td></tr>
+          <tr><td><code>lcsr-cuda-coder-1</code></td><td>tui / <code>codex-pro</code></td><td>ready, not launched</td></tr>
+          <tr><td><code>lcsr-cuda-coder-2</code></td><td>tui / <code>codex-pro</code></td><td>ready, not launched</td></tr>
+          <tr><td><code>lcsr-synthesizer</code></td><td>tui / <code>codex-pro</code></td><td>ready, not launched</td></tr>
+          <tr><td><code>lcsr-researcher</code></td><td>tui / <code>codex-pro</code></td><td>ready, not launched</td></tr>
+          <tr><td><code>lcsr-evaluator</code></td><td>tui / <code>claude-kimi-cred</code></td><td>ready, not launched</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 </div>
 
 ---
@@ -1518,6 +2084,17 @@ layout: section
 - **输入**：workspace contract、agent bindings 和 repo-local 约束。
 - **输出**：workspace directories、state links、初始化文件和 workspace readiness report。
 - **边界**：只处理 workspace 姿态，不代表 mail、gateway 或 agents 已就绪。
+
+<div class="loop-example-grid loop-example-grid-side">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro prepare-workspace teams/lead-code-synth-research</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Materialized in-repo worktrees under <code>houmao-ws/lead-code-synth-research</code>.<br><br>Each agent gets a private <code>repo/</code> worktree and <code>states/</code> directory.<br><br>Shared owner-state and workspace docs are ready.</div>
+  </div>
+</div>
 
 </div>
 
@@ -1532,6 +2109,17 @@ layout: section
 - **输出**：pre-launch validation report，以及可以阻塞启动的问题清单。
 - **边界**：这是运行前检查，不会替 operator 自动修复所有 runtime 问题。
 
+<div class="loop-example-grid loop-example-grid-side">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro validate-loop teams/lead-code-synth-research</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Validation Result<br><br>Ready with warnings. No blockers found for <code>launch-agents</code>.<br><br>Checked: manifest, harness, mail schemas, profiles, skills and workspace readiness.<br><br>Warnings: mailbox accounts are launch-created; <code>NCU_ROOT_PW</code> is unset.</div>
+  </div>
+</div>
+
 </div>
 
 ---
@@ -1545,31 +2133,30 @@ layout: section
 - **输出**：live agent ids、CLI 进程信息、gateway attachment 和 launch report。
 - **边界**：启动 agents，但不一定发送 first trigger。
 
+<div class="loop-example-grid loop-example-grid-side">
+  <div class="loop-example-panel">
+    <div class="loop-example-label">You</div>
+    <div class="loop-example-code">$houmao-agent-loop-pro launch-agents teams/lead-code-synth-research</div>
+  </div>
+  <div class="loop-example-panel">
+    <div class="loop-example-label">AI</div>
+    <div class="loop-example-code">Launched the managed agents and recorded live agent ids.<br><br>Gateway attachment and CLI process posture are captured for later inspection.<br><br>No first trigger is sent until start.</div>
+  </div>
+</div>
+
 </div>
 
 ---
 
-# `start`
-
-<div class="text-[15px] leading-snug mt-5">
-
-- **定位**：正式开始一次 loop run。
-- **输入**：已启动 agents、run contract、initial event 或 operator start prompt。
-- **输出**：run id、初始化 state、first trigger mail 或 prompt，以及 run log 起点。
-- **边界**：只负责启动 run，不保证每个 agent 已完成后续协作。
-
-</div>
-
----
-
-# Runtime Control Commands
+# Run / Runtime Control Commands
 
 <div class="text-[14px] leading-snug mt-5">
 
-`start` 之后的 execution commands 主要是 runtime control surface，用来观察、暂停、恢复、修复和结束一次 run。
+从 `start` 开始，我们只把 execution commands 当作 runtime control surface 总览，不展开运行细节。
 
 | command | 作用 |
 | --- | --- |
+| `start` | 正式开始一次 run：初始化 state，发送 first trigger mail 或 prompt，记录 run log 起点 |
 | `status` | 只读查看 phase、open events、pending mail、agent 状态和最近 artifact 更新 |
 | `pause` | 暂停自动推进或 notifier wakeup 姿态，保留 agents、workspace 和 run artifacts |
 | `resume` | 从 paused state 恢复推进，并给出下一步触发计划 |

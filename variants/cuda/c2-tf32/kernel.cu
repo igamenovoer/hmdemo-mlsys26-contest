@@ -17,8 +17,9 @@
 
 #include <cutlass/cutlass.h>
 #include <cutlass/arch/mma.h>
-#include <cutlass/bfloat16.h>
+#include <cutlass/arch/mma_sm80.h>
 #include <cutlass/gemm/device/gemm.h>
+#include <cutlass/gemm/warp/default_mma_tensor_op_sm80.h>
 #include <cutlass/layout/matrix.h>
 
 namespace hmdemo_mlsys26_contest {
@@ -37,7 +38,6 @@ constexpr int32_t kGemm1OutBlocks = kGemm1OutSize / kBlockSize;
 constexpr int32_t kTopK = 8;
 constexpr int32_t kNumGroups = 8;
 constexpr int32_t kTopKGroup = 4;
-constexpr int32_t kBf16GemmCountThreshold = 8;
 constexpr uint8_t kDTypeFloat8E4M3Fn = static_cast<uint8_t>(kDLFloat8_e4m3fn);
 
 using BasicGemm = cutlass::gemm::device::Gemm<
@@ -46,18 +46,20 @@ using BasicGemm = cutlass::gemm::device::Gemm<
     float,
     cutlass::layout::RowMajor,
     float,
-    cutlass::layout::RowMajor>;
-
-using TensorGemm = cutlass::gemm::device::Gemm<
-    cutlass::bfloat16_t,
-    cutlass::layout::RowMajor,
-    cutlass::bfloat16_t,
-    cutlass::layout::RowMajor,
-    float,
     cutlass::layout::RowMajor,
     float,
     cutlass::arch::OpClassTensorOp,
-    cutlass::arch::Sm80>;
+    cutlass::arch::Sm80,
+    cutlass::gemm::GemmShape<128, 256, 64>,
+    cutlass::gemm::GemmShape<64, 64, 64>,
+    cutlass::gemm::GemmShape<16, 8, 16>,
+    cutlass::epilogue::thread::LinearCombination<float, 4>,
+    cutlass::gemm::threadblock::GemmIdentityThreadblockSwizzle<>,
+    3,
+    4,
+    4,
+    false,
+    cutlass::arch::OpMultiplyAddFastF32>;
 
 void check_cuda(cudaError_t status, const char* context) {
   if (status != cudaSuccess) {
@@ -544,93 +546,6 @@ __global__ void dequant_gemm2_weights_kernel(
       scale;
 }
 
-__global__ void dequant_compact_activations_bf16_kernel(
-    const uint8_t* __restrict__ hidden_states,
-    const float* __restrict__ hidden_states_scale,
-    const int32_t* __restrict__ compact_slot_ids,
-    cutlass::bfloat16_t* __restrict__ activations,
-    int32_t start,
-    int32_t count,
-    int32_t seq_len) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(count) * kHiddenSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t row = static_cast<int32_t>(linear / kHiddenSize);
-  const int32_t hidden = static_cast<int32_t>(linear - static_cast<int64_t>(row) * kHiddenSize);
-  const int32_t slot = compact_slot_ids[start + row];
-  const int32_t token = slot / kTopK;
-  const float scale = hidden_states_scale[(hidden / kBlockSize) * seq_len + token];
-  const float value =
-      fp8_e4m3_to_float(hidden_states[static_cast<int64_t>(token) * kHiddenSize + hidden]) * scale;
-  activations[linear] = cutlass::bfloat16_t(value);
-}
-
-__global__ void dequant_gemm1_weights_bf16_kernel(
-    const uint8_t* __restrict__ gemm1_weights,
-    const float* __restrict__ gemm1_weights_scale,
-    cutlass::bfloat16_t* __restrict__ gemm1_weight_t,
-    int32_t local_expert) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(kHiddenSize) * kGemm1OutSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t hidden = static_cast<int32_t>(linear / kGemm1OutSize);
-  const int32_t out = static_cast<int32_t>(linear - static_cast<int64_t>(hidden) * kGemm1OutSize);
-  const float scale =
-      gemm1_weights_scale[(local_expert * kGemm1OutBlocks + (out / kBlockSize)) * kHiddenBlocks +
-                          (hidden / kBlockSize)];
-  const float value =
-      fp8_e4m3_to_float(gemm1_weights[(static_cast<int64_t>(local_expert) * kGemm1OutSize + out) *
-                                       kHiddenSize + hidden]) *
-      scale;
-  gemm1_weight_t[linear] = cutlass::bfloat16_t(value);
-}
-
-__global__ void swiglu_bf16_kernel(
-    const float* __restrict__ gemm1_out,
-    cutlass::bfloat16_t* __restrict__ gated,
-    int32_t count) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(count) * kIntermediateSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t row = static_cast<int32_t>(linear / kIntermediateSize);
-  const int32_t i = static_cast<int32_t>(linear - static_cast<int64_t>(row) * kIntermediateSize);
-  const int64_t base = static_cast<int64_t>(row) * kGemm1OutSize;
-  const float up = gemm1_out[base + i];
-  const float gate = gemm1_out[base + kIntermediateSize + i];
-  const float silu_gate = gate / (1.0f + expf(-gate));
-  gated[linear] = cutlass::bfloat16_t(silu_gate * up);
-}
-
-__global__ void dequant_gemm2_weights_bf16_kernel(
-    const uint8_t* __restrict__ gemm2_weights,
-    const float* __restrict__ gemm2_weights_scale,
-    cutlass::bfloat16_t* __restrict__ gemm2_weight_t,
-    int32_t local_expert) {
-  const int64_t linear = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
-  const int64_t total = static_cast<int64_t>(kIntermediateSize) * kHiddenSize;
-  if (linear >= total) {
-    return;
-  }
-  const int32_t intermediate = static_cast<int32_t>(linear / kHiddenSize);
-  const int32_t hidden =
-      static_cast<int32_t>(linear - static_cast<int64_t>(intermediate) * kHiddenSize);
-  const float scale =
-      gemm2_weights_scale[(local_expert * kHiddenBlocks + (hidden / kBlockSize)) *
-                              kIntermediateBlocks +
-                          (intermediate / kBlockSize)];
-  const float value =
-      fp8_e4m3_to_float(gemm2_weights[(static_cast<int64_t>(local_expert) * kHiddenSize + hidden) *
-                                       kIntermediateSize + intermediate]) *
-      scale;
-  gemm2_weight_t[linear] = cutlass::bfloat16_t(value);
-}
-
 __global__ void accumulate_weighted_output_kernel(
     const float* __restrict__ expert_output,
     const int32_t* __restrict__ compact_slot_ids,
@@ -684,30 +599,6 @@ void run_basic_gemm(
       {c, n},
       {1.0f, 0.0f});
   check_cutlass(BasicGemm::can_implement(args), context);
-  check_cutlass(gemm(args, nullptr, stream), context);
-}
-
-void run_tensor_gemm(
-    int32_t m,
-    int32_t n,
-    int32_t k,
-    const cutlass::bfloat16_t* a,
-    const cutlass::bfloat16_t* b,
-    float* c,
-    cudaStream_t stream,
-    const char* context) {
-  if (m == 0 || n == 0 || k == 0) {
-    return;
-  }
-  TensorGemm gemm;
-  TensorGemm::Arguments args(
-      {m, n, k},
-      {a, k},
-      {b, n},
-      {c, n},
-      {c, n},
-      {1.0f, 0.0f});
-  check_cutlass(TensorGemm::can_implement(args), context);
   check_cutlass(gemm(args, nullptr, stream), context);
 }
 
@@ -866,30 +757,6 @@ void kernel(
             sizeof(float),
             "expert output"),
         stream);
-    DeviceBuffer activations_bf16(
-        checked_mul(
-            checked_mul(max_count, kHiddenSize, "bf16 activation elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 activations"),
-        stream);
-    DeviceBuffer gemm1_weight_bf16(
-        checked_mul(
-            checked_mul(kHiddenSize, kGemm1OutSize, "bf16 gemm1 weight elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 gemm1 weights"),
-        stream);
-    DeviceBuffer gated_bf16(
-        checked_mul(
-            checked_mul(max_count, kIntermediateSize, "bf16 gated elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 gated"),
-        stream);
-    DeviceBuffer gemm2_weight_bf16(
-        checked_mul(
-            checked_mul(kIntermediateSize, kHiddenSize, "bf16 gemm2 weight elements"),
-            sizeof(cutlass::bfloat16_t),
-            "bf16 gemm2 weights"),
-        stream);
 
     for (int32_t local_expert = 0; local_expert < kNumLocalExperts; ++local_expert) {
       const int32_t count = counts_host[local_expert];
@@ -900,135 +767,70 @@ void kernel(
 
       const int64_t activation_elems = static_cast<int64_t>(count) * kHiddenSize;
       const int64_t gemm1_weight_elems = static_cast<int64_t>(kHiddenSize) * kGemm1OutSize;
-      const int64_t gemm2_weight_elems = static_cast<int64_t>(kIntermediateSize) * kHiddenSize;
+      dequant_compact_activations_kernel<<<
+          static_cast<int32_t>((activation_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(
+          static_cast<const uint8_t*>(hidden_states.data_ptr()),
+          static_cast<const float*>(hidden_states_scale.data_ptr()),
+          compact_slot_ids.data<int32_t>(),
+          activations.data<float>(),
+          start,
+          count,
+          seq_len);
+      check_launch("dequant_compact_activations_kernel");
+
+      dequant_gemm1_weights_kernel<<<
+          static_cast<int32_t>((gemm1_weight_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(
+          static_cast<const uint8_t*>(gemm1_weights.data_ptr()),
+          static_cast<const float*>(gemm1_weights_scale.data_ptr()),
+          gemm1_weight_t.data<float>(),
+          local_expert);
+      check_launch("dequant_gemm1_weights_kernel");
+
+      run_basic_gemm(
+          count,
+          kGemm1OutSize,
+          kHiddenSize,
+          activations.data<float>(),
+          gemm1_weight_t.data<float>(),
+          gemm1_out.data<float>(),
+          stream,
+          "cutlass gemm1");
+
       const int64_t gated_elems = static_cast<int64_t>(count) * kIntermediateSize;
-      if (count < kBf16GemmCountThreshold) {
-        dequant_compact_activations_bf16_kernel<<<
-            static_cast<int32_t>((activation_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(hidden_states.data_ptr()),
-            static_cast<const float*>(hidden_states_scale.data_ptr()),
-            compact_slot_ids.data<int32_t>(),
-            activations_bf16.data<cutlass::bfloat16_t>(),
-            start,
-            count,
-            seq_len);
-        check_launch("dequant_compact_activations_bf16_kernel");
+      swiglu_kernel<<<
+          static_cast<int32_t>((gated_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(gemm1_out.data<float>(), gated.data<float>(), count);
+      check_launch("swiglu_kernel");
 
-        dequant_gemm1_weights_bf16_kernel<<<
-            static_cast<int32_t>((gemm1_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm1_weights.data_ptr()),
-            static_cast<const float*>(gemm1_weights_scale.data_ptr()),
-            gemm1_weight_bf16.data<cutlass::bfloat16_t>(),
-            local_expert);
-        check_launch("dequant_gemm1_weights_bf16_kernel");
+      const int64_t gemm2_weight_elems = static_cast<int64_t>(kIntermediateSize) * kHiddenSize;
+      dequant_gemm2_weights_kernel<<<
+          static_cast<int32_t>((gemm2_weight_elems + kThreads - 1) / kThreads),
+          kThreads,
+          0,
+          stream>>>(
+          static_cast<const uint8_t*>(gemm2_weights.data_ptr()),
+          static_cast<const float*>(gemm2_weights_scale.data_ptr()),
+          gemm2_weight_t.data<float>(),
+          local_expert);
+      check_launch("dequant_gemm2_weights_kernel");
 
-        run_tensor_gemm(
-            count,
-            kGemm1OutSize,
-            kHiddenSize,
-            activations_bf16.data<cutlass::bfloat16_t>(),
-            gemm1_weight_bf16.data<cutlass::bfloat16_t>(),
-            gemm1_out.data<float>(),
-            stream,
-            "cutlass bf16 gemm1");
-
-        swiglu_bf16_kernel<<<
-            static_cast<int32_t>((gated_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(gemm1_out.data<float>(), gated_bf16.data<cutlass::bfloat16_t>(), count);
-        check_launch("swiglu_bf16_kernel");
-
-        dequant_gemm2_weights_bf16_kernel<<<
-            static_cast<int32_t>((gemm2_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm2_weights.data_ptr()),
-            static_cast<const float*>(gemm2_weights_scale.data_ptr()),
-            gemm2_weight_bf16.data<cutlass::bfloat16_t>(),
-            local_expert);
-        check_launch("dequant_gemm2_weights_bf16_kernel");
-
-        run_tensor_gemm(
-            count,
-            kHiddenSize,
-            kIntermediateSize,
-            gated_bf16.data<cutlass::bfloat16_t>(),
-            gemm2_weight_bf16.data<cutlass::bfloat16_t>(),
-            expert_output.data<float>(),
-            stream,
-            "cutlass bf16 gemm2");
-      } else {
-        dequant_compact_activations_kernel<<<
-            static_cast<int32_t>((activation_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(hidden_states.data_ptr()),
-            static_cast<const float*>(hidden_states_scale.data_ptr()),
-            compact_slot_ids.data<int32_t>(),
-            activations.data<float>(),
-            start,
-            count,
-            seq_len);
-        check_launch("dequant_compact_activations_kernel");
-
-        dequant_gemm1_weights_kernel<<<
-            static_cast<int32_t>((gemm1_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm1_weights.data_ptr()),
-            static_cast<const float*>(gemm1_weights_scale.data_ptr()),
-            gemm1_weight_t.data<float>(),
-            local_expert);
-        check_launch("dequant_gemm1_weights_kernel");
-
-        run_basic_gemm(
-            count,
-            kGemm1OutSize,
-            kHiddenSize,
-            activations.data<float>(),
-            gemm1_weight_t.data<float>(),
-            gemm1_out.data<float>(),
-            stream,
-            "cutlass fp32 gemm1");
-
-        swiglu_kernel<<<
-            static_cast<int32_t>((gated_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(gemm1_out.data<float>(), gated.data<float>(), count);
-        check_launch("swiglu_kernel");
-
-        dequant_gemm2_weights_kernel<<<
-            static_cast<int32_t>((gemm2_weight_elems + kThreads - 1) / kThreads),
-            kThreads,
-            0,
-            stream>>>(
-            static_cast<const uint8_t*>(gemm2_weights.data_ptr()),
-            static_cast<const float*>(gemm2_weights_scale.data_ptr()),
-            gemm2_weight_t.data<float>(),
-            local_expert);
-        check_launch("dequant_gemm2_weights_kernel");
-
-        run_basic_gemm(
-            count,
-            kHiddenSize,
-            kIntermediateSize,
-            gated.data<float>(),
-            gemm2_weight_t.data<float>(),
-            expert_output.data<float>(),
-            stream,
-            "cutlass fp32 gemm2");
-      }
+      run_basic_gemm(
+          count,
+          kHiddenSize,
+          kIntermediateSize,
+          gated.data<float>(),
+          gemm2_weight_t.data<float>(),
+          expert_output.data<float>(),
+          stream,
+          "cutlass gemm2");
 
       const int64_t expert_output_elems = static_cast<int64_t>(count) * kHiddenSize;
       accumulate_weighted_output_kernel<<<
