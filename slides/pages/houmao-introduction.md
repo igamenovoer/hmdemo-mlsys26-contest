@@ -1242,7 +1242,7 @@ layout: section
 
 # `init`
 
-<div class="text-[15px] leading-snug mt-5">
+<div class="text-[14px] leading-snug mt-4">
 
 - **定位**：为一个新 agent loop 创建可编辑的 source 区域。
 - **输入**：loop 目录、operator 的初始目标、可选 project context。
@@ -1348,7 +1348,7 @@ layout: section
 - **输入**：intention 中的目标、参与者、事件、handoff 和 recovery 设想。
 - **边界**：关注 phase、event、tick、handoff 和伪代码，不生成具体 agent 绑定。
 
-<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">核心文件</div>
+<div class="option-side-title" style="margin: 0.7rem 0 0.35rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1rem; font-weight: 700; line-height: 1.2;">核心文件</div>
 
 | 文件 | 作用 |
 | --- | --- |
@@ -1356,6 +1356,19 @@ layout: section
 | fenced `python` pseudocode | 把 process 写成接近可执行的流程，标出条件、动作、state effects 和 stopping points |
 | fenced `mermaid` sequenceDiagram | 给人看的高层协作图，说明主要 participant/event/handoff flow |
 | provisional families | 在 process 层预告 participant、message、state、记录 families，供 contracts 阶段细化 |
+
+<div class="option-side-title" style="margin: 0.7rem 0 0.35rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1rem; font-weight: 700; line-height: 1.2;">`collab-overview.md` key sections</div>
+
+<div class="grid grid-cols-2 gap-x-5 gap-y-1 text-[13px] leading-snug">
+
+- scope / topology mode / cycle posture
+- phases / events / handoffs or exchanges
+- on-event / on-tick responsibilities
+- participant ownership / execution mode
+- mail family outline / result routing
+- terminal posture / recovery posture / unresolved decisions
+
+</div>
 
 </div>
 
