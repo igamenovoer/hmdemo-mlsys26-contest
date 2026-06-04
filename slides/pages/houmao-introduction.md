@@ -3,9 +3,12 @@ layout: cover
 class: text-center
 ---
 
-# Houmao for Agentic CUDA Kernel Optimization
+<h1 style="font-size: 2.35rem; line-height: 1.16; font-weight: 700;">
+  Fast Prototyping Multi Aagent System<br/>
+  with Loosely Coupled CLI Agents
+</h1>
 
-如何使用多个独立的 CLI agents 进行自动化算子优化。
+Introduction to Houmao Agent Orchestration Framework
 
 <div class="mt-3 text-sm">
   Houmao（猴毛）:

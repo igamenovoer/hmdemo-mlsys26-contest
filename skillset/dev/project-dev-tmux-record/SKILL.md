@@ -19,19 +19,19 @@ tmux list-panes -t SESSION -F '#{pane_id} #{window_name} active=#{pane_active}'
 2. Prefer passive mode for observation-only captures:
 
 ```bash
-pixi run terminal-record start --mode passive --target-session SESSION --sample-interval-seconds 0.1
+pixi run terminal-record start --mode passive --target-session SESSION --sample-interval-seconds 0.2
 ```
 
 3. Use active mode only when stdin/input capture matters. After `start`, use the printed `attach_command` to interact through the recorder-owned tmux session:
 
 ```bash
-pixi run terminal-record start --mode active --target-session SESSION --tool codex --sample-interval-seconds 0.1
+pixi run terminal-record start --mode active --target-session SESSION --tool codex --sample-interval-seconds 0.2
 ```
 
 4. If the target session has multiple panes, pass the pane id:
 
 ```bash
-pixi run terminal-record start --mode passive --target-session SESSION --target-pane %1 --sample-interval-seconds 0.1
+pixi run terminal-record start --mode passive --target-session SESSION --target-pane %1 --sample-interval-seconds 0.2
 ```
 
 5. Save the printed `run_root`. Use it for status and stop:
@@ -45,13 +45,13 @@ Always stop recorder runs you start before ending the task unless the user expli
 
 ## Frame Rate
 
-Default to normal mode: `--sample-interval-seconds 0.1`, which records `pane_snapshots.ndjson` at 10 samples per second. This controls the tmux pane snapshot rate, not asciinema playback FPS; `session.cast` remains event/timing based.
+Default to normal mode: `--sample-interval-seconds 0.2`, which records `pane_snapshots.ndjson` at 5 samples per second. This controls the tmux pane snapshot rate, not asciinema playback FPS; `session.cast` remains event/timing based.
 
-- `normal`: `0.1` seconds, 10 samples per second. Use by default.
-- `slow`: `0.5` seconds, 2 samples per second. Use for long recordings where coarse state changes are enough.
-- `fast`: `0.05` seconds, 20 samples per second. Use for short recordings where rapid UI changes matter.
+- `low`: 2 fps, `--sample-interval-seconds 0.5`. Use for long recordings where coarse state changes are enough.
+- `normal`: 5 fps, `--sample-interval-seconds 0.2`. Use by default.
+- `high`: 20 fps, `--sample-interval-seconds 0.05`. Use for short recordings where rapid UI changes matter.
 
-Only change from normal mode when the user asks for slow/fast recording or the recording length makes file size/overhead more important than smooth trace detail.
+Only change from normal mode when the user asks for low/high recording or the recording length makes file size/overhead more important than smooth trace detail.
 
 ## Mode Guidance
 

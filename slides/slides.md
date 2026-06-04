@@ -1,8 +1,8 @@
 ---
 theme: default
-title: Houmao for Agentic CUDA Kernel Optimization
+title: "Fast Prototyping Multi Aagent System with Loosely Coupled CLI Agents"
 info: |
-  How we use the Houmao system to approach agentic CUDA kernel optimization.
+  Introduction to Houmao Agent Orchestration Framework.
 class: text-center
 drawings:
   persist: false
