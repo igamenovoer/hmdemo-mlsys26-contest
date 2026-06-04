@@ -1336,8 +1336,7 @@ layout: section
 | --- | --- |
 | `execplan/adrs/*.md` | 记录 generation-time decisions：每一步为什么这样生成、会影响哪些 artifacts |
 | `execplan/specs/**` | 逐步建立 process authority 和 contracts，让后续阶段有明确来源 |
-| `execplan/harness/**`、`execplan/skills/**`、`execplan/agents/**` | 按已确认的 specs 生成可运行的 commands、skills 和 agent bindings |
-| `execplan/docs/**`、`manifest.toml` | 最后汇总 artifact index、operator guide、runtime model 和 validation posture |
+| `execplan/harness/**`、`skills/**`、`agents/**`、`docs/**`、`manifest.toml` | 按已确认的 specs 生成 commands、skills、agent bindings、docs 和 artifact index |
 
 </div>
 
@@ -1503,9 +1502,8 @@ layout: section
 | 文件组 | 作用 |
 | --- | --- |
 | `execplan/adrs/*.md` | 记录 accepted execplan implementation decisions，以及影响哪些 generated artifacts |
-| `execplan/specs/**` | 修正 generated contracts、schema、topology、state 或 workspace 的实现细节 |
-| `execplan/harness/**`、`skills/**`、`agents/**` | 修正命令入口、skill trigger/procedure、agent binding 或 notifier prompt |
-| stale-artifact notes | 如果一个决定影响下游阶段，标出哪些 artifacts 需要 regeneration 或已经 stale |
+| `execplan/specs/**`、`harness/**`、`skills/**`、`agents/**` | 修正 contracts、commands、skill trigger/procedure、agent binding 或 notifier prompt |
+| stale-artifact notes | 标出受影响的下游 artifacts：哪些已更新，哪些需要 regeneration 或已经 stale |
 
 </div>
 
