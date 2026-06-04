@@ -1234,6 +1234,444 @@ flowchart TB
 layout: section
 ---
 
+# Agent Loop Pro Authoring
+
+从 intention source 生成可验证、可执行的 execplan package。
+
+---
+
+# `init`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：为一个新 agent loop 创建可编辑的 source 区域。
+- **输入**：loop 目录、operator 的初始目标、可选 project context。
+- **边界**：只初始化 intention source，不生成 `execplan/`，也不启动 agent。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出文件</div>
+
+| 文件 | 作用 |
+| --- | --- |
+| `intention/README.md` | intention source 的入口说明，告诉后续 authoring step 应该读哪些文件、哪些内容可以人工编辑 |
+| `intention/loop-overview.md` | loop 的核心意图：目标、参与者、协作流程、handoff、open questions |
+| `intention/project-context.md` | 当前项目的背景事实：repo 结构、可用命令、约束、已有约定和 workspace 假设 |
+
+</div>
+
+---
+
+# `create-intention`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：创建最小 intention source，用来承载 loop 的初始意图。
+- **输入**：loop 目录、operator 对目标和参与者的描述。
+- **边界**：不做 project context 探测，也不进入 execplan 生成阶段。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">输出文件</div>
+
+| 文件 | 作用 |
+| --- | --- |
+| `intention/README.md` | 最小 source 入口，说明 intention 目录是后续生成 execplan 的人工可编辑来源 |
+| `intention/loop-overview.md` | 最小 loop 意图：目标、参与者、协作流程和还没澄清的问题 |
+| 不生成 `project-context.md` | 这个命令不扫描项目背景；需要项目事实时用 `init` 或后续手动补充 |
+
+</div>
+
+---
+
+# `clarify-intent`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：在生成 execplan 前，补齐 intention 中影响设计的关键问题。
+- **输入**：`intention/` 下的目标、参与者、协作方式和约束。
+- **边界**：只澄清 source intent，不直接写运行时 contract。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">更新文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `<loop-dir>/adrs/*.md` | 记录已接受的 intent decision：问了什么、为什么重要、最终怎么决定 |
+| `intention/loop-overview.md` | 更新目标、参与者、生命周期、拓扑和整体操作模型 |
+| `intention/*.md` | 按主题补充 `participants.md`、`workflow.md`、`communication.md`、`state.md`、`workspace.md`、`constraints.md` 等 source docs |
+| stale report | 如果现有 `execplan/` 已经不再匹配 intention，需要明确报告它变 stale |
+
+</div>
+
+---
+
+# `execplan-fast-forward`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：一次性把 intention source 推进成完整 execplan package。
+- **输入**：已经足够清晰的 `intention/`。
+- **边界**：适合快速产出骨架，不启动 agents，不替代后续 validation。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">生成文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/README.md`、子目录 `README.md`、`manifest.toml` | package shell 和索引：说明有哪些 generated artifacts、哪些默认层被省略 |
+| `execplan/specs/**` | generated authority：process model、contracts、schema、topology、state/workspace/run 约束 |
+| `execplan/harness/**`、`execplan/skills/**`、`execplan/agents/**` | 可执行表面：命令入口、agent 可用 skills、participant 到具体 agent 的绑定 |
+| `execplan/docs/**` | 给 operator 读的支持文档，只总结和链接 authoritative artifacts |
+
+</div>
+
+---
+
+# `execplan-step-by-step`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：按阶段生成 execplan，让 operator 在每个关键点确认设计。
+- **输入**：`intention/`，以及 operator 对每一阶段问题的回答。
+- **边界**：比 fast-forward 更可控，但需要更多人工确认。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">生成文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/adrs/*.md` | 记录 generation-time decisions：每一步为什么这样生成、会影响哪些 artifacts |
+| `execplan/specs/**` | 逐步建立 process authority 和 contracts，让后续阶段有明确来源 |
+| `execplan/harness/**`、`execplan/skills/**`、`execplan/agents/**` | 按已确认的 specs 生成可运行的 commands、skills 和 agent bindings |
+| `execplan/docs/**`、`manifest.toml` | 最后汇总 artifact index、operator guide、runtime model 和 validation posture |
+
+</div>
+
+---
+
+# `execplan-specs-process`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：先定义协作过程，作为后续 artifact 的 process authority。
+- **输入**：intention 中的目标、参与者、事件、handoff 和 recovery 设想。
+- **边界**：关注 phase、event、tick、handoff 和伪代码，不生成具体 agent 绑定。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">核心文件</div>
+
+| 文件 | 作用 |
+| --- | --- |
+| `execplan/specs/collab/collab-overview.md` | 第一个 generated authority：定义 phases、events、handoffs、tick responsibilities、ownership、terminal posture、recovery posture |
+| fenced `python` pseudocode | 把 process 写成接近可执行的流程，标出条件、动作、state effects 和 stopping points |
+| fenced `mermaid` sequenceDiagram | 给人看的高层协作图，说明主要 participant/event/handoff flow |
+| provisional families | 在 process 层预告 participant、message、state、记录 families，供 contracts 阶段细化 |
+
+</div>
+
+---
+
+# `execplan-specs-contract`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：从 process spec 派生可验证的 contract 集合。
+- **输入**：`collab-overview.md` 和 intention 中的约束。
+- **边界**：定义结构和约束，不生成执行脚本和 skills。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">contract 文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `specs/objective/`、`specs/participants/` | 定义成功标准、policy、participant role templates 和 stable role instances |
+| `specs/collab/topology/` | 定义 `tree-loop` 或 `generic-loop`、route graph、cycle posture、context posture |
+| `specs/comms/` | 定义 mail templates、`schema_id`、JSON schemas、Markdown renderers 和 reply expectation |
+| `specs/state/`、`specs/workspace/`、`specs/run/` | 定义 bookkeeping state、workspace policy、run artifacts 和结构化记录 schema |
+
+</div>
+
+---
+
+# `execplan-harness`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：生成 loop package 自带的验证、查询、渲染、应用和控制入口。
+- **输入**：process spec 和 contracts。
+- **边界**：harness 服务于这个 loop，不替代 Houmao 平台级 lifecycle 命令。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">harness 文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/harness/commands.toml` | loop-local command registry：列出 validation、query、render、apply、control 等命令 |
+| `execplan/harness/src/`、`bin/` | command implementation 和 wrapper，给 agents 或 operator 调用 |
+| `execplan/harness/schemas/`、`refs/` | command envelope schema，以及指向 authoritative package artifacts 的相对引用 |
+| `dependency-posture.toml`、`requirements.txt`、`vendor/` | 只在需要非标准库或 standalone/custom execution 时记录依赖姿态 |
+
+</div>
+
+---
+
+# `execplan-skills`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：把 loop 行为编译成 agents 可以安装和调用的 generated skills。
+- **输入**：process spec、contracts、事件定义和 operator control 需求。
+- **边界**：每个 skill 都应该是 bounded turn，不依赖长期 in-chat wait。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">skills 文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/skills/README.md` | 说明 generated skill collection 的用途和内容 |
+| `<loop-slug>-shared-harness/SKILL.md` | 统一说明 agents 如何使用 generated harness、contracts 和 structured outputs |
+| `<loop-slug>-<role>-on-<message-family>/SKILL.md` | 处理一个具体 `schema_id` 或 event family，做一个 bounded action 后结束 |
+| `<loop-slug>-<role>-tick/`、`<loop-slug>-operator-control/` | 调度/恢复/完成检查，以及 operator 的 status、pause、resume、stop、manual step 等控制 |
+
+</div>
+
+---
+
+# `execplan-agent-bindings`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：把 participant contract 绑定到可启动的 Houmao agent 配置。
+- **输入**：participants、workspace contract、generated skills 和 notifier prompt 需求。
+- **边界**：只生成绑定材料，不启动 live agent。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">agent binding 文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/agents/bindings.toml` | 把 participant instance 映射到 concrete agent id、skills、prompt source、workspace policy 和 notifier prompt |
+| `execplan/agents/profiles/<agent-id>/config.toml` | 记录准备 Houmao profile 时需要的 concrete agent 配置意图 |
+| `execplan/agents/profiles/<agent-id>/definition.md`、`memo-seed.md` | agent 的 role prompt source 和可选 memo seed |
+| `execplan/agents/notifier-prompts/<agent-id>.md` | mail-driven participant 被 notifier 唤醒后，如何按 `schema_id` 选择 generated skill |
+
+</div>
+
+---
+
+# `execplan-finalize`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：整理 execplan package，让它可以被阅读、校验和执行。
+- **输入**：已经生成的 specs、harness、skills 和 agent bindings。
+- **边界**：docs 解释 package，但 source authority 仍然是 specs 和 contracts。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">final package 文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/README.md`、各目录 `README.md` | orientation docs，只说明 Purpose 和 Contents，不放 authoritative behavior |
+| `execplan/manifest.toml` | final artifact index：路径、artifact kind、plan revision、generated-source posture、omissions |
+| `execplan/docs/artifact-index.md` | 给人快速查 package 里有什么，每个 artifact 去哪里读 |
+| `operator-guide.md`、`runtime-model.md`、`validation.md` | 总结如何操作、runtime 如何被 notifier/mail/skills 驱动、validation posture 是什么 |
+
+</div>
+
+---
+
+# `validate-execplan`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：检查 execplan package 的结构、引用和 artifact 一致性。
+- **输入**：完整或部分生成的 `execplan/`。
+- **边界**：验证 package shape，不证明 live runtime 已经准备好。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">检查对象</div>
+
+| 文件组 | 检查什么 |
+| --- | --- |
+| `manifest.toml`、目录 `README.md` | package 是否可索引、路径是否存在、omission 是否被记录 |
+| `execplan/specs/**` | process authority、contracts、topology、comms、state、workspace、run 是否一致 |
+| `harness/**`、`skills/**`、`agents/**` | command registry、generated skills、agent bindings 是否符合约定且互相引用正确 |
+| validation report | 报告缺失文件、parse/link failures、stale markers 和是否可进入 execution preparation |
+
+</div>
+
+---
+
+# `clarify-execplan`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：在 execplan 已生成后，处理 implementation-level 的歧义。
+- **输入**：现有 `execplan/`、validation 结果和 operator 的修正意图。
+- **边界**：只改 execplan 层的歧义，不重新定义原始目标，除非同步回 intention。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">可能更新的文件组</div>
+
+| 文件组 | 作用 |
+| --- | --- |
+| `execplan/adrs/*.md` | 记录 accepted execplan implementation decisions，以及影响哪些 generated artifacts |
+| `execplan/specs/**` | 修正 generated contracts、schema、topology、state 或 workspace 的实现细节 |
+| `execplan/harness/**`、`skills/**`、`agents/**` | 修正命令入口、skill trigger/procedure、agent binding 或 notifier prompt |
+| stale-artifact notes | 如果一个决定影响下游阶段，标出哪些 artifacts 需要 regeneration 或已经 stale |
+
+</div>
+
+---
+
+# `update-execplan`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：当 intention 或 contract 变化时，从最早受影响阶段向后刷新。
+- **输入**：变更后的 source material，以及要保留或重生成的 artifact 范围。
+- **边界**：避免盲目全量重写，重点是保持 artifact dependency 一致。
+
+<div class="option-side-title" style="margin: 0.85rem 0 0.45rem; padding-bottom: 0.2rem; border-bottom: 1px solid #cbd5e1; color: #0f172a; font-size: 1.05rem; font-weight: 700; line-height: 1.2;">按影响范围刷新</div>
+
+| 最早受影响文件组 | 后续动作 |
+| --- | --- |
+| `execplan/specs/collab/collab-overview.md` | process 变了，重跑 contracts、harness、skills、bindings、finalize |
+| `execplan/specs/**` contracts | contracts 变了，重跑 harness、skills、bindings、finalize |
+| `execplan/harness/**` 或 `execplan/skills/**` | 命令或 agent procedure 变了，重跑下游 skills/bindings/docs |
+| `execplan/agents/**`、`docs/**`、`manifest.toml` | 只刷新 concrete bindings 或 final package material，并最后 `validate-execplan` |
+
+</div>
+
+---
+layout: section
+---
+
+# Agent Loop Pro Execution
+
+从 execplan package 准备、启动、运行和恢复 live Houmao agents。
+
+---
+
+# `prepare-agents`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：把 generated agent material 转成可启动的 Houmao agent 准备状态。
+- **输入**：`execplan/agents/`、generated skills、notifier prompts 和 memo seeds。
+- **输出**：specialists、launch profiles、已安装 skills 和准备报告。
+- **边界**：只准备 agent 材料，不启动 CLI 进程。
+
+</div>
+
+---
+
+# `prepare-workspace`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：按照 workspace contract 准备每个 agent 需要操作的工作区。
+- **输入**：workspace contract、agent bindings 和 repo-local 约束。
+- **输出**：workspace directories、state links、初始化文件和 workspace readiness report。
+- **边界**：只处理 workspace 姿态，不代表 mail、gateway 或 agents 已就绪。
+
+</div>
+
+---
+
+# `validate-loop`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：在 launch 前验证整个 loop 的 runtime readiness。
+- **输入**：execplan package、prepared agents、workspace、mailbox、gateway 和 harness 状态。
+- **输出**：pre-launch validation report，以及可以阻塞启动的问题清单。
+- **边界**：这是运行前检查，不会替 operator 自动修复所有 runtime 问题。
+
+</div>
+
+---
+
+# `launch-agents`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：启动 execplan 定义的 Houmao managed agents。
+- **输入**：prepared launch profiles、workspace facts、mailbox 和 gateway 配置。
+- **输出**：live agent ids、CLI 进程信息、gateway attachment 和 launch report。
+- **边界**：启动 agents，但不一定发送 first trigger。
+
+</div>
+
+---
+
+# `start`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：正式开始一次 loop run。
+- **输入**：已启动 agents、run contract、initial event 或 operator start prompt。
+- **输出**：run id、初始化 state、first trigger mail 或 prompt，以及 run log 起点。
+- **边界**：只负责启动 run，不保证每个 agent 已完成后续协作。
+
+</div>
+
+---
+
+# `status`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：只读查看 loop 当前运行状态。
+- **输入**：run id、runtime state、agent liveness、mailbox 和 harness status。
+- **输出**：phase、open events、pending mail、agent 状态和最近 artifact 更新。
+- **边界**：不修改 state，不发送 prompt，不触发 agent 行动。
+
+</div>
+
+---
+
+# `pause`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：暂停 loop 的自动推进或 wakeup 姿态。
+- **输入**：run id、当前 scheduling/notifier 状态。
+- **输出**：paused state、暂停原因和恢复提示。
+- **边界**：暂停 loop 控制面，不等同于杀掉 agents 或删除 workspace。
+
+</div>
+
+---
+
+# `resume`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：从 paused state 恢复 loop 推进。
+- **输入**：run id、resume intent、必要的 repaired state。
+- **输出**：恢复后的 scheduling/notifier 状态，以及下一步触发计划。
+- **边界**：只恢复已经可恢复的 loop，不掩盖仍然存在的 validation 问题。
+
+</div>
+
+---
+
+# `recover`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：处理中断、部分 handoff、失败 setup 或 runtime posture 不一致。
+- **输入**：run artifacts、agent state、mailbox state、harness logs 和 operator 的恢复选择。
+- **输出**：recovery plan、修复后的 state、必要的 replay 或 manual handoff。
+- **边界**：恢复应保守推进，避免重复触发已经完成的关键动作。
+
+</div>
+
+---
+
+# `stop`
+
+<div class="text-[15px] leading-snug mt-5">
+
+- **定位**：停止 loop 的运行和相关 managed agents。
+- **输入**：run id、stop mode、需要保留的 artifacts 和 cleanup 策略。
+- **输出**：stopped state、agent stop report、剩余 artifacts 和后续清理建议。
+- **边界**：停止 live runtime，不删除历史 run artifacts，除非 contract 明确要求。
+
+</div>
+
+---
+layout: section
+---
+
 # Reference Material
 
 From Toy Example onward, the remaining pages are for reference only during slide development.

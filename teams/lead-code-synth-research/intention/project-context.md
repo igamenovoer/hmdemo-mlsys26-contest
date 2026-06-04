@@ -31,8 +31,8 @@
 - Default unit and integration checks should avoid GPU or dataset dependency; GPU and dataset dependent timing belongs in explicit benchmark paths.
 - Generated `solution.json`, `.pixi/`, `tmp/`, and ignored external checkouts should not be committed.
 - This loop root contains `source/mlsys26-tech-report.pdf`, which is the design seed for the intended Houmao multi-agent optimization loop.
+- Accepted first implementation scope: active Fused MoE only, using `moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048`.
 
 ## Open Questions
 
-- UNRESOLVED - The exact first implementation scope is not yet chosen: active Fused MoE only, all contest kernels, or a reusable framework that starts with Fused MoE.
-- UNRESOLVED - Whether the loop will need managed agent workspaces, live gateway/mail routing, local GPU access, Modal access, or only offline execplan authoring.
+- UNRESOLVED - Live gateway/mail routing, local GPU access, Modal access, and offline-only versus executable loop posture still need decisions.

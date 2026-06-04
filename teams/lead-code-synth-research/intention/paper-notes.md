@@ -41,7 +41,7 @@ Source: `../source/mlsys26-tech-report.pdf`.
 
 ## Implications For Houmao
 
-- Houmao mail should carry structured handoffs: plan assignments, implementation results, profiler requests, profiler reports, research requests, research summaries, synthesis decisions, evaluation results, and operator interventions.
+- Houmao mail should carry structured handoffs: plan assignments, implementation results, profiler requests, profiler reports, research requests, research summaries with source-scope notes, synthesis decisions, evaluation results, and operator interventions.
 - The generated loop should use prompt-triggered bounded turns rather than agents waiting inside chat turns.
 - Loop state should record current best candidate, run history, failed directions, accepted evidence, rejected hacks, profiler artifacts, and open hypotheses.
 - Operator controls should include pause, resume, stop, redirect search, mark a result invalid, request independent review, and force a new planning cycle.
